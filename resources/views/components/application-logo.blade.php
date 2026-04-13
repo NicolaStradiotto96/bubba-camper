@@ -5,8 +5,8 @@
 @php
     $sizes = [
         'small' => 'h-16 w-auto',
-        'medium' => 'h-24 w-auto',
-        'large' => 'max-h-[45vh] w-auto',
+        'medium' => 'h-48 w-auto',
+        'large' => 'h-auto max-h-[45vh] w-auto',
     ];
 
     $classes = $sizes[$size] ?? $sizes['small'];

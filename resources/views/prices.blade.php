@@ -42,7 +42,7 @@
         {{-- KM PRICES --}}
         <div class="mx-4">
             <div
-                class="max-w-3xl mx-auto my-7 bg-green-50 dark:bg-green-900/20 border-l-8 border-green-500 p-6 rounded-r-xl">
+                class="max-w-3xl mx-auto my-7 bg-green-100 dark:bg-green-900/20 border-l-8 border-green-500 p-6 rounded-r-xl">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <svg class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">

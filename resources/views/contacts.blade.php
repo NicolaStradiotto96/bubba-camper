@@ -24,7 +24,7 @@
                         {{-- WHATASPP AND ADDRESS --}}
                         <div class="space-y-6">
                             <a href="https://wa.me/393347538083"
-                                class="flex items-center p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl hover:shadow-md transition"
+                                class="flex items-center p-4 bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl hover:shadow-md hover:border-green-300 hover:bg-green-200 dark:hover:border-green-500 dark:hover:bg-green-900/40 transition"
                                 target="_blank">
                                 <div class="bg-green-500 p-3 rounded-lg text-white">
                                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"
@@ -41,7 +41,7 @@
                             </a>
 
                             <a href="https://maps.app.goo.gl/YPc96ugg7UmpMZX49"
-                                class="flex items-center p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl hover:shadow-md transition"
+                                class="flex items-center p-4 bg-amber-100 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl hover:shadow-md hover:border-amber-300 hover:bg-amber-200 dark:hover:border-amber-500 dark:hover:bg-amber-900/40  transition"
                                 target="_blank">
                                 <div class="bg-amber-500 p-3 rounded-lg text-white">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,49 +65,58 @@
                     {{-- MAIL FORM --}}
                     <div
                         class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+                        <div class="mb-6 text-center">
+                            <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest">
+                                Contattaci via email
+                            </h2>
+                        </div>
                         <form action="#" method="POST" class="space-y-4">
+                            @csrf
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {{-- Name --}}
                                 <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label>
-                                    <input type="text"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+                                    <x-input-label for="name" :value="__('Nome')" />
+                                    <x-text-input id="name" name="name" type="text" class="block mt-1 w-full"
+                                        required />
                                 </div>
+                                {{-- Email --}}
                                 <div>
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                                    <input type="email"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+                                    <x-input-label for="email" :value="__('Email')" />
+                                    <x-text-input id="email" name="email" type="email" class="block mt-1 w-full"
+                                        required />
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {{-- Start date --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data
-                                        Inizio</label>
-                                    <input type="date"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-gray-400">
+                                    <x-input-label for="start_date" :value="__('Data Inizio')" />
+                                    <x-text-input id="start_date" name="start_date" type="date"
+                                        class="block mt-1 w-full" />
                                 </div>
+                                {{-- End date --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data
-                                        Fine</label>
-                                    <input type="date"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-gray-400">
+                                    <x-input-label for="end_date" :value="__('Data Fine')" />
+                                    <x-text-input id="end_date" name="end_date" type="date"
+                                        class="block mt-1 w-full" />
                                 </div>
                             </div>
 
+                            {{-- Message --}}
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Il tuo
-                                    messaggio</label>
-                                <textarea rows="4"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-amber-500 focus:ring-amber-500"
+                                <x-input-label for="message" :value="__('Il tuo messaggio')" />
+                                <textarea id="message" name="message" rows="4"
+                                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm"
                                     placeholder="Parlaci del tuo itinerario..."></textarea>
                             </div>
 
-                            <button type="submit"
-                                class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-lg transition duration-150 uppercase tracking-widest text-sm">
-                                Invia richiesta
-                            </button>
+                            {{-- Bottone --}}
+                            <div class="flex justify-center">
+                                <x-primary-button
+                                    class="w-full justify-center bg-amber-600 hover:bg-amber-700 active:bg-amber-800">
+                                    {{ __('Invia richiesta') }}
+                                </x-primary-button>
+                            </div>
                         </form>
                     </div>
 

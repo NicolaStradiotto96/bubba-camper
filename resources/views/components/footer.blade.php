@@ -3,9 +3,9 @@
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
 
             <div class="space-y-8 xl:col-span-1">
-                <div class="flex items-center space-x-2 justify-center">
+                <div class="flex items-center justify-center space-x-2">
                     <x-application-logo size="small" />
-                    <span class="text-xl font-bold text-gray-900 dark:text-white">{{ config('app.name') }}</span>
+                    <span class="text-xl font-bold text-gray-900 dark:text-white text-center">{{ config('app.name') }}</span>
                 </div>
                 <p class="text-gray-500 dark:text-gray-400 text-sm text-center">
                     Rendi le tue vacanze indimenticabili con il nostro camper di famiglia.
@@ -13,7 +13,7 @@
                 </p>
             </div>
 
-            <div class="md:grid md:grid-cols-3 gap-8 xl:mt-0 xl:col-span-2">
+            <div class="md:grid md:grid-cols-3 gap-8 mt-7 xl:mt-0 xl:col-span-2">
                 <div class="mt-7 md:mt-0">
                     <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider text-center">
                         Navigazione
