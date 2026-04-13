@@ -1,0 +1,21 @@
+/* MY CSS */
+@import "./style.css";
+
+/* TAILWIND */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* TRANSITION DARK/LIGHT MODE */
+@layer base {
+    body {
+        @apply transition-colors duration-300 ease-in-out;
+    }
+
+    * {
+        @apply transition-colors duration-300 ease-in-out;
+
+        transition-duration: 300ms !important;
+        transition-timing-function: ease-in-out !important;
+    }
+}
