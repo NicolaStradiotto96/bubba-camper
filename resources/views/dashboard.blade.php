@@ -27,11 +27,11 @@
                     <p class="text-gray-600 dark:text-gray-400">Pronto per la tua prossima avventura con Bubba Camper?
                     </p>
 
-                    <div class="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200">
-                        <p class="dark:text-amber-200">Non hai ancora prenotazioni attive. Scegli le date e parti!</p>
-                        <a href="{{ route('index') }}"
-                            class="mt-4 inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-lg transition duration-150 uppercase tracking-widest text-sm">Prenota
-                            ora</a>
+                    <div class="mt-8 p-4 bg-amber-100 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <p class="text-amber-700 dark:text-amber-400">Non hai ancora prenotazioni attive. Scegli le date e parti!</p>
+                        <x-primary-anchor class="mt-3" href="{{ route('index') }}" wire:navigate>
+                            {{ __('Prenota ora') }}
+                        </x-primary-anchor>
                     </div>
                 </div>
             @endif

@@ -1,14 +1,14 @@
 <x-app-layout>
 
     {{-- TITLE --}}
-    <div class="flex justify-center mt-5">
-        <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">PREZZI</h2>
-    </div>
+    <header class="flex justify-center mt-5">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">PREZZI</h1>
+    </header>
 
-    <div class="grid grid-cols-1 gap-6">
+    <section class="grid grid-cols-1 gap-6 py-16">
 
         {{-- GENERAL PRICES --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 py-16 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 pb-16 max-w-7xl mx-auto">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-b-4 border-blue-400 p-8 text-center">
                 <h3 class="text-xl font-bold uppercase tracking-wider text-blue-400">Bassa Stagione</h3>
                 <div class="my-4">
@@ -61,6 +61,6 @@
             </div>
         </div>
 
-    </div>
+    </section>
 
 </x-app-layout>

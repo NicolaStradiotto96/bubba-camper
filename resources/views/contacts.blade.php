@@ -1,11 +1,11 @@
 <x-app-layout>
 
     {{-- TITLE --}}
-    <div class="flex justify-center mt-5">
-        <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">CONTATTI</h2>
-    </div>
+    <header class="flex justify-center mt-5">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">CONTATTI</h1>
+    </header>
 
-    <div class="grid grid-cols-1 gap-6">
+    <section class="grid grid-cols-1 gap-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto px-4 py-16">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -52,7 +52,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm text-amber-600 dark:text-amber-400 font-bold uppercase">Dove siamo
+                                    <p class="text-sm text-amber-700 dark:text-amber-400 font-bold uppercase">Dove siamo
                                     </p>
                                     <p class="text-lg font-semibold text-gray-900 dark:text-white">Via Chemin Palma,
                                         2/C - 36065 Mussolente
@@ -112,8 +112,7 @@
 
                             {{-- Bottone --}}
                             <div class="flex justify-center">
-                                <x-primary-button
-                                    class="w-full justify-center bg-amber-600 hover:bg-amber-700 active:bg-amber-800">
+                                <x-primary-button class="w-full justify-center">
                                     {{ __('Invia richiesta') }}
                                 </x-primary-button>
                             </div>
@@ -136,6 +135,6 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
 </x-app-layout>

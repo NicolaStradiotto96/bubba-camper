@@ -6,16 +6,18 @@
     </div>
 
     {{-- DESCRIPTION --}}
-    <section class="text-center mt-8 px-4">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
+    <header class="text-center mt-8 px-4">
+        <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
             Prenota la tua libertà su quattro ruote
-        </h1>
-        <p class="mt-4 text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Benvenuto su <strong>Bubba Camper</strong>.
-            <br>
+        </h2>
+
+        <h1 class="mt-4 text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Benvenuto su <strong>Bubba
+                Camper</strong>.</h1>
+
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Scopri i nostri camper curati nei dettagli e parti per la tua prossima avventura on-the-road.
         </p>
-    </section>
+    </header>
 
     {{-- REVIEWS --}}
     <section class="py-16">
