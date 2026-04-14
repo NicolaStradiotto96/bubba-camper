@@ -195,6 +195,12 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'name' => 'nome',
+        'email' => 'email',
+        'message' => 'messaggio',
+        'start_date' => 'data inizio',
+        'end_date' => 'data fine',
+    ],
 
 ];

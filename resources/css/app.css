@@ -22,6 +22,6 @@
 
 /* LIVEWIRE PROGRESS BAR */
 #nprogress .bar {
-    display: none;
-    /* background-color: #d97706 !important;  */
+    display: none !important;
+    background-color: #d97706 !important; 
 }

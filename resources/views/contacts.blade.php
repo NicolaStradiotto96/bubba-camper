@@ -63,61 +63,7 @@
                     </div>
 
                     {{-- MAIL FORM --}}
-                    <div
-                        class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
-                        <div class="mb-6 text-center">
-                            <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest">
-                                Contattaci via email
-                            </h2>
-                        </div>
-                        <form action="#" method="POST" class="space-y-4">
-                            @csrf
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {{-- Name --}}
-                                <div>
-                                    <x-input-label for="name" :value="__('Nome')" />
-                                    <x-text-input id="name" name="name" type="text" class="block mt-1 w-full"
-                                        required />
-                                </div>
-                                {{-- Email --}}
-                                <div>
-                                    <x-input-label for="email" :value="__('Email')" />
-                                    <x-text-input id="email" name="email" type="email" class="block mt-1 w-full"
-                                        required />
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {{-- Start date --}}
-                                <div>
-                                    <x-input-label for="start_date" :value="__('Data Inizio')" />
-                                    <x-text-input id="start_date" name="start_date" type="date"
-                                        class="block mt-1 w-full" />
-                                </div>
-                                {{-- End date --}}
-                                <div>
-                                    <x-input-label for="end_date" :value="__('Data Fine')" />
-                                    <x-text-input id="end_date" name="end_date" type="date"
-                                        class="block mt-1 w-full" />
-                                </div>
-                            </div>
-
-                            {{-- Message --}}
-                            <div>
-                                <x-input-label for="message" :value="__('Il tuo messaggio')" />
-                                <textarea id="message" name="message" rows="4"
-                                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm"
-                                    placeholder="Parlaci del tuo itinerario..."></textarea>
-                            </div>
-
-                            {{-- Bottone --}}
-                            <div class="flex justify-center">
-                                <x-primary-button class="w-full justify-center">
-                                    {{ __('Invia richiesta') }}
-                                </x-primary-button>
-                            </div>
-                        </form>
-                    </div>
+                    <livewire:forms.contact-form />
 
                     {{-- MAP --}}
                     <div class="lg:col-span-2 mt-8">
