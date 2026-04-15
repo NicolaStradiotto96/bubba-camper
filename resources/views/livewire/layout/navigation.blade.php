@@ -87,9 +87,13 @@ new class extends Component {
                     </x-dropdown>
                 @else
                     <div class="space-x-4 ml-4">
-                        <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Log in</a>
-                        <a href="{{ route('register') }}"
-                            class="text-sm text-gray-700 dark:text-gray-500 underline">Registrati</a>
+                        <x-nav-link :href="route('login')" :active="request()->routeIs('login')" wire:navigate>
+                            {{ __('Log in') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('register')" :active="request()->routeIs('register')" wire:navigate>
+                            {{ __('Registrati') }}
+                        </x-nav-link>
                     </div>
                 @endauth
             </div>

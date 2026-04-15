@@ -2,12 +2,23 @@
     <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
 
-            <div class="space-y-8 xl:col-span-1">
-                <div class="flex items-center justify-center space-x-2">
-                    <x-application-logo size="small" />
-                    <span class="text-xl font-bold text-gray-900 dark:text-white text-center">{{ config('app.name') }}</span>
+            <div class="space-y-6 xl:col-span-1 flex flex-col items-center text-center">
+                <div class="space-y-1">
+                    <div class="flex items-center justify-center space-x-2">
+                        <x-application-logo size="small" />
+                        <div>
+                            <p class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">
+                                {{ config('app.name') }}
+                            </p>
+                            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                                P.IVA 03970540963
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-gray-500 dark:text-gray-400 text-sm text-center">
+
+                {{-- Descrizione --}}
+                <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-xs">
                     Rendi le tue vacanze indimenticabili con il nostro camper di famiglia.
                     Comfort, libertà e avventura a portata di click.
                 </p>

@@ -1,8 +1,16 @@
 <x-app-layout>
 
     {{-- TITLE --}}
-    <header class="flex justify-center mt-5">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">PREZZI</h1>
+    <header class="flex flex-col items-center justify-center mt-5">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight text-center">PREZZI
+        </h1>
+        <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto leading-relaxed px-4 text-center">
+            {{ __('Tariffe chiare, senza sorprese. Ogni noleggio include tutto il necessario per partire in totale serenità.') }}
+        </p>
+
+        <div class="mt-4 flex justify-center">
+            <div class="w-72 md:w-96 h-1 bg-amber-600 rounded-full"></div>
+        </div>
     </header>
 
     <section class="grid grid-cols-1 gap-6 py-16">

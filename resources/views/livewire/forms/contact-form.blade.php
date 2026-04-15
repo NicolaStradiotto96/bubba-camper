@@ -17,6 +17,16 @@
         </div>
     @endif
 
+    @if ($errors->any())
+        <div class="bg-red-500 text-white p-4 mb-4 rounded">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     {{-- FORM --}}
     <form wire:submit.prevent="sendEmail" class="space-y-4">
         @csrf
@@ -40,17 +50,24 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {{-- Start date --}}
-            <div>
-                <x-input-label for="start_date" :value="__('Data Inizio')" />
-                <x-text-input id="start_date" wire:model="start_date" type="date" class="block mt-1 w-full" />
-                <x-input-error :messages="$errors->get('start_date')" class="mt-2" />
-            </div>
-            {{-- End date --}}
-            <div>
-                <x-input-label for="end_date" :value="__('Data Fine')" />
-                <x-text-input id="end_date" wire:model="end_date" type="date" class="block mt-1 w-full" />
-                <x-input-error :messages="$errors->get('end_date')" class="mt-2" />
+
+            {{-- Booking period --}}
+            <div wire:ignore x-data class="md:col-span-2">
+                <x-input-label for="date_range" :value="__('Seleziona il periodo')" />
+                <x-text-input id="date_range" x-init="window.flatpickr($el, {
+                    mode: 'range',
+                    dateFormat: 'd-m-Y',
+                    altInput: true,
+                    altFormat: 'd-m-Y',
+                    minDate: 'today',
+                    locale: 'it',
+                    position: 'below center',
+                    onChange: function(selectedDates, dateStr) {
+                        $wire.set('date_range', dateStr);
+                    }
+                })" type="text" class="block mt-1 w-full"
+                    placeholder="Scegli le date di inizio e fine" />
+                <x-input-error :messages="$errors->get('date_range')" class="mt-2" />
             </div>
         </div>
 

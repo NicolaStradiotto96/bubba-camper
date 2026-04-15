@@ -23,9 +23,9 @@
         <div class="mt-6 flex justify-between items-center border-t border-gray-100 dark:border-gray-700 pt-4">
             <span class="text-gray-500 dark:text-gray-400 text-sm">Disponibile subito</span>
             <a href="#">
-                <x-primary-button class="ms-3">
-                    {{ __('Vedi dettagli') }}
-                </x-primary-button>
+                <x-primary-anchor href="{{ route('show', $camper) }}" wire:navigate>
+                    {{ __('Vedi Dettagli') }}
+                </x-primary-anchor>
             </a>
         </div>
     </div>

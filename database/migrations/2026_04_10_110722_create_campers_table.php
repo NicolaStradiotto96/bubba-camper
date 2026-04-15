@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('campers', function (Blueprint $table) {
             $table->id();
+
             $table->string("name");
+            $table->string("slug")->unique();
             $table->text("description");
-            $table->decimal("price_per_day");
+            $table->decimal("price_per_day", 8, 2);
             $table->string("image_path");
+            $table->json("images")->nullable();
+
             $table->timestamps();
         });
     }

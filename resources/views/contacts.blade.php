@@ -17,7 +17,7 @@
                             <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">
                                 Hai domande sul camper o vuoi verificare la disponibilità?
                                 <br>
-                                Stefano è pronto ad aiutarti.
+                                Siamo pronti ad aiutarti.
                             </p>
                         </div>
 

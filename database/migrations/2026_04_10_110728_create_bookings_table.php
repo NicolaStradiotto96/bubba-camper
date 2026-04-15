@@ -13,10 +13,21 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId("user_id");
+            $table->string('customer_name');
+            $table->string('customer_email');
+
+            $table->foreignId('camper_id')->constrained();
+            $table->string('camper_name');
+
             $table->date("start_date");
             $table->date("end_date");
-            $table->decimal("total_price");
+
+            $table->decimal("total_price", 10, 2);
+
+            $table->string('status')->default('pending');
+
             $table->timestamps();
         });
     }

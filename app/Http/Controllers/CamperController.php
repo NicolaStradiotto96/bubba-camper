@@ -18,4 +18,9 @@ class CamperController extends Controller
     {
         return view('prices');
     }
+
+    public function show(Camper $camper)
+    {
+        return view('show', compact('camper'));
+    }
 }
