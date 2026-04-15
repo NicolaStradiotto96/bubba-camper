@@ -14,19 +14,20 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId("user_id");
+            $table->foreignId("user_id")->nullable()->constrained()->onDelete('set null');
             $table->string('customer_name');
             $table->string('customer_email');
+            $table->string('customer_phone')->nullable();
 
-            $table->foreignId('camper_id')->constrained();
-            $table->string('camper_name');
+            $table->foreignId('camper_id')->constrained()->onDelete('cascade');
 
             $table->date("start_date");
             $table->date("end_date");
 
             $table->decimal("total_price", 10, 2);
 
-            $table->string('status')->default('pending');
+            $table->string('status')->default('pending')->index();
+            $table->index(['start_date', 'end_date']);
 
             $table->timestamps();
         });

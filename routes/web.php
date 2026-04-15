@@ -1,22 +1,26 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CamperController;
 use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
 // HOME
-Route::get('/', [PublicController::class, "welcome"])->name("welcome");
+Route::get('/', [PublicController::class, "welcome"])
+    ->name("welcome");
 
 // INDEX
-Route::get('/noleggio', [CamperController::class, "index"])->name("index");
+Route::get('/noleggio', [CamperController::class, "index"])
+    ->name("index");
 
 // SHOW
-Route::get('/noleggio/{camper:slug}', [CamperController::class, 'show'])->name('show');
+Route::get('/noleggio/{camper:slug}', [CamperController::class, 'show'])
+    ->name('show');
 
 // BOOKING
-Route::get('/booking/{camper:slug}', function (App\Models\Camper $camper) {
-    return view('booking.show', ['camper' => $camper]);
-})->name('booking.show');
+Route::get('/booking/{camper:slug}', [BookingController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('booking.show');
 
 // PRICES
 Route::get('/prezzi', [CamperController::class, "prices"])->name("prices");

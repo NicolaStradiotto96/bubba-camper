@@ -11,7 +11,7 @@
                                 {{ config('app.name') }}
                             </p>
                             <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-                                P.IVA 03970540963
+                                P.IVA 02403740240
                             </p>
                         </div>
                     </div>

@@ -17,7 +17,7 @@
 
         {{-- GENERAL PRICES --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 pb-16 max-w-7xl mx-auto">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-b-4 border-blue-400 p-8 text-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-b-4 border-blue-400 p-14 text-center">
                 <h3 class="text-xl font-bold uppercase tracking-wider text-blue-400">Bassa Stagione</h3>
                 <div class="my-4">
                     <span class="text-5xl font-extrabold dark:text-white">100€</span>
@@ -27,8 +27,8 @@
                     Dic</p>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-b-4 border-amber-400 p-8 text-center">
-                <h3 class="text-xl font-bold uppercase tracking-wider text-amber-600">Media Stagione</h3>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-b-4 border-amber-500 p-14 text-center">
+                <h3 class="text-xl font-bold uppercase tracking-wider text-amber-500">Media Stagione</h3>
                 <div class="my-4">
                     <span class="text-5xl font-extrabold dark:text-white">120€</span>
                     <span class="text-gray-500">/gg</span>
@@ -37,7 +37,7 @@
                     Ott</p>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-b-4 border-red-500 p-8 text-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-b-4 border-red-500 p-14 text-center">
                 <h3 class="text-xl font-bold uppercase tracking-wider text-red-500">Alta Stagione</h3>
                 <div class="my-4">
                     <span class="text-5xl font-extrabold dark:text-white">140€</span>

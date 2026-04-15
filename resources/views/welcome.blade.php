@@ -109,14 +109,18 @@
     </section>
 
     {{-- INDEX --}}
-    <section class="grid grid-cols-1 gap-6">
+    <section>
         <div class="max-w-7xl mx-auto px-4 pb-16 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white uppercase tracking-wider mb-12">
                 Scopri i nostri camper
             </h2>
-            @foreach ($campers as $camper)
-                <x-card :camper="$camper" />
-            @endforeach
+            <div class="flex flex-wrap justify-center gap-8">
+                @foreach ($campers as $camper)
+                    <div class="w-full md:w-[calc(50%-2rem)] lg:w-[calc(33.333%-2rem)] max-w-sm">
+                        <x-card :camper="$camper" />
+                    </div>
+                @endforeach
+            </div>
         </div>
     </section>
 

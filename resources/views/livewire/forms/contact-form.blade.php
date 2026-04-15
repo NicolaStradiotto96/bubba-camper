@@ -52,24 +52,28 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             {{-- Booking period --}}
-            <div wire:ignore x-data class="md:col-span-2">
+            <div wire:ignore wire:key="contact-calendar-{{ count($this->bookedDates) }}" class="md:col-span-2">
                 <x-input-label for="date_range" :value="__('Seleziona il periodo')" />
-                <x-text-input id="date_range" x-init="window.flatpickr($el, {
-                    mode: 'range',
-                    dateFormat: 'd-m-Y',
-                    altInput: true,
-                    altFormat: 'd-m-Y',
-                    minDate: 'today',
-                    locale: 'it',
-                    position: 'below center',
-                    onChange: function(selectedDates, dateStr) {
-                        $wire.set('date_range', dateStr);
-                    }
-                })" type="text" class="block mt-1 w-full"
-                    placeholder="Scegli le date di inizio e fine" />
+                <div x-data="{ booked: @js($this->bookedDates) }">
+                    <x-text-input id="date_range" x-init="flatpickr($el, {
+                        mode: 'range',
+                        dateFormat: 'Y-m-d',
+                        altInput: true,
+                        altFormat: 'd-m-Y',
+                        minDate: 'today',
+                        locale: 'it',
+                        position: 'below center',
+                        {{-- disable: booked, --}}
+                        onChange: function(selectedDates, dateStr) {
+                            $wire.set('date_range', dateStr);
+                        }
+                    })" type="text" class="block mt-1 w-full"
+                        placeholder="Scegli le date di inizio e fine" />
+                </div>
                 <x-input-error :messages="$errors->get('date_range')" class="mt-2" />
             </div>
         </div>
+
 
         {{-- Message --}}
         <div>
@@ -80,7 +84,6 @@
             <x-input-error :messages="$errors->get('message')" class="mt-2" />
         </div>
 
-        {{-- Bottone --}}
         <div class="flex justify-center">
             <x-primary-button class="w-full justify-center">
                 <span wire:loading.remove wire:target="sendEmail">{{ __('Invia richiesta') }}</span>

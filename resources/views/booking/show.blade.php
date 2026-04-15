@@ -1,25 +1,23 @@
 <x-app-layout>
+
     <div class="py-12 bg-gray-50 dark:bg-gray-900">
         <div class="max-w-5xl mx-auto px-4">
 
-            {{-- Header rapido --}}
             <div class="mb-8 flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Completa la tua prenotazione</h1>
                     <p class="text-gray-600 dark:text-gray-400">Stai prenotando: <span
                             class="font-bold text-amber-600">{{ $camper->name }}</span></p>
                 </div>
-                <a href="{{ route('show', $camper) }}" class="text-sm text-gray-500 hover:underline">Modifica
+                <a href="{{ route('index') }}" class="text-sm text-gray-500 hover:underline">Modifica
                     scelta</a>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {{-- Colonna Sinistra: Il componente Livewire --}}
                 <div class="lg:col-span-2">
                     <livewire:forms.booking-form :camper="$camper" />
                 </div>
 
-                {{-- Colonna Destra: Mini riepilogo del mezzo --}}
                 <div class="lg:col-span-1">
                     <div
                         class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
@@ -40,4 +38,5 @@
 
         </div>
     </div>
+
 </x-app-layout>

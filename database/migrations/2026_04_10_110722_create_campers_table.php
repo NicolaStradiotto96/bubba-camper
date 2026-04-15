@@ -17,9 +17,13 @@ return new class extends Migration
             $table->string("name");
             $table->string("slug")->unique();
             $table->text("description");
-            $table->decimal("price_per_day", 8, 2);
+
             $table->string("image_path");
             $table->json("images")->nullable();
+
+            $table->integer("seats")->default(4);
+            $table->integer("beds")->default(4);
+            $table->boolean("is_active")->default(true);
 
             $table->timestamps();
         });
