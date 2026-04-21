@@ -7,16 +7,20 @@ use Illuminate\Validation\Rule;
 use Livewire\Volt\Component;
 
 new class extends Component {
-    public string $name = '';
+    public string $first_name = '';
+    public string $last_name = '';
     public string $email = '';
+    public string $phone = '';
 
     /**
      * Mount the component.
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
+        $this->first_name = Auth::user()->first_name;
+        $this->last_name = Auth::user()->last_name;
         $this->email = Auth::user()->email;
+        $this->phone = Auth::user()->phone ?? '';
     }
 
     /**
@@ -27,8 +31,10 @@ new class extends Component {
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'phone' => ['required', 'string', 'min:8', 'max:20'],
         ]);
 
         $user->fill($validated);
@@ -39,7 +45,7 @@ new class extends Component {
 
         $user->save();
 
-        $this->dispatch('profile-updated', name: $user->name);
+        $this->dispatch('profile-updated', first_name: $user->first_name, last_name: $user->last_name);
     }
 
     /**
@@ -73,13 +79,25 @@ new class extends Component {
     </header>
 
     <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
-        <div>
-            <x-input-label for="name" :value="__('Nome')" />
-            <x-text-input wire:model="name" id="name" name="name" type="text" class="mt-1 block w-full" required
-                autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+
+        {{-- First Name and Last Name --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <x-input-label for="first_name" :value="__('Nome')" />
+                <x-text-input wire:model="first_name" id="first_name" name="first_name" type="text"
+                    class="mt-1 block w-full" required autofocus autocomplete="given-name" />
+                <x-input-error class="mt-2" :messages="$errors->get('first_name')" />
+            </div>
+
+            <div>
+                <x-input-label for="name" :value="__('Cognome')" />
+                <x-text-input wire:model="last_name" id="last_name" name="last_name" type="text"
+                    class="mt-1 block w-full" required autofocus autocomplete="family-name" />
+                <x-input-error class="mt-2" :messages="$errors->get('last_name')" />
+            </div>
         </div>
 
+        <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full"
@@ -104,6 +122,58 @@ new class extends Component {
                     @endif
                 </div>
             @endif
+        </div>
+
+        <!-- Phone -->
+        <div class="mt-4" x-data="{
+            init() {
+                this.$nextTick(() => {
+                    if (typeof window.intlTelInput !== 'function') return;
+        
+                    const input = $refs.phoneInput;
+                    const iti = window.intlTelInput(input, {
+                        initialCountry: 'it',
+                        separateDialCode: true,
+                        countrySearch: true,
+                        i18n: window.itiI18nIt,
+                    });
+        
+                    if (window.itiUtils) {
+                        iti.utils = window.itiUtils;
+                    }
+        
+                    if (this.$wire.phone) {
+                        iti.setNumber(this.$wire.phone);
+                    }
+        
+                    const syncPhone = () => {
+                        input.value = input.value.replace(/\D/g, '');
+        
+                        const dialCodeEl = this.$el.querySelector('.iti__selected-dial-code');
+                        const dialCode = dialCodeEl ? dialCodeEl.innerText.trim() : '';
+                        const rawNumber = input.value;
+        
+                        if (rawNumber === '') {
+                            this.$wire.set('phone', '', false);
+                            return;
+                        }
+        
+                        this.$wire.set('phone', dialCode + rawNumber, false);
+                    };
+        
+                    input.addEventListener('countrychange', syncPhone);
+                    input.addEventListener('input', syncPhone);
+                });
+            }
+        }">
+            <x-input-label for="phone" :value="__('Telefono')" />
+
+            <div wire:ignore class="mt-1">
+                <x-text-input x-ref="phoneInput" type="tel" id="phone" name="phone" autocomplete="tel"
+                    class="block w-full" />
+            </div>
+
+            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
         <div class="flex justify-center items-center gap-4">

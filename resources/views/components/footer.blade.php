@@ -59,7 +59,7 @@
                 </div>
                 <div class="mt-7 md:mt-0">
                     <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider text-center">
-                        Dove siamo
+                        iNFO
                     </h3>
                     <ul class="mt-4 space-y-2 text-base text-gray-500 dark:text-gray-400 text-center">
                         <li>

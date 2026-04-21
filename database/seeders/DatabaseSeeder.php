@@ -20,16 +20,18 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'email' => 'test@example.com',
             'phone' => '3331234567',
             'is_admin' => false,
         ]);
 
         User::factory()->create([
-            'name' => 'Stefano',
-            'email' => 'stefano@bubbacamper.it',
-            'phone' => '3339876543',
+            'first_name' => 'Stefano',
+            'last_name' => 'Bubba',
+            'email' => 'info@bubbacamper.com',
+            'phone' => '3331234567',
             'is_admin' => true,
         ]);
 

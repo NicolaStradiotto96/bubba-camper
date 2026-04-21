@@ -1,6 +1,6 @@
 @props(['camper'])
 
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-100 dark:border-gray-700">
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-300 dark:border-gray-700">
     <div class="relative h-75 w-full">
         <img src="{{ asset('storage/' . $camper->image_path) }}" alt="{{ $camper->name }}"
             class="w-full h-full object-cover">

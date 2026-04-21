@@ -1,4 +1,4 @@
-<div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+<div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
     <h3 class="text-xl font-bold mb-6 text-gray-900 dark:text-white">Prenota il tuo viaggio</h3>
 
     <div class="space-y-6">

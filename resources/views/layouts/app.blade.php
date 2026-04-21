@@ -13,7 +13,7 @@
         @endif
 
         <!-- Page Content -->
-        <main class="flex-grow">
+        <main class="flex-grow my-10">
             {{ $slot }}
         </main>
 

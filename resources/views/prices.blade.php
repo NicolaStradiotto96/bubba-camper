@@ -1,7 +1,8 @@
 <x-app-layout>
 
+    <div class="min-h-[calc(100vh-160px)]">
     {{-- TITLE --}}
-    <header class="flex flex-col items-center justify-center mt-5">
+    <header class="flex flex-col items-center justify-center">
         <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight text-center">PREZZI
         </h1>
         <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto leading-relaxed px-4 text-center">
@@ -13,11 +14,11 @@
         </div>
     </header>
 
-    <section class="grid grid-cols-1 gap-6 py-16">
+    <section class="grid grid-cols-1 gap-6 pt-16">
 
         {{-- GENERAL PRICES --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 pb-16 max-w-7xl mx-auto">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-b-4 border-blue-400 p-14 text-center">
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-b-6 border-blue-400 p-14 text-center">
                 <h3 class="text-xl font-bold uppercase tracking-wider text-blue-400">Bassa Stagione</h3>
                 <div class="my-4">
                     <span class="text-5xl font-extrabold dark:text-white">100€</span>
@@ -27,8 +28,8 @@
                     Dic</p>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-b-4 border-amber-500 p-14 text-center">
-                <h3 class="text-xl font-bold uppercase tracking-wider text-amber-500">Media Stagione</h3>
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-xl border-2 border-b-6 border-yellow-500 p-14 text-center">
+                <h3 class="text-xl font-bold uppercase tracking-wider text-yellow-500">Media Stagione</h3>
                 <div class="my-4">
                     <span class="text-5xl font-extrabold dark:text-white">120€</span>
                     <span class="text-gray-500">/gg</span>
@@ -37,7 +38,7 @@
                     Ott</p>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-b-4 border-red-500 p-14 text-center">
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-b-6 border-red-500 p-14 text-center">
                 <h3 class="text-xl font-bold uppercase tracking-wider text-red-500">Alta Stagione</h3>
                 <div class="my-4">
                     <span class="text-5xl font-extrabold dark:text-white">140€</span>
@@ -50,7 +51,7 @@
         {{-- KM PRICES --}}
         <div class="mx-4">
             <div
-                class="max-w-3xl mx-auto my-7 bg-green-100 dark:bg-green-900/20 border-l-8 border-green-500 p-6 rounded-r-xl">
+                class="max-w-3xl mx-auto mt-6 bg-green-100 dark:bg-green-900/20 border-l-8 border-green-500 p-6 rounded-r-xl">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <svg class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -70,5 +71,7 @@
         </div>
 
     </section>
+
+    </div>
 
 </x-app-layout>

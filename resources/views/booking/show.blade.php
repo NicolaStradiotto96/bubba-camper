@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <div class="py-12 bg-gray-50 dark:bg-gray-900">
+    <div class="py-12 bg-gray-50 dark:bg-gray-900 flex items-center min-h-[calc(100vh-160px)]">
         <div class="max-w-5xl mx-auto px-4">
 
             <div class="mb-8 flex items-center justify-between">
@@ -20,7 +20,7 @@
 
                 <div class="lg:col-span-1">
                     <div
-                        class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
                         <img src="{{ asset('storage/' . $camper->image_path) }}"
                             class="rounded-xl mb-4 w-full h-40 object-cover">
                         <div class="space-y-2">

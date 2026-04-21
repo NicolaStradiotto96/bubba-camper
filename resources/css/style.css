@@ -7,7 +7,12 @@
     /* --fp-color2: #dbdbdb; */
     --fp-color-disabled: rgba(57, 57, 57, 0.3);
     --fp-accent: #d97706;
-    --fp-hover: black;
+    --fp-hover: #000000;
+    --iti-text: #6b7280;
+    --iti-bg: #ffffff;
+    --iti-search-bg: #ffffff;
+    --iti-search-text: #1f2937;
+    --iti-accent: #d97706;
 }
 
 .dark {
@@ -17,10 +22,14 @@
     /* --fp-color2: #283547; */
     --fp-color-disabled: rgba(198, 198, 198, 0.3);
     --fp-accent: #d97706;
-    --fp-hover: white;
-
+    --fp-hover: #ffffff;
+    --iti-text: #9ca3af;
+    --iti-bg: #1f2937;
+    --iti-search-bg: #374151;
+    --iti-search-text: #f3f4f6;
 }
 
+/* FLATPICKR */
 .flatpickr-calendar {
     background: var(--fp-bg) !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -79,4 +88,62 @@
     background: transparent !important;
     text-decoration: line-through;
     cursor: not-allowed;
+}
+
+/* PRICES */
+.border-b-6 {
+    border-bottom-width: 6px !important;
+}
+
+/* INTERNATIONAL TELEPHONE INPUT */
+.iti {
+    width: 100%;
+    display: block;
+}
+
+.iti input {
+    width: 100% !important;
+}
+
+.iti__country-list {
+    text-align: left !important;
+}
+
+.dark .iti__country-name,
+.dark .iti__dial-code {
+    color: var(--fp-color);
+}
+
+.dark .iti__selected-dial-code {
+    color: var(--iti-text);
+}
+
+.dark .iti__country-list {
+    background-color: var(--iti-bg);
+}
+
+.iti__search-input {
+    background-color: var(--iti-search-bg) !important;
+    color: var(--iti-search-text) !important;
+    border: 2px solid var(--iti-accent) !important;
+}
+
+.iti__search-input:focus {
+    box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.4) !important;
+}
+
+.iti__search-input::placeholder {
+    color: #9ca3af;
+}
+
+.dark .iti__no-results,
+.iti__dropdown-content {
+    background-color: var(--iti-search-bg) !important;
+    color: var(--iti-search-text) !important;
+}
+
+@media (min-width: 501px) {
+    .iti__country-list {
+        height: 170px !important;
+    }
 }

@@ -1,7 +1,7 @@
 <x-app-layout>
 
     {{-- TITLE --}}
-    <header class="flex justify-center mt-5">
+    <header class="flex justify-center">
         <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">CONTATTI</h1>
     </header>
 
@@ -68,7 +68,7 @@
                     {{-- MAP --}}
                     <div class="lg:col-span-2 mt-8">
                         <div
-                            class="w-full h-96 rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+                            class="w-full h-96 rounded-2xl overflow-hidden shadow-lg border border-gray-300 dark:border-gray-700">
                             <iframe
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2783.8269244852063!2d11.806780776833884!3d45.75461561401408!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4778d9e0cd4a0873%3A0x52cec110268c0360!2sBirreria%20El%20Tocayo!5e0!3m2!1sit!2sit!4v1776084275365!5m2!1sit!2sit"
                                 width="100%" height="100%" style="border:0; clip-path: inset(2px);"

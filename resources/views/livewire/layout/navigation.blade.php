@@ -16,7 +16,7 @@ new class extends Component {
 }; ?>
 
 <nav x-data="{ open: false }"
-    class="sticky top-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-700 shadow z-50">
+    class="sticky top-0 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border-b border-gray-300 dark:border-gray-700 shadow z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20">
@@ -55,8 +55,8 @@ new class extends Component {
                         <x-slot name="trigger">
                             <button
                                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white/0 dark:bg-gray-800/0 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                                <div x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name"
-                                    x-on:profile-updated.window="name = $event.detail.name"></div>
+                                <div x-data="{{ json_encode(['name' => auth()->user()->first_name]) }}" x-text="name"
+                                    x-on:profile-updated.window="name = $event.detail.first_name"></div>
 
                                 <div class="ms-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +101,7 @@ new class extends Component {
             <!-- Hamburger -->
             <div class="-me-2 flex items-center md:hidden">
                 <button @click.stop="open = ! open"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
+                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-100/70 dark:hover:bg-gray-900/70 focus:outline-none focus:bg-gray-100/70 dark:focus:bg-gray-900/70 focus:text-gray-600 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -122,8 +122,8 @@ new class extends Component {
 
             @auth
                 <div class="px-4">
-                    <div class="font-medium text-base text-gray-800 dark:text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->name]) }}"
-                        x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
+                    <div class="font-medium text-base text-gray-800 dark:text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->first_name]) }}"
+                        x-text="name" x-on:profile-updated.window="name = $event.detail.first_name"></div>
                     <div class="font-medium text-sm text-gray-500">{{ auth()->user()->email }}</div>
                 </div>
             @endauth
@@ -143,7 +143,7 @@ new class extends Component {
             </div>
         </div>
         @auth
-            <div class="py-3 border-t border-gray-200 dark:border-gray-600 ">
+            <div class="py-3 border-t border-gray-300 dark:border-gray-700 ">
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
@@ -160,7 +160,7 @@ new class extends Component {
                 </button>
             </div>
         @else
-            <div class="py-3 border-t border-gray-200 dark:border-gray-600 ">
+            <div class="py-3 border-t border-gray-300 dark:border-gray-700 ">
                 <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')">
                     {{ __('Log In') }}
                 </x-responsive-nav-link>

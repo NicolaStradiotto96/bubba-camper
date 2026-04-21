@@ -1,10 +1,10 @@
 <x-app-layout>
-    <div class="py-12 bg-gray-50 dark:bg-gray-900">
+    <div class="py-12 bg-gray-50 dark:bg-gray-900 flex items-center min-h-[calc(100vh-160px)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Back --}}
             <a href="{{ route('index') }}" wire:navigate
-                class="relative inline-block mb-6 text-amber-700 dark:text-amber-500 font-medium group transition-colors duration-300">
+                class="relative inline-block mb-6 text-amber-600 dark:text-amber-600 font-medium group transition-colors duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor"
                     class="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1 inline-block">
@@ -12,7 +12,7 @@
                 </svg>
                 {{ __('Torna indietro') }}
                 <span
-                    class="absolute left-0 bottom-0 w-0 h-0.5 bg-amber-700 dark:bg-amber-500 transition-all duration-300 group-hover:w-full"></span>
+                    class="absolute left-0 bottom-0 w-0 h-0.5 bg-amber-600 dark:bg-amber-600 transition-all duration-300 group-hover:w-full"></span>
             </a>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -49,7 +49,7 @@
                                 x-transition:enter-start="opacity-0 transform translate-x-8"
                                 x-transition:enter-end="opacity-100 transform translate-x-0" class="absolute inset-0">
                                 <img :src="'/storage/' + slide" @click="openModal('/storage/' + slide)"
-                                    class="w-full h-full object-contain cursor-zoom-in" alt="Dettaglio Camper">
+                                    class="w-full h-full object-cover cursor-zoom-in" alt="Dettaglio Camper">
                             </div>
                         </template>
                     </div>

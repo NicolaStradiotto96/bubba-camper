@@ -1,31 +1,9 @@
-<div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+<div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-300 dark:border-gray-700">
     <div class="mb-6 text-center">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest">
             Contattaci via email
         </h2>
     </div>
-
-    {{-- ERRORS --}}
-    @if (session()->has('success'))
-        <div class="text-center mb-4 p-4 rounded bg-green-100 text-green-800">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session()->has('error'))
-        <div class="text-center mb-4 p-4 rounded bg-red-100 text-red-800">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="bg-red-500 text-white p-4 mb-4 rounded">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     {{-- FORM --}}
     <form wire:submit.prevent="sendEmail" class="space-y-4">

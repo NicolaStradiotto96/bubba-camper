@@ -1,26 +1,41 @@
 <x-app-layout>
 
-    {{-- LOGO --}}
-    <div class="flex justify-center mt-5">
-        <x-application-logo size="large" class="px-5" />
+
+    <div class="relative flex flex-col justify-center items-center min-h-[calc(100vh+80px)] -mt-[160px]">
+        {{-- BACKGROUND --}}
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat shadow-inner"
+                style="background-image: url('{{ asset('bg.jpg') }}')">
+            </div>
+            <div class="absolute inset-0 bg-black/40 dark:bg-black/60"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100 dark:to-gray-900">
+            </div>
+        </div>
+        <div class="relative z-10 flex flex-col items-center">
+            {{-- LOGO --}}
+            <div class="flex justify-center">
+                <x-application-logo size="large" class="px-5" />
+            </div>
+
+            {{-- DESCRIPTION --}}
+            <header class="text-center mt-8 px-4">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
+                    Prenota la tua libertà su quattro ruote
+                </h2>
+
+                <h1 class="mt-4 text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">Benvenuto su <strong
+                        class="text-amber-700">Bubba
+                        Camper</strong>.</h1>
+
+                <p class="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
+                    Scopri i nostri camper curati nei dettagli e parti per la tua prossima avventura on-the-road.
+                </p>
+            </header>
+        </div>
     </div>
 
-    {{-- DESCRIPTION --}}
-    <header class="text-center mt-8 px-4">
-        <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
-            Prenota la tua libertà su quattro ruote
-        </h2>
-
-        <h1 class="mt-4 text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Benvenuto su <strong>Bubba
-                Camper</strong>.</h1>
-
-        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Scopri i nostri camper curati nei dettagli e parti per la tua prossima avventura on-the-road.
-        </p>
-    </header>
-
     {{-- REVIEWS --}}
-    <section class="py-16">
+    <section class="pb-16">
         <div class="max-w-7xl mx-auto px-4">
             <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white uppercase tracking-wider mb-12">
                 Cosa dicono i nostri viaggiatori
@@ -28,7 +43,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div
-                    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 relative">
                     <div class="flex text-amber-400 mb-4">
                         @for ($i = 0; $i < 5; $i++)
                             <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
@@ -37,9 +52,9 @@
                             </svg>
                         @endfor
                     </div>
-                    <p class="text-gray-600 dark:text-gray-300 italic mb-6">
-                        "Esperienza fantastica! Il camper di Stefano è tenuto benissimo ed è super accessoriato. Abbiamo
-                        girato la Toscana senza un problema. Consigliatissimo!"
+                    <p class="text-gray-600 dark:text-gray-300 italic mb-6 min-h-[100px]">
+                        "Camper perfetto per le nostre vacanze. Proprietario splendido, disponibile per ogni tua
+                        esigenza. Sicuramente consigliato. Grazie Stefano!"
                     </p>
                     <div class="flex items-center">
                         <div
@@ -47,14 +62,14 @@
                             M
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-bold text-gray-900 dark:text-white">Marco Rossi</p>
-                            <p class="text-xs text-gray-500">Agosto 2025</p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Bruno</p>
+                            <p class="text-xs text-gray-500">Agosto 2023</p>
                         </div>
                     </div>
                 </div>
 
                 <div
-                    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
                     <div class="flex text-amber-400 mb-4">
                         @for ($i = 0; $i < 5; $i++)
                             <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
@@ -63,9 +78,9 @@
                             </svg>
                         @endfor
                     </div>
-                    <p class="text-gray-600 dark:text-gray-300 italic mb-6">
-                        "Stefano è una persona gentilissima e super disponibile. Ci ha spiegato tutto nei minimi
-                        dettagli. Il camper è comodissimo anche per 4 persone."
+                    <p class="text-gray-600 dark:text-gray-300 italic mb-6 min-h-[100px]">
+                        "Camper pulito e in ottimo stato. Propietario gentilissimo e disponibile. Lo consiglio
+                        vivamente. Noi ripeteremo sicuramente l'esperienza."
                     </p>
                     <div class="flex items-center">
                         <div
@@ -73,14 +88,14 @@
                             G
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-bold text-gray-900 dark:text-white">Giulia Bianchi</p>
-                            <p class="text-xs text-gray-500">Luglio 2025</p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Alessandra</p>
+                            <p class="text-xs text-gray-500">Marzo 2024</p>
                         </div>
                     </div>
                 </div>
 
                 <div
-                    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
                     <div class="flex text-amber-400 mb-4">
                         @for ($i = 0; $i < 5; $i++)
                             <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
@@ -89,9 +104,9 @@
                             </svg>
                         @endfor
                     </div>
-                    <p class="text-gray-600 dark:text-gray-300 italic mb-6">
-                        "Prenotazione facile e veloce. Bubba Camper è una garanzia. Pulizia impeccabile e kit cucina
-                        completo. Lo noleggeremo sicuramente di nuovo!"
+                    <p class="text-gray-600 dark:text-gray-300 italic mb-6 min-h-[100px]">
+                        "Ottima esperienza, un rapporto cordiale e premuroso ci ha accompagnato dal primo contatto.
+                        Consigliatissimo!"
                     </p>
                     <div class="flex items-center">
                         <div
@@ -99,8 +114,8 @@
                             L
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-bold text-gray-900 dark:text-white">Luca Verdi</p>
-                            <p class="text-xs text-gray-500">Giugno 2025</p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">Matteo</p>
+                            <p class="text-xs text-gray-500">Aprile 2025</p>
                         </div>
                     </div>
                 </div>
@@ -110,7 +125,7 @@
 
     {{-- INDEX --}}
     <section>
-        <div class="max-w-7xl mx-auto px-4 pb-16 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white uppercase tracking-wider mb-12">
                 Scopri i nostri camper
             </h2>
