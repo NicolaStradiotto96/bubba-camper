@@ -10,7 +10,8 @@ class Booking extends Model
 {
     protected $fillable = [
         'user_id',
-        'customer_name',
+        'customer_first_name',
+        'customer_last_name',
         'customer_email',
         'customer_phone',
         'camper_id',
@@ -18,6 +19,7 @@ class Booking extends Model
         'end_date',
         'total_price',
         'status',
+        'payment_status',
     ];
 
     public function user(): BelongsTo

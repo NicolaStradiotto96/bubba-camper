@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId("user_id")->nullable()->constrained()->onDelete('set null');
-            $table->string('customer_name');
+            $table->string('customer_first_name');
+            $table->string('customer_last_name');
             $table->string('customer_email');
             $table->string('customer_phone')->nullable();
 
@@ -27,6 +28,8 @@ return new class extends Migration
             $table->decimal("total_price", 10, 2);
 
             $table->string('status')->default('pending')->index();
+            $table->string('payment_status')->default('unpaid')->index();
+
             $table->index(['start_date', 'end_date']);
 
             $table->timestamps();

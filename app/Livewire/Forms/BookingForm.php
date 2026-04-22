@@ -53,6 +53,11 @@ class BookingForm extends Component
     public function getBookedDatesProperty()
     {
         return Booking::where('camper_id', $this->camper->id)
+            ->where('status', '!=', 'cancelled')
+            ->where(function ($query) {
+                $query->where('payment_status', 'paid')
+                    ->orWhere('created_at', '>=', now()->subMinutes(15));
+            })
             ->get(['start_date', 'end_date'])
             ->flatMap(function ($booking) {
                 $period = new \DatePeriod(
@@ -117,20 +122,23 @@ class BookingForm extends Component
             return;
         }
 
-        Booking::create([
+        $booking = Booking::create([
             'user_id' => auth()->id(),
-            'customer_name' => auth()->user()->name ?? 'Guest',
-            'customer_email' => auth()->user()->email ?? 'guest@example.com',
+            'customer_first_name' => auth()->user()->first_name,
+            'customer_last_name' => auth()->user()->last_name,
+            'customer_email' => auth()->user()->email,
+            'customer_phone' => auth()->user()->phone,
             'camper_id' => $this->camper->id,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'total_price' => $this->total_price,
             'status' => 'pending',
+            'payment_status' => 'unpaid',
         ]);
 
         $this->reset(['date_range', 'start_date', 'end_date', 'total_price', 'days_count']);
 
-        session()->flash('success', 'Prenotazione effettuata con successo!');
+        return redirect()->route('checkout', ['booking' => $booking->id]);
     }
 
     public function render()

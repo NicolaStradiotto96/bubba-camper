@@ -6,30 +6,43 @@ Bubba Camper is a modern web application designed to streamline camper van renta
 
 ## LANGUAGES AND FRAMEWORKS
 
-- HTML
-- CSS
-- JavaScript
-- Tailwind
-- Laravel
-- Vite
-- Laravel Breeze
-- Livewire & Volt
-- Apline.js
-- MySQL
+- Backend: Laravel 11, PHP 8.4, MySQL
+
+- Frontend: Livewire 3 (Volt), Alpine.js, Tailwind CSS
+
+- Payments: Stripe API (Checkout & Webhooks)
+
+- Tooling: Vite, Laravel Breeze
+
+- Libraries: intl-tel-input (v27), Flatpickr (Booking calendar)
 
 ## Key Features
 
-- Adaptive UI: Fully responsive design with native Dark Mode support.
+### Secure Payment System
 
-- Smooth Navigation: Custom-built hamburger menu with Alpine.js transitions and "click-outside" auto-close functionality.
+- Stripe Integration: Full implementation of Stripe Checkout for secure, SCA-compliant transactions.
 
-- Advanced Booking Form: A dynamic request system with date validation and seamless UX.
+- Webhook Architecture: Robust backend listener to handle asynchronous payment events (success/failure) and automatically update booking statuses in the database.
 
-- Glitch-Free Integration: Optimized Google Maps integration with custom focus-management to prevent default browser styling issues.
+- Metadata Management: Seamless synchronization between Stripe sessions and internal database records for reliable tracking.
 
-- Role-Based Dashboard: Admin and User
+### Advanced Booking & UI
 
-- SEO & Performance: Lightweight structure optimized for fast loading and search engine visibility.
+- Dynamic Pricing: Real-time cost calculation based on date ranges selected via an interactive calendar.
+
+- Adaptive UI: Fully responsive design with native Dark Mode support and optimized Alpine.js transitions.
+
+- International Phone Integration: Professional-grade phone input using intl-tel-input v27 with flag detection and E.164 formatting.
+
+- Smart Data Sanitization: Strict client-side and server-side validation to ensure data integrity.
+
+### Management & Security
+
+- Role-Based Access Control (RBAC): Dedicated Dashboards for Admins (Stefano) and Users, ensuring secure data separation.
+
+- CSRF Protection: Hardened security layers with specific exclusions for external API communications (Webhooks).
+
+- SEO & Performance: Optimized for fast loading and search engine visibility.
 
 ## DEVELOPER
 

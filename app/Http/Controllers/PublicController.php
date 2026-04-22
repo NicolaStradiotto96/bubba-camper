@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ContactRequest;
 use App\Models\Camper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class PublicController extends Controller
 {

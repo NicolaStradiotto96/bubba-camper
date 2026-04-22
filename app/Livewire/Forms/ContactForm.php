@@ -76,9 +76,6 @@ class ContactForm extends Component
     {
         // HONEYPOT
         if (!empty($this->website)) {
-            logger()->warning('Rilevato bot nel form della sezione contatti', [
-                'ip' => request()->ip(),
-            ]);
 
             return;
         }
