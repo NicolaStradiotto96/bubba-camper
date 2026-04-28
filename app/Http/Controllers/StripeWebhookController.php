@@ -31,21 +31,23 @@ class StripeWebhookController extends Controller
                 try {
                     $booking = Booking::find($bookingId);
                     if ($booking && $booking->payment_status !== 'paid') {
-                        $booking->update(['payment_status' => 'paid']);
+                        $booking->payment_status = 'paid';
+                        $booking->save();
 
                         Log::info("Stripe Webhook: Pagamento ricevuto", [
                             'booking_id' => $bookingId,
                             'stripe_session_id' => $session->id,
                             'amount' => $session->amount_total / 100 . '€'
                         ]);
+                    } else {
+                        Log::error("Ricevuto pagamento Stripe per booking ID {$bookingId} ma non trovato nel DB.");
                     }
                 } catch (\Exception $e) {
                     Log::error("Errore durante l'aggiornamento della booking {$bookingId}: " . $e->getMessage());
-                    return response()->json(['error' => 'Database error'], 500);
                 }
             }
         }
 
-        return response()->json(['status' => 'success']);
+        return response()->json(['status' => 'success'], 200);
     }
 }

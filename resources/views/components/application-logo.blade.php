@@ -15,8 +15,8 @@
 <div {{ $attributes->merge(['class' => 'relative flex justify-center ' . $classes]) }}>
     <img src="{{ asset('logo.png') }}"
         class="absolute h-full w-auto transition-opacity duration-500 ease-in-out opacity-100 dark:opacity-0"
-        alt="Logo Camper">
+        alt="Logo {{ config('app.name', 'Bubba Camper') }}">
 
     <img src="{{ asset('logo-dark.png') }}"
-        class="h-full w-auto transition-opacity duration-500 ease-in-out opacity-0 dark:opacity-100" alt="Logo Camper">
+        class="h-full w-auto transition-opacity duration-500 ease-in-out opacity-0 dark:opacity-100" alt="Logo {{ config('app.name', 'Bubba Camper') }}">
 </div>

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->ulid('ulid')->unique();
 
             $table->foreignId("user_id")->nullable()->constrained()->onDelete('set null');
             $table->string('customer_first_name');
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->string('payment_status')->default('unpaid')->index();
 
             $table->index(['start_date', 'end_date']);
+            $table->index(['status', 'payment_status', 'created_at'], 'bookings_cleanup_index');
 
             $table->timestamps();
         });

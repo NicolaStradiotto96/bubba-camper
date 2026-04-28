@@ -11,5 +11,5 @@
 @endphp
 
 <div>
-    <img src="{{ url('/logo.png') }}" alt="Bubba Camper" style="{{ $style }}">
+    <img src="{{ url('/logo.png') }}" alt="Logo {{ config('app.name', 'Bubba Camper') }}" style="{{ $style }}">
 </div>

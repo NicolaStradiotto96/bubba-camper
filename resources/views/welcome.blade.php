@@ -24,8 +24,7 @@
                 </h2>
 
                 <h1 class="mt-4 text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">Benvenuto su <strong
-                        class="text-amber-700">Bubba
-                        Camper</strong>.</h1>
+                        class="text-amber-600">{{ config('app.name', 'Bubba Camper') }}</strong>.</h1>
 
                 <p class="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
                     Scopri i nostri camper curati nei dettagli e parti per la tua prossima avventura on-the-road.

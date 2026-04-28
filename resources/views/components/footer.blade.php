@@ -8,7 +8,7 @@
                         <x-application-logo size="small" />
                         <div>
                             <p class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">
-                                {{ config('app.name') }}
+                                {{ config('app.name', 'Bubba Camper') }}
                             </p>
                             <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                                 P.IVA 02403740240
@@ -92,7 +92,7 @@
         <div
             class="mt-12 border-t border-gray-200 dark:border-gray-800 pt-6 flex flex-col md:flex-row justify-center items-center">
             <p class="text-base text-gray-400 text-center">
-                &copy; {{ date('Y') }} {{ config('app.name') }}. Tutti i diritti riservati.
+                &copy; {{ date('Y') }} {{ config('app.name', 'Bubba Camper') }}. Tutti i diritti riservati.
             </p>
         </div>
     </div>

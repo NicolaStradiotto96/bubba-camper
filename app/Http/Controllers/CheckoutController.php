@@ -37,8 +37,8 @@ class CheckoutController extends Controller
                 ],
                 'quantity' => 1,
             ]],
-            'success_url' => route('checkout.success', $booking->id) . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => route('checkout.cancel', $booking->id),
+            'success_url' => route('checkout.success', $booking) . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => route('checkout.cancel', $booking),
         ]);
 
         return redirect($session->url);
@@ -46,6 +46,9 @@ class CheckoutController extends Controller
 
     public function success(Booking $booking, Request $request)
     {
+        if ($booking->user_id !== auth()->id()) {
+            abort(403, 'Azione non autorizzata.');
+        }
 
         return view('checkout.success', compact('booking'));
     }

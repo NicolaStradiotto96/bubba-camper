@@ -1,7 +1,7 @@
 <x-mail::message>
 # 🚐 Nuova richiesta
 
-Hai ricevuto una nuova richiesta dal sito **{{ config('app.name') }}**.
+Hai ricevuto una nuova richiesta dal sito **{{ config('app.name', 'Bubba Camper') }}**.
 
 ---
 

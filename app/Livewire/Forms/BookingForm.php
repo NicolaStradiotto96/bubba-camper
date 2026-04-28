@@ -24,13 +24,25 @@ class BookingForm extends Component
     public function updated($propertyName, $value)
     {
         if ($propertyName === 'date_range') {
+            if (empty($value)) {
+                $this->total_price = 0;
+                $this->days_count = 0;
+                $this->addError('date_range', 'Seleziona un intervallo di almeno 2 giorni.');
+                return;
+            }
+
             $this->splitDates($value);
 
             if ($this->start_date && $this->end_date) {
                 $this->calculateBooking();
-            } else {
-                $this->total_price = 0;
-                $this->days_count = 0;
+
+                $this->resetErrorBag(['date_range', 'days_count']);
+
+                $this->validateOnly('days_count', [
+                    'days_count' => 'integer|min:2'
+                ], [
+                    'days_count.min' => 'Il noleggio deve essere di almeno 2 giorni.'
+                ]);
             }
         }
     }
@@ -53,7 +65,7 @@ class BookingForm extends Component
     public function getBookedDatesProperty()
     {
         return Booking::where('camper_id', $this->camper->id)
-            ->where('status', '!=', 'cancelled')
+            ->whereNotIn('status', ['cancelled', 'expired'])
             ->where(function ($query) {
                 $query->where('payment_status', 'paid')
                     ->orWhere('created_at', '>=', now()->subMinutes(15));
@@ -79,6 +91,11 @@ class BookingForm extends Component
         $end = Carbon::parse($this->end_date);
 
         $this->days_count = $start->diffInDays($end) + 1;
+
+        if ($this->days_count < 2) {
+            $this->total_price = 0;
+            return;
+        }
 
         $total = 0;
         $tempDate = $start->copy();
@@ -106,12 +123,32 @@ class BookingForm extends Component
             return;
         }
 
+        $this->calculateBooking();
+
+        $this->validate([
+            'date_range' => 'required',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after:start_date',
+            'days_count' => 'required|integer|min:2',
+            'total_price' => 'required|numeric|min:1',
+        ], [
+            'days_count.min' => 'Il noleggio minimo è di 2 giorni.',
+            'total_price.min' => 'Errore nel calcolo del prezzo.',
+            'start_date.after_or_equal' => 'La data di inizio non può essere nel passato.',
+            'end_date.after' => 'La data di fine deve essere successiva a quella di inizio.',
+        ]);
+
         $alreadyBooked = Booking::where('camper_id', $this->camper->id)
+            ->whereNotIn('status', ['cancelled', 'expired'])
+            ->where(function ($q) {
+                $q->where('payment_status', 'paid')
+                    ->orWhere('created_at', '>=', now()->subMinutes(15));
+            })
             ->where(function ($query) {
                 $query->whereBetween('start_date', [$this->start_date, $this->end_date])
                     ->orWhereBetween('end_date', [$this->start_date, $this->end_date])
-                    ->orWhere(function ($q) {
-                        $q->where('start_date', '<=', $this->start_date)
+                    ->orWhere(function ($sub) {
+                        $sub->where('start_date', '<=', $this->start_date)
                             ->where('end_date', '>=', $this->end_date);
                     });
             })
@@ -122,23 +159,27 @@ class BookingForm extends Component
             return;
         }
 
-        $booking = Booking::create([
-            'user_id' => auth()->id(),
-            'customer_first_name' => auth()->user()->first_name,
-            'customer_last_name' => auth()->user()->last_name,
-            'customer_email' => auth()->user()->email,
-            'customer_phone' => auth()->user()->phone,
-            'camper_id' => $this->camper->id,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
-            'total_price' => $this->total_price,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-        ]);
+        $booking = new Booking();
+
+        $booking->user_id = auth()->id();
+        $booking->customer_first_name = auth()->user()->first_name;
+        $booking->customer_last_name = auth()->user()->last_name;
+        $booking->customer_email = auth()->user()->email;
+        $booking->customer_phone = auth()->user()->phone;
+        $booking->camper_id = $this->camper->id;
+        $booking->start_date = $this->start_date;
+        $booking->end_date = $this->end_date;
+        $this->calculateBooking();
+        $booking->total_price = $this->total_price;
+        $booking->status = 'pending';
+        $booking->payment_status = 'unpaid';
+
+
+        $booking->save();
 
         $this->reset(['date_range', 'start_date', 'end_date', 'total_price', 'days_count']);
 
-        return redirect()->route('checkout', ['booking' => $booking->id]);
+        return redirect()->route('checkout', $booking);
     }
 
     public function render()

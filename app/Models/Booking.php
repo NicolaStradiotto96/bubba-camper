@@ -3,24 +3,35 @@
 namespace App\Models;
 
 use App\Models\Camper;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class Booking extends Model
 {
+    use HasUlids;
+
     protected $fillable = [
-        'user_id',
-        'customer_first_name',
-        'customer_last_name',
-        'customer_email',
-        'customer_phone',
-        'camper_id',
         'start_date',
         'end_date',
-        'total_price',
-        'status',
-        'payment_status',
     ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'total_price' => 'decimal:2',
+    ];
+
+    public function getRouteKeyName()
+    {
+        return 'ulid';
+    }
+
+    public function uniqueIds(): array
+    {
+        return ['ulid'];
+    }
 
     public function user(): BelongsTo
     {

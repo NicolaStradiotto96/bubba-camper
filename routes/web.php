@@ -26,7 +26,7 @@ Route::get('/booking/{camper:slug}', [BookingController::class, 'show'])
 
 // CHECKOUT
 Route::get('/checkout/{booking}', [CheckoutController::class, 'show'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'throttle:5,5'])
     ->name('checkout');
 
 Route::get('/checkout/success/{booking}', [CheckoutController::class, 'success'])

@@ -13,7 +13,7 @@
                     scelta</a>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
                 <div class="lg:col-span-2">
                     <livewire:forms.booking-form :camper="$camper" />
                 </div>
@@ -24,7 +24,7 @@
                         <img src="{{ asset('storage/' . $camper->image_path) }}"
                             class="rounded-xl mb-4 w-full h-40 object-cover">
                         <div class="space-y-2">
-                            <h3 class="font-bold">{{ $camper->name }}</h3>
+                            <h3 class="font-bold text-gray-900 dark:text-white">{{ $camper->name }}</h3>
                             <div class="flex items-center text-sm text-gray-500">
                                 Assistenza stradale inclusa
                             </div>

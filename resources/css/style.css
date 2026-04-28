@@ -90,6 +90,16 @@
     cursor: not-allowed;
 }
 
+.flatpickr-day.flatpickr-disabled:hover {
+    color: var(--fp-color-disabled) !important;
+}
+
+.flatpickr-animation {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition-duration: 150ms !important;
+}
+
 /* PRICES */
 .border-b-6 {
     border-bottom-width: 6px !important;
