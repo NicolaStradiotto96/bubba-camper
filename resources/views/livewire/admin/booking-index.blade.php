@@ -1,8 +1,18 @@
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 mx-2">
+
+    {{-- TITLE --}}
+    <div class="px-4 sm:px-0 mb-8">
+        <h2
+            class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white uppercase tracking-tight text-center">
+            Statistiche
+        </h2>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8 mx-2">
 
         {{-- Card: Earnings --}}
-        <div class="bg-white dark:bg-gray-800 py-5 px-3 flex rounded-2xl shadow-sm border border-l-4 border-green-500">
+        <div
+            class="bg-white dark:bg-gray-800 py-5 px-3 flex rounded-2xl shadow-sm border border-l-4 border-green-500 overflow-hidden">
             <div class="flex items-center">
                 <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -12,7 +22,7 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Incasso</h3>
+                    <h3 class="text-xs xl:text-base font-bold text-gray-500 uppercase tracking-widest">Incasso</h3>
                     <p class="text-2xl font-black text-gray-900 dark:text-white">
                         {{ number_format($this->stats['earnings'], 0, ',', '.') }}€</p>
                 </div>
@@ -20,7 +30,8 @@
         </div>
 
         {{-- Card: Bookings --}}
-        <div class="bg-white dark:bg-gray-800 py-5 px-3 flex rounded-2xl shadow-sm border border-l-4 border-green-500">
+        <div
+            class="bg-white dark:bg-gray-800 py-5 px-3 flex rounded-2xl shadow-sm border border-l-4 border-green-500 overflow-hidden">
             <div class="flex items-center">
                 <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,14 +41,15 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Totali</h3>
+                    <h3 class="text-xs xl:text-base font-bold text-gray-500 uppercase tracking-widest">Totali</h3>
                     <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $this->stats['total'] }}</p>
                 </div>
             </div>
         </div>
 
         {{-- Card: Confirmed Bookings --}}
-        <div class="bg-white dark:bg-gray-800 py-5 px-3 flex rounded-2xl shadow-sm border border-l-4 border-green-500">
+        <div
+            class="bg-white dark:bg-gray-800 py-5 px-3 flex rounded-2xl shadow-sm border border-l-4 border-green-500 overflow-hidden">
             <div class="flex items-center">
                 <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,14 +57,15 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Confermate</h3>
+                    <h3 class="text-xs xl:text-base font-bold text-gray-500 uppercase tracking-widest">Confermate</h3>
                     <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $this->stats['confirmed'] }}</p>
                 </div>
             </div>
         </div>
 
         {{-- Card: Pending --}}
-        <div class="bg-white dark:bg-gray-800 py-5 px-3 flex rounded-2xl shadow-sm border border-l-4 border-amber-500">
+        <div
+            class="bg-white dark:bg-gray-800 py-5 px-3 flex rounded-2xl shadow-sm border border-l-4 border-amber-500 overflow-hidden">
             <div class="flex items-center">
                 <div class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg relative">
                     <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +77,7 @@
                     @endif
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">In Attesa</h3>
+                    <h3 class="text-xs xl:text-base font-bold text-gray-500 uppercase tracking-widest">In Attesa</h3>
                     <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $this->stats['pending'] }}</p>
                 </div>
             </div>
@@ -73,10 +86,11 @@
     </div>
 
     {{-- TITLE --}}
-    <div class="px-4 sm:px-0 flex justify-between items-center mb-8">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white uppercase tracking-tight">
-            Prenotazioni <span class="text-amber-600">{{ config('app.name', 'Bubba Camper') }}</span>
-        </h1>
+    <div class="px-4 sm:px-0 mb-8">
+        <h2
+            class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white uppercase tracking-tight text-center">
+            Prenotazioni
+        </h2>
     </div>
 
     @if (session()->has('booked') || session()->has('cancelled'))
@@ -102,32 +116,32 @@
 
     {{-- DESKTOP VIEW --}}
     <div
-        class="hidden md:block bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+        class="hidden lg:block bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
         <table class="w-full text-left">
             <thead class="bg-gray-50 dark:bg-gray-700/50">
                 <tr>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Cliente</th>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Camper</th>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500">Periodo</th>
+                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Cliente</th>
+                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Camper</th>
+                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Periodo</th>
                     <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Pagamento</th>
                     <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Stato</th>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-right">Azioni</th>
+                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Azioni</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                 @foreach ($bookings as $booking)
                     <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors">
-                        <td class="px-6 py-4 text-sm">
+                        <td class="px-4 py-4 text-sm text-center">
                             <span class="text-xs font-mono text-gray-400">#{{ $booking->id }}</span>
                             <div class="font-bold text-gray-900 dark:text-white">{{ $booking->customer_first_name }}
                                 {{ $booking->customer_last_name }}</div>
                             <div class="text-xs text-gray-500 italic">{{ $booking->customer_email }}</div>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                        <td class="px-4 py-4 text-sm text-amber-600 font-semibold text-center">
                             {{ $booking->camper->name }}
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                            <div class="flex items-center space-x-2">
+                        <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300">
+                            <div class="flex items-center justify-center space-x-2">
                                 <span
                                     class="font-medium text-nowrap">{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}</span>
                                 <span class="text-gray-400">➔</span>
@@ -135,7 +149,7 @@
                                     class="font-medium text-nowrap">{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-center">
+                        <td class="px-4 py-4 text-center min-w-[130px]">
                             @if ($booking->payment_status === 'paid')
                                 <span
                                     class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-green-100 text-green-700">Pagata</span>
@@ -145,7 +159,7 @@
                                     pagata</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-center">
+                        <td class="px-4 py-4 text-center">
                             @if ($booking->status === 'pending')
                                 <span
                                     class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase text-nowrap">In
@@ -161,13 +175,13 @@
                                     class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-black uppercase text-nowrap">Confermata</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-right">
-                            <div class="flex justify-end gap-2">
+                        <td class="px-4 py-4 text-right">
+                            <div class="flex flex-col justify-center gap-2 min-h-[72px]">
                                 @if ($booking->status === 'pending' && $booking->payment_status === 'paid')
                                     <button wire:click="confirmBooking({{ $booking->id }})"
                                         wire:confirm="Vuoi confermare questo noleggio?"
                                         class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold py-2 px-3 rounded-lg transition-all uppercase shadow-sm">
-                                        Conferma
+                                        Conferma Prenotazione
                                     </button>
                                 @endif
 
@@ -175,7 +189,7 @@
                                     <button wire:click="cancelBooking({{ $booking->id }})"
                                         wire:confirm="Sei sicuro di voler annullare questa prenotazione? L'utente non potrà più procedere."
                                         class="bg-white dark:bg-gray-700 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 text-[10px] font-bold py-2 px-3 rounded-lg transition-all uppercase shadow-sm">
-                                        Annulla
+                                        Annulla Prenotazione
                                     </button>
                                 @endif
                             </div>
@@ -187,16 +201,17 @@
     </div>
 
     {{-- MOBILE VIEW --}}
-    <div class="md:hidden space-y-4 px-4">
+    <div class="lg:hidden space-y-4 px-4">
         @foreach ($bookings as $booking)
             <div
                 class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700">
-                <div class="flex justify-between items-start mb-4">
+                <div class="flex justify-between items-center mb-4">
                     <div>
                         <p class="text-[10px] font-mono text-gray-400 uppercase tracking-widest">Prenotazione
                             #{{ $booking->id }}</p>
                         <h3 class="font-bold text-gray-900 dark:text-white">{{ $booking->customer_first_name }}
                             {{ $booking->customer_last_name }}</h3>
+                        <div class="text-xs text-gray-500 italic">{{ $booking->customer_email }}</div>
                         <p class="text-sm text-amber-600 font-semibold">{{ $booking->camper->name }}</p>
                     </div>
                     <div class="flex flex-col gap-2 items-end">
@@ -227,12 +242,12 @@
 
                 <div
                     class="text-sm text-gray-700 dark:text-gray-300 mb-4 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl border border-gray-100 dark:border-gray-600">
-                    <div class="flex justify-between items-center text-xs">
+                    <div class="flex justify-center items-center text-xs">
                         <span
-                            class="font-bold">{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}</span>
+                            class="font-bold me-3">{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}</span>
                         <span class="text-gray-400">➔</span>
                         <span
-                            class="font-bold">{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</span>
+                            class="font-bold ms-3">{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</span>
                     </div>
                 </div>
 

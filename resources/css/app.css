@@ -6,6 +6,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* FLATPICKR */
+@import 'flatpickr/dist/flatpickr.css';
+
 /* TRANSITION DARK/LIGHT MODE */
 @layer base {
     body {
@@ -23,5 +26,5 @@
 /* LIVEWIRE PROGRESS BAR */
 #nprogress .bar {
     display: none !important;
-    background-color: #d97706 !important; 
+    background-color: #d97706 !important;
 }

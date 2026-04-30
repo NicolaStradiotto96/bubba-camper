@@ -15,6 +15,15 @@ class CheckoutController extends Controller
             abort(403);
         }
 
+        if ($booking->created_at->lt(now()->subMinutes(15))) {
+            if ($booking->status !== 'expired') {
+                $booking->status = 'expired';
+                $booking->save();
+            }
+
+            return redirect()->route('dashboard')->with('error', 'Il tempo per il pagamento è scaduto. Effettua una nuova prenotazione.');
+        }
+
         if ($booking->payment_status === 'paid') {
             return redirect()->route('dashboard')->with('info', 'Questa prenotazione è già stata pagata.');
         }

@@ -70,8 +70,7 @@
                         <span class="font-bold dark:text-white" x-text="$wire.days_count"></span>
                     </div>
 
-                    <div class="flex justify-between text-sm italic text-gray-500">
-                        <span>Tariffa calcolata in base alla stagione</span>
+                    <div class="text-sm italic text-gray-500">
                         <span>Media: <span
                                 x-text="$wire.days_count > 0 ? ($wire.total_price / $wire.days_count).toFixed(2) : '0.00'"></span>€/gg</span>
                     </div>
@@ -88,12 +87,13 @@
                         <span wire:loading wire:target="saveBooking" class="flex items-center">Verifica...</span>
                     </button>
                 </div>
+
             </div>
 
             <div
                 class="absolute inset-0 p-5 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl flex flex-col items-center justify-center z-0 h-[12rem]">
                 <p class="text-sm text-gray-500 text-center italic">
-                    Seleziona un intervallo di date (min. 2 giorni) per vedere il preventivo.
+                    Seleziona un intervallo di date per vedere il preventivo.
                 </p>
             </div>
 

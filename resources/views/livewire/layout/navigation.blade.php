@@ -86,13 +86,13 @@ new class extends Component {
                         </x-slot>
                     </x-dropdown>
                 @else
-                    <div class="space-x-4 ml-4">
+                    <div class="space-x-3 ml-4">
                         <x-nav-link :href="route('login')" :active="request()->routeIs('login')" wire:navigate>
                             {{ __('Log in') }}
                         </x-nav-link>
 
                         <x-nav-link :href="route('register')" :active="request()->routeIs('register')" wire:navigate>
-                            {{ __('Registrati') }}
+                            {{ __('Register') }}
                         </x-nav-link>
                     </div>
                 @endauth

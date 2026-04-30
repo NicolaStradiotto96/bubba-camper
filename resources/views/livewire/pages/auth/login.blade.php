@@ -27,7 +27,7 @@ new #[Layout('layouts.guest')] class extends Component
 <div>
     <div class="mb-6 text-center">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest">
-            Login
+            {{ __('Log in') }}
         </h2>
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Bentornato a bordo!
