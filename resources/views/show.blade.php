@@ -151,7 +151,7 @@
                             <span class="block text-xs text-gray-500 uppercase font-semibold tracking-wider">Tariffa
                                 Attuale</span>
                             <span class="text-2xl font-bold text-gray-900 dark:text-white">
-                                {{ $camper->getPriceForDate() }}€<span
+                                {{ $camper->getPriceForDate() }}€/gg<span
                                     class="font-normal text-gray-500">*</span>
                             </span>
                         </div>

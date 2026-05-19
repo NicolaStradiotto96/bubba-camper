@@ -21,6 +21,10 @@ class Booking extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'total_price' => 'decimal:2',
+        'deposit_amount' => 'decimal:2',
+        'balance_amount' => 'decimal:2',
+        'refund_requested_at' => 'datetime',
+        'refund_confirmed_at' => 'datetime',
     ];
 
     public function getRouteKeyName()
@@ -31,6 +35,63 @@ class Booking extends Model
     public function uniqueIds(): array
     {
         return ['ulid'];
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($booking) {
+            $booking->deposit_amount = $booking->total_price * 0.30;
+            $booking->balance_amount = $booking->total_price * 0.70;
+        });
+    }
+
+    public function calculateExpectedRefund()
+    {
+        $today = now()->startOfDay();
+        $startDate = \Carbon\Carbon::parse($this->start_date)->startOfDay();
+        $daysToTrip = $today->diffInDays($startDate, false);
+
+        if ($daysToTrip < 10) {
+            $penaltyPercent = 1.0;
+        } elseif ($daysToTrip < 30) {
+            $penaltyPercent = 0.8;
+        } elseif ($daysToTrip < 60) {
+            $penaltyPercent = 0.5;
+        } else {
+            $penaltyPercent = 0.1;
+        }
+
+        $totalPenaltyAmount = $this->total_price * $penaltyPercent;
+
+        $actualRefund = max(0, $this->deposit_amount - $totalPenaltyAmount);
+
+        $remainingPenalty = 0;
+        if ($totalPenaltyAmount > $this->deposit_amount) {
+            $remainingPenalty = $totalPenaltyAmount - $this->deposit_amount;
+        }
+
+        return [
+            'refund_amount' => $actualRefund,
+            'penalty_amount' => $totalPenaltyAmount,
+            'remaining_penalty' => $remainingPenalty,
+            'days' => $daysToTrip,
+            'penalty_percent' => $penaltyPercent * 100
+        ];
+    }
+
+    public function isFullyPaid(): bool
+    {
+        return $this->payment_status === 'fully_paid';
+    }
+
+    public function canBeConfirmed(): bool
+    {
+        return $this->status === 'pending' && $this->payment_status === 'paid';
+    }
+
+    public function canBeCompleted(): bool
+    {
+        return $this->status === 'confirmed' && $this->payment_status === 'paid';
     }
 
     public function user(): BelongsTo

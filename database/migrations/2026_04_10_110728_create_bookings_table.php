@@ -27,9 +27,18 @@ return new class extends Migration
             $table->date("end_date");
 
             $table->decimal("total_price", 10, 2);
+            $table->decimal('deposit_amount', 10, 2);
+            $table->decimal('balance_amount', 10, 2);
 
             $table->string('status')->default('pending')->index();
             $table->string('payment_status')->default('unpaid')->index();
+
+            $table->timestamp('refund_requested_at')->nullable();
+            $table->timestamp('refund_confirmed_at')->nullable();
+
+            $table->string('stripe_payment_id')->nullable();
+            
+            $table->decimal('refund_amount', 10, 2)->nullable();
 
             $table->index(['start_date', 'end_date']);
             $table->index(['status', 'payment_status', 'created_at'], 'bookings_cleanup_index');

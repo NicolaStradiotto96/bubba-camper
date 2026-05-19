@@ -32,6 +32,7 @@ class StripeWebhookController extends Controller
                     $booking = Booking::find($bookingId);
                     if ($booking && $booking->payment_status !== 'paid') {
                         $booking->payment_status = 'paid';
+                        $booking->stripe_payment_id = $session->payment_intent ?? $session->id;
                         $booking->save();
 
                         Log::info("Stripe Webhook: Pagamento ricevuto", [

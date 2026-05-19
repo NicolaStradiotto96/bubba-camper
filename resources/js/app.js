@@ -1,5 +1,4 @@
 import './bootstrap';
-import "./main";
 
 // FLATPICKR
 import flatpickr from "flatpickr";
@@ -16,3 +15,11 @@ import it from 'intl-tel-input/dist/js/i18n/it.js';
 window.intlTelInput = intlTelInput;
 window.itiUtils = utils;
 window.itiI18nIt = it.default || it;
+
+// SWEET ALERT 2
+import './bootstrap';
+import Swal from 'sweetalert2';
+window.Swal = Swal;
+
+// MY JS
+import "./main";

@@ -15,17 +15,21 @@ class CheckoutController extends Controller
             abort(403);
         }
 
+        if ($booking->status === 'expired') {
+            return redirect()->route('dashboard')->with('error', 'Questa sessione è scaduta definitivamente. Riprova con una nuova ricerca.');
+        }
+
         if ($booking->created_at->lt(now()->subMinutes(15))) {
             if ($booking->status !== 'expired') {
                 $booking->status = 'expired';
                 $booking->save();
             }
 
-            return redirect()->route('dashboard')->with('error', 'Il tempo per il pagamento è scaduto. Effettua una nuova prenotazione.');
+            return redirect()->route('dashboard')->with('error', 'Il tempo per il pagamento è scaduto.');
         }
 
         if ($booking->payment_status === 'paid') {
-            return redirect()->route('dashboard')->with('info', 'Questa prenotazione è già stata pagata.');
+            return redirect()->route('dashboard')->with('info', 'L\'acconto per questa prenotazione è già stato pagato.');
         }
 
         Stripe::setApiKey(config('services.stripe.secret'));
@@ -35,14 +39,16 @@ class CheckoutController extends Controller
             'mode' => 'payment',
             'metadata' => [
                 'booking_id' => (string) $booking->id,
+                'payment_type' => 'deposit_30',
             ],
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'eur',
                     'product_data' => [
-                        'name' => "Prenotazione Camper: " . $booking->camper->name,
+                        'name' => "Acconto (30%) - Camper: " . $booking->camper->name,
+                        'description' => "Il restante 70% (€" . number_format($booking->balance_amount, 2, ',', '.') . ") verrà pagato al ritiro.",
                     ],
-                    'unit_amount' => (int)($booking->total_price * 100),
+                    'unit_amount' => (int)($booking->deposit_amount * 100),
                 ],
                 'quantity' => 1,
             ]],

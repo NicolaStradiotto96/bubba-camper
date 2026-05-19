@@ -6,6 +6,7 @@ use App\Mail\BookingCancelled;
 use App\Mail\BookingConfirmed;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -13,6 +14,7 @@ class BookingIndex extends Component
 {
     use WithPagination;
 
+    #[On('confirmBooking')]
     public function confirmBooking($bookingId)
     {
         if (!auth()->user()->is_admin) {
@@ -45,6 +47,17 @@ class BookingIndex extends Component
         Mail::to($booking->customer_email)->send(new BookingCancelled($booking));
 
         session()->flash('cancelled', "Prenotazione #{$booking->id} annullata.");
+    }
+
+    #[On('markAsPaid')]
+    public function markAsPaid($bookingId)
+    {
+        $booking = Booking::findOrFail($bookingId);
+
+        $booking->payment_status = 'fully_paid';
+        $booking->save();
+
+        session()->flash('booked', "Saldo registrato per #{$booking->id}. Ora la prenotazione è saldata al 100%.");
     }
 
     public function getStatsProperty()

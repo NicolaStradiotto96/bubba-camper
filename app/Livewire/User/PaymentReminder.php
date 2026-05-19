@@ -39,6 +39,10 @@ class PaymentReminder extends Component
 
     public function render()
     {
+        $this->updateTime();
+
+        $isPaying = auth()->user()->isPayingRightNow();
+
         $formattedDates = '';
         if ($this->booking) {
             $start = \Carbon\Carbon::parse($this->booking->start_date)->format('d/m');
@@ -47,7 +51,8 @@ class PaymentReminder extends Component
         }
 
         return view('livewire.user.payment-reminder', [
-            'formattedDates' => $formattedDates
+            'formattedDates' => $formattedDates,
+            'isPaying' => $isPaying
         ]);
     }
 }

@@ -33,7 +33,12 @@
                             </div>
                         </div>
                     @else
-                        <livewire:user.payment-reminder />
+                        <div class="mt-8">
+                            <livewire:user.payment-reminder />
+                            <p class="text-[11px] text-gray-400 max-w-sm italic">
+                                *Ricorda: se il tempo scade, la prenotazione verrà annullata automaticamente.
+                            </p>
+                        </div>
                     @endif
 
                 </div>
