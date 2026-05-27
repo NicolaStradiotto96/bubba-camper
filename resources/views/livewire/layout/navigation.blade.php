@@ -47,9 +47,10 @@ new class extends Component {
             </div>
             <!-- Settings Dropdown -->
             <div class="hidden md:flex md:items-center md:justify-end w-48">
-                <div class="flex items-center ml-auto">
+                {{-- Theme Toggle --}}
+                {{-- <div class="flex items-center ml-auto">
                     <x-theme-toggle />
-                </div>
+                </div> --}}
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">

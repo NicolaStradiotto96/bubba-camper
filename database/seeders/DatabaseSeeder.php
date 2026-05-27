@@ -38,14 +38,15 @@ class DatabaseSeeder extends Seeder
         Camper::create([
             'name' => 'McLouis Glamys 226',
             'slug' => Str::slug('McLouis Glamys 226'),
-            'description' => 'Il 6 posti perfetto: mansardato, doppio matrimoniale, doccia XL e garage per ogni avventura.',
+            'description' => 'Il 6 posti perfetto: mansardato, doppio matrimoniale e garage per ogni avventura.',
+            'full_description' => 'Camper mansardato McLouis Glamys 226 su meccanica Citroen 2.200 140 CV anno 2023. Omologato 6 posti letto e 6 posti viaggio, dotato di 2 letti matrimoniali sempre pronti, più 2 posti letto in dinette. Bagno con doccia separata e garage posteriore di grandi dimensioni.',
             'image_path' => 'campers/camper.png',
             'images' => [
                 'campers/camper.png',
                 'campers/camper.png',
             ],
-            'seats' => 2,
-            'beds' => 2,
+            'seats' => 6,
+            'beds' => 6,
             'is_active' => true,
         ]);
     }

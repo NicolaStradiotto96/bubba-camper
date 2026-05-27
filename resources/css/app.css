@@ -1,13 +1,16 @@
 /* MY CSS */
 @import "./style.css";
 
+/* FONTAWESOME */
+@import '@fortawesome/fontawesome-free/css/all.css';
+
+/* FLATPICKR */
+@import 'flatpickr/dist/flatpickr.css';
+
 /* TAILWIND */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* FLATPICKR */
-@import 'flatpickr/dist/flatpickr.css';
 
 /* TRANSITION DARK/LIGHT MODE */
 @layer base {

@@ -54,8 +54,8 @@ class BookingForm extends Component
         if (!empty($value) && str_contains($value, $separator)) {
             $dates = explode($separator, $value);
             try {
-                $this->start_date = Carbon::createFromFormat('Y-m-d', trim($dates[0]))->format('Y-m-d');
-                $this->end_date = Carbon::createFromFormat('Y-m-d', trim($dates[1]))->format('Y-m-d');
+                $this->start_date = Carbon::createFromFormat('d-m-Y', trim($dates[0]))->format('Y-m-d');
+                $this->end_date = Carbon::createFromFormat('d-m-Y', trim($dates[1]))->format('Y-m-d');
             } catch (\Exception $e) {
                 $this->start_date = null;
                 $this->end_date = null;
@@ -79,7 +79,7 @@ class BookingForm extends Component
                 );
                 $dates = [];
                 foreach ($period as $date) {
-                    $dates[] = $date->format('Y-m-d');
+                    $dates[] = $date->format('d-m-Y');
                 }
                 return $dates;
             })->toArray();
@@ -174,8 +174,9 @@ class BookingForm extends Component
         $booking->status = 'pending';
         $booking->payment_status = 'unpaid';
 
-
         $booking->save();
+
+        $this->dispatch('clear-calendar');
 
         $this->reset(['date_range', 'start_date', 'end_date', 'total_price', 'days_count']);
 

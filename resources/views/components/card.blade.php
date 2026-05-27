@@ -16,13 +16,22 @@
             {{ $camper->name }}
         </h2>
 
-        <p class="text-gray-600 dark:text-gray-400 mt-2 line-clamp-1">
+        <p class="text-gray-600 dark:text-gray-400 mt-2">
             {{ Str::limit($camper->description, 80) }}
         </p>
 
         <div class="mt-6 flex justify-between items-center border-t border-gray-100 dark:border-gray-700 pt-6">
-            <span class="text-green-600 dark:text-green-400 text-sm font-bold italic">Disponibile subito</span> <a
-                href="#">
+            @if ($camper->is_active)
+                <span class="text-sm font-bold text-green-600 dark:text-green-500 uppercase mt-1">
+                    Disponibile
+                </span>
+            @else
+                <span class="text-sm font-bold text-red-600 dark:text-red-500 uppercase mt-1">
+                    Non disponibile
+                </span>
+            @endif
+
+            <a href="#">
                 <x-primary-anchor href="{{ route('show', $camper) }}" wire:navigate>
                     {{ __('Vedi Dettagli') }}
                 </x-primary-anchor>

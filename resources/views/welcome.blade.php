@@ -19,12 +19,12 @@
 
             {{-- DESCRIPTION --}}
             <header class="text-center mt-8 px-4">
-                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight uppercase">
                     Prenota la tua libertà su quattro ruote
                 </h2>
 
                 <h1 class="mt-4 text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">Benvenuto su <strong
-                        class="text-amber-600">{{ config('app.name', 'Bubba Camper') }}</strong>.</h1>
+                        class="text-amber-500">{{ config('app.name', 'Bubba Camper') }}</strong>.</h1>
 
                 <p class="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
                     Scopri i nostri camper curati nei dettagli e parti per la tua prossima avventura on-the-road.
@@ -43,12 +43,9 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div
                     class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 relative">
-                    <div class="flex text-amber-400 mb-4">
+                    <div class="flex mb-4">
                         @for ($i = 0; $i < 5; $i++)
-                            <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                                <path
-                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
+                            <i class="fa-solid fa-star text-amber-400 text-md"></i>
                         @endfor
                     </div>
                     <p class="text-gray-600 dark:text-gray-300 italic mb-6 min-h-[100px]">
@@ -71,10 +68,7 @@
                     class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
                     <div class="flex text-amber-400 mb-4">
                         @for ($i = 0; $i < 5; $i++)
-                            <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                                <path
-                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
+                            <i class="fa-solid fa-star text-amber-400 text-md"></i>
                         @endfor
                     </div>
                     <p class="text-gray-600 dark:text-gray-300 italic mb-6 min-h-[100px]">
@@ -97,10 +91,7 @@
                     class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
                     <div class="flex text-amber-400 mb-4">
                         @for ($i = 0; $i < 5; $i++)
-                            <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                                <path
-                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
+                            <i class="fa-solid fa-star text-amber-400 text-md"></i>
                         @endfor
                     </div>
                     <p class="text-gray-600 dark:text-gray-300 italic mb-6 min-h-[100px]">

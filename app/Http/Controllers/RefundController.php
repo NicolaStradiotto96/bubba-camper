@@ -40,8 +40,8 @@ class RefundController extends Controller
             $booking->save();
 
             $msg = $amountToRefund <= 0
-                ? "Prenotazione Annullata (Penale 100%)."
-                : "Prenotazione Annullata e rimborsata in data " . $booking->refund_confirmed_at->format('d/m/Y H:i') . ". " . ($request->input('use_stripe') === "1" ? "Rimborso Stripe di {$amountToRefund}€ inviato." : "Rimborso manuale dovuto: {$amountToRefund}€.");
+                ? "Prenotazione Annullata, nessun rimborso dovuto."
+                : "Prenotazione Annullata e rimborsata in data " . $booking->refund_confirmed_at->format('d/m/Y H:i') . ". " . ($request->input('use_stripe') === "1" ? "Rimborso Stripe di {$amountToRefund}€ inviato." : "Rimborso manuale dovuto {$amountToRefund}€.");
 
             return back()->with('cancelled', $msg);
         } catch (\Exception $e) {

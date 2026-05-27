@@ -1,7 +1,9 @@
 :root {
+    --accent: #d97706;
+    --accent2: #f59e0b;
     --fp-bg: #ffffff;
     --fp-color: #393939;
-    --fp-color2: #f9a13c;
+    --fp-color2: #f59e0b;
     /* --fp-color2: #dbdbdb; */
     --fp-color-disabled: rgba(57, 57, 57, 0.3);
     --fp-accent: #d97706;
@@ -14,9 +16,11 @@
 }
 
 .dark {
+    --accent: #d97706;
+    --accent2: #f59e0b;
     --fp-bg: #1f2937;
     --fp-color: #f3f4f6;
-    --fp-color2: #9f5909;
+    --fp-color2: #b45309;
     /* --fp-color2: #283547; */
     --fp-color-disabled: rgba(198, 198, 198, 0.3);
     --fp-accent: #d97706;
@@ -25,6 +29,21 @@
     --iti-bg: #1f2937;
     --iti-search-bg: #374151;
     --iti-search-text: #f3f4f6;
+    --iti-accent: #d97706;
+}
+
+/* MY CSS */
+*::selection {
+    background-color: var(--accent2);
+    color: #000000;
+}
+
+/* PAGINATION */
+[wire\:click*="page"].focus\:ring-blue-800,
+[wire\:click*="page"]:focus,
+[wire\:click*="page"]:active {
+    border-color: var(--accent) !important;
+    --tw-ring-color: var(--accent) !important;
 }
 
 /* FLATPICKR */

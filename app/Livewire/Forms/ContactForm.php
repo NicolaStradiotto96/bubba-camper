@@ -44,11 +44,24 @@ class ContactForm extends Component
         if (str_contains($value, $separator)) {
             $dates = explode($separator, $value);
 
-            $this->start_date = (!empty($dates[0])) ? trim($dates[0]) : null;
-            $this->end_date = (!empty($dates[1])) ? trim($dates[1]) : null;
+            $rawStart = (!empty($dates[0])) ? trim($dates[0]) : null;
+            $rawEnd = (!empty($dates[1])) ? trim($dates[1]) : null;
+
+            try {
+                $this->start_date = $rawStart ? Carbon::createFromFormat('d-m-Y', $rawStart)->format('Y-m-d') : null;
+                $this->end_date = $rawEnd ? Carbon::createFromFormat('d-m-Y', $rawEnd)->format('Y-m-d') : null;
+            } catch (\Exception $e) {
+                $this->start_date = null;
+                $this->end_date = null;
+            }
         } else {
-            $this->start_date = trim($value);
-            $this->end_date = null;
+            try {
+                $this->start_date = Carbon::createFromFormat('d-m-Y', trim($value))->format('Y-m-d');
+                $this->end_date = null;
+            } catch (\Exception $e) {
+                $this->start_date = null;
+                $this->end_date = null;
+            }
         }
     }
 
@@ -130,7 +143,9 @@ class ContactForm extends Component
 
             Mail::to('info@bubbacamper.com')->send(new ContactRequest($dataForEmail));
 
-            $this->reset();
+            $this->reset(['name', 'email', 'date_range', 'message']);
+
+            $this->dispatch('form-reset');
 
             $this->loadTime = microtime(true);
 

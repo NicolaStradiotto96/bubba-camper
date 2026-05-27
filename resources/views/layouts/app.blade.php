@@ -21,10 +21,11 @@
         <x-footer />
     </div>
 
-    <div class="sm:hidden fixed bottom-5 right-5 z-50">
+    {{-- Theme Toggle --}}
+    {{-- <div class="sm:hidden fixed bottom-5 right-5 z-50">
         <div class="bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg border border-gray-200 dark:border-gray-700">
             <x-theme-toggle />
         </div>
-    </div>
+    </div> --}}
 
 </x-layout>

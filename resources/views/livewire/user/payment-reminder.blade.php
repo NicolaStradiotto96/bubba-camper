@@ -3,11 +3,7 @@
         <div>
             <div
                 class="w-20 h-20 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-10 h-10 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+                <i class="fa-solid fa-triangle-exclamation text-amber-600 dark:text-amber-400 text-4xl"></i>
             </div>
 
             <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">
@@ -25,11 +21,7 @@
             <p class="text-sm font-bold uppercase tracking-widest text-amber-600 mb-4">Puoi concludere entro:</p>
 
             <div class="relative flex items-center justify-center mb-4">
-                <svg class="w-16 h-16 text-amber-500 opacity-20 animate-spin-slow" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" style="animation-duration: 10s;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+                <i class="fa-solid fa-clock text-amber-500 opacity-20 animate-spin text-5xl" style="animation-duration: 10s;"></i>
                 <span class="absolute text-xl font-black text-amber-600 dark:text-amber-400 font-mono">
                     {{ $timeLeft }}
                 </span>
@@ -55,11 +47,7 @@
         <div>
             <div
                 class="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-10 h-10 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+                <i class="fa-solid fa-triangle-exclamation text-red-600 dark:text-red-400 text-4xl"></i>
             </div>
 
             <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">
