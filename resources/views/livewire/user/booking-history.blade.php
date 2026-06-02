@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto py-10">
+<div class="max-w-7xl mx-auto pt-10">
 
     {{-- TITLE --}}
     <div class="px-4 sm:px-0 mb-8">
@@ -8,175 +8,836 @@
         </h2>
     </div>
 
-    {{-- DESKTOP VIEW --}}
-    <div
-        class="hidden lg:block bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
-        <table class="w-full text-left">
-            <thead class="bg-gray-50 dark:bg-gray-700/50">
-                <tr>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">ID</th>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Camper</th>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Periodo</th>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Totale</th>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Pagamento</th>
-                    <th class="px-6 py-4 text-xs font-bold uppercase text-gray-500 text-center">Stato</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                @foreach ($bookings as $booking)
-                    <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors">
-                        <td class="px-4 py-4 text-sm text-center">
-                            <span
-                                class="font-mono bg-gray-900 py-1 px-1 text-gray-700 dark:text-gray-300">#{{ $booking->id }}</span>
-                        </td>
-                        <td class="px-4 py-4 text-sm text-amber-600 font-bold text-center tracking-wide">
-                            {{ $booking->camper->name }}
-                        </td>
-                        <td class="px-4 py-4 text-sm text-gray-700 dark:text-gray-300">
-                            <div class="flex items-center justify-center space-x-2">
-                                <span
-                                    class="font-medium">{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}</span>
-                                <span class="text-amber-500 font-bold">➔</span>
-                                <span
-                                    class="font-medium">{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-4 text-center font-bold text-gray-900 dark:text-white">
-                            {{ number_format($booking->total_price, 2, ',', '.') }}€
-                        </td>
-                        <td class="px-4 py-4 text-center">
-                            @if ($booking->payment_status === 'paid')
-                                <span
-                                    class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-green-100 text-green-700">Pagata</span>
-                            @else
-                                <span
-                                    class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-red-100 text-red-700">Non
-                                    pagata</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-4 text-center">
-                            @php
-                                $statusClasses = [
-                                    'pending' => 'bg-amber-100 text-amber-700',
-                                    'confirmed' => 'bg-green-100 text-green-700',
-                                    'expired' => 'bg-red-50 text-red-500',
-                                    'cancelled' => 'bg-gray-100 text-gray-500',
-                                    'completed' => 'bg-blue-100 text-blue-700',
-                                ];
-                                $statusLabels = [
-                                    'pending' => 'In Attesa',
-                                    'confirmed' => 'Confermata',
-                                    'expired' => 'Scaduta',
-                                    'cancelled' => 'Annullata',
-                                    'completed' => 'Concluso',
-                                ];
-                            @endphp
-                            <span
-                                class="{{ $statusClasses[$booking->status] ?? 'bg-gray-100' }} px-3 py-1 rounded-full text-[10px] font-black uppercase text-nowrap">
-                                {{ $statusLabels[$booking->status] ?? $booking->status }}
-                            </span>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+    {{-- MESSAGES --}}
+    @if (session()->has('success') || session()->has('cancelled'))
+        <div x-data="{ show: true }" x-show="show"
+            class="mx-4 sm:mx-0 mb-6 p-4 rounded-r-xl border border-l-4 bg-white dark:bg-gray-800 {{ session()->has('success') ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500' }}">
+            <div class="flex items-center justify-between font-medium">
+                <span>{{ session('success') ?? session('cancelled') }}</span>
+                <button @click="show = false"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none"><i
+                        class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+        </div>
+    @endif
 
-    {{-- MOBILE VIEW --}}
-    <div class="lg:hidden space-y-4 px-2">
-        @foreach ($bookings as $booking)
+    @if ($bookings->isEmpty())
+        <div
+            class="mx-4 bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-6 text-center shadow-sm flex flex-col items-center justify-center">
             <div
-                class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700">
+                class="w-20 h-20 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-full flex items-center justify-center mb-4">
+                <i class="fa-solid fa-van-shuttle text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-wide mb-2">
+                {{ __('Nessun viaggio programmato') }}
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 max-w-sm mb-6">
+                {{ __('Non hai ancora effettuato nessuna prenotazione.') }}
+                <br>
+                {{ __('Scegli il camper perfetto per te e inizia a pianificare la tua prossima avventura!') }}
+            </p>
+        </div>
+    @else
+        {{-- DESKTOP VIEW --}}
+        <div
+            class="hidden lg:block bg-white dark:bg-gray-800 shadow-xl rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <table class="w-full text-center">
 
-                {{-- Header: ID e Badge --}}
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <p class="text-[10px] font-mono text-gray-400 uppercase tracking-widest">#{{ $booking->id }}
-                        </p>
-                        <h3 class="font-black text-amber-600 uppercase">{{ $booking->camper->name }}</h3>
-                        <p class="text-sm font-bold text-gray-900 dark:text-white">
-                            {{ $booking->customer_first_name }} {{ $booking->customer_last_name }}
-                        </p>
-                    </div>
-                    <div class="flex flex-col gap-2 items-end">
-                        {{-- Badge Pagamento --}}
-                        @if ($booking->payment_status === 'paid')
-                            <span
-                                class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-green-100 text-green-700">Pagato</span>
-                        @else
-                            <span
-                                class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-red-100 text-red-700">Non
-                                Pagato</span>
-                        @endif
+                {{-- TABLE COLUMNS --}}
+                <thead class="font-black uppercase text-gray-400 bg-gray-50 dark:bg-gray-700/50">
+                    <tr>
+                        <th class="px-2 py-4">ID</th>
+                        <th class="px-2 py-4">Camper</th>
+                        <th class="px-2 py-4">Periodo</th>
+                        <th class="px-2 py-4">Pagamento</th>
+                        <th class="px-2 py-4">Stato</th>
+                        <th class="px-2 py-4">Bilancio</th>
+                        <th class="px-2 py-4">Azioni</th>
+                    </tr>
+                </thead>
 
-                        {{-- Badge Stato Prenotazione --}}
-                        @if ($booking->status === 'pending')
-                            <span
-                                class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-black uppercase">In
-                                attesa</span>
-                        @elseif ($booking->status === 'confirmed')
-                            <span
-                                class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[9px] font-black uppercase">Confermata</span>
-                        @else
-                            <span
-                                class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-[9px] font-black uppercase">Annullata</span>
-                        @endif
-                    </div>
-                </div>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    @foreach ($bookings as $booking)
+                        <tr class="font-black hover:bg-gray-100/50 dark:hover:bg-gray-700/30">
 
-                {{-- Periodo --}}
+                            {{-- ID --}}
+                            <td class="px-2 py-4">
+                                <span
+                                    class="text-xs text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-1 px-1">#{{ $booking->id }}</span>
+                            </td>
+
+                            {{-- CAMPER --}}
+                            <td class="px-2 py-4">
+                                <p class="text-amber-500">{{ $booking->camper->name }}</p>
+                            </td>
+
+                            {{-- BOOKING DATES --}}
+                            <td class="px-2 py-4 text-sm">
+                                <p class="text-gray-700 dark:text-gray-300 ">{{ $booking->start_date->format('d/m/Y') }}
+                                    <span class="text-amber-500">➔</span>
+                                    {{ $booking->end_date->format('d/m/Y') }}
+                                </p>
+                            </td>
+
+                            {{-- PAYMENT STATUS --}}
+                            <td class="px-2 py-4 text-xs uppercase">
+                                @if ($booking->payment_status === 'paid')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Pagato parz.
+                                    </span>
+                                @elseif ($booking->payment_status === 'fully_paid')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Pagato intero
+                                    </span>
+                                @elseif ($booking->payment_status === 'penalty_paid')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Penale pagata
+                                    </span>
+                                @elseif ($booking->payment_status === 'refunded_stripe')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Rimb. Stripe
+                                    </span>
+                                @elseif ($booking->payment_status === 'refunded_manual')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Rimb. Manuale
+                                    </span>
+                                @elseif ($booking->payment_status === 'no_refund')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        No Rimborso
+                                    </span>
+                                @elseif ($booking->payment_status === 'unpaid')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Non pagato
+                                    </span>
+                                @else
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Errore
+                                    </span>
+                                @endif
+                            </td>
+
+                            {{-- BOOKING STATUS --}}
+                            <td class="px-2 py-4 text-xs uppercase">
+                                @if ($booking->status === 'confirmed')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Confermata
+                                    </span>
+                                @elseif ($booking->status === 'pending')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                        In attesa
+                                    </span>
+                                @elseif ($booking->status === 'cancellation_pending')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                        Richiesta Canc.
+                                    </span>
+                                @elseif ($booking->status === 'expired')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Scaduta
+                                    </span>
+                                @elseif ($booking->status === 'cancelled')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Cancellata
+                                    </span>
+                                @else
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Errore
+                                    </span>
+                                @endif
+                            </td>
+
+                            {{-- BALANCE --}}
+                            <td class="px-2 py-4 text-xs uppercase">
+                                <div class="flex flex-col items-center gap-1">
+
+                                    {{-- Total --}}
+                                    <div
+                                        class="flex justify-between w-36 border-b border-gray-100 dark:border-gray-700 pb-1">
+                                        <span class="text-gray-400">Totale:</span>
+                                        <span
+                                            class="text-gray-900 dark:text-white">{{ number_format($booking->total_price, 2, ',', '.') }}€</span>
+                                    </div>
+
+                                    {{-- Deposit --}}
+                                    <div class="flex justify-between w-36">
+                                        <span class="text-gray-400">Acconto:</span>
+                                        @if ($booking->payment_status === 'unpaid' && ($booking->status === 'expired' || $booking->status === 'cancelled'))
+                                            <span class="text-gray-400">0,00€</span>
+                                        @elseif ($booking->payment_status === 'unpaid')
+                                            <span class="text-amber-500 animate-pulse">
+                                                {{ number_format($booking->deposit_amount, 2, ',', '.') }}€</span>
+                                        @else
+                                            <span
+                                                class="text-green-600">{{ number_format($booking->deposit_amount, 2, ',', '.') }}€</span>
+                                        @endif
+                                    </div>
+
+                                    {{-- Balance --}}
+                                    <div class="flex justify-between w-36 pt-1">
+                                        <span class="text-gray-400">Saldo:</span>
+
+                                        @if (
+                                            $booking->status === 'cancelled' &&
+                                                $booking->calculateExpectedRefund()['penalty_amount'] > $booking->deposit_amount &&
+                                                $booking->payment_status !== 'fully_paid' &&
+                                                $booking->payment_status !== 'penalty_paid')
+                                            <span class="text-amber-500 animate-pulse">
+                                                {{ number_format($booking->calculateExpectedRefund()['penalty_amount'] - $booking->deposit_amount, 2, ',', '.') }}€
+                                            </span>
+                                        @elseif ($booking->status === 'cancelled' && $booking->payment_status === 'penalty_paid')
+                                            <span class="text-green-600">
+                                                {{ number_format($booking->calculateExpectedRefund()['penalty_amount'] - $booking->deposit_amount, 2, ',', '.') }}€
+                                            </span>
+                                        @elseif ($booking->payment_status === 'fully_paid')
+                                            <span
+                                                class="text-green-600">{{ number_format($booking->balance_amount, 2, ',', '.') }}€
+                                            </span>
+                                        @elseif ($booking->status === 'cancelled' || $booking->status === 'expired')
+                                            <span class="text-gray-400">
+                                                0,00€
+                                            </span>
+                                        @else
+                                            <span class="text-amber-500 animate-pulse">
+                                                {{ number_format($booking->balance_amount, 2, ',', '.') }}€
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    {{-- Penalty --}}
+                                    @if ($booking->status === 'cancelled' && $booking->payment_status === 'no_refund')
+                                        <div
+                                            class="flex justify-between w-36 pt-1 border-t border-gray-100 dark:border-gray-700">
+                                            <span class="text-gray-400">Penale:</span>
+                                            <span
+                                                class="text-amber-500 animate-pulse">-{{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€
+                                            </span>
+                                        </div>
+                                    @elseif ($booking->status === 'cancelled' && $booking->payment_status !== 'no_refund')
+                                        <div
+                                            class="flex justify-between w-36 pt-1 border-t border-gray-100 dark:border-gray-700">
+                                            <span class="text-gray-400">Penale:</span>
+                                            <span
+                                                class="text-red-600">-{{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€
+                                            </span>
+                                        </div>
+                                    @endif
+
+                                    {{-- Refund --}}
+                                    @if ($booking->refund_amount > 0)
+                                        <div
+                                            class="flex justify-between w-36 pt-1 border-t border-gray-100 dark:border-gray-700">
+                                            <span class="text-gray-400">Rimborso:</span>
+                                            <span
+                                                class="text-green-600">{{ number_format($booking->refund_amount, 2, ',', '.') }}€
+                                            </span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </td>
+
+                            {{-- BUTTONS --}}
+                            <td class="px-2 py-4">
+                                <div class="flex flex-col gap-2 justify-center uppercase">
+
+                                    {{-- Details --}}
+                                    <button type="button" wire:click="openBookingDetails('{{ $booking->id }}')"
+                                        wire:loading.attr="disabled"
+                                        wire:target="openBookingDetails('{{ $booking->id }}')"
+                                        class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-600 dark:hover:bg-gray-600 border border-gray-600 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm disabled:opacity-50">
+                                        Dettagli
+                                    </button>
+
+
+                                    {{-- Request Cancellation --}}
+                                    @if (($booking->status === 'confirmed' || $booking->status === 'pending') && $booking->payment_status === 'paid')
+                                        <button type="button"
+                                            onclick="window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
+                                            class="bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-2 px-3 rounded-xl uppercase tracking-widest shadow-sm">
+                                            Annulla Viaggio
+                                        </button>
+                                    @endif
+
+                                    {{-- Pay Penalty --}}
+                                    @if (
+                                        $booking->status === 'cancelled' &&
+                                            $booking->payment_status === 'no_refund' &&
+                                            $booking->calculateExpectedRefund()['penalty_amount'] > 0)
+                                        <button type="button"
+                                            onclick="window.payPenaltyAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] }})"
+                                            class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                                            Paga Penale
+                                        </button>
+                                    @endif
+                                </div>
+                            </td>
+
+                        </tr>
+                    @endforeach
+                </tbody>
+
+            </table>
+        </div>
+
+        {{-- MOBILE VIEW --}}
+        <div class="lg:hidden space-y-4 px-4">
+            @foreach ($bookings as $booking)
                 <div
-                    class="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl border border-gray-100 dark:border-gray-600 mb-4">
-                    <div class="flex justify-center items-center text-xs space-x-3">
-                        <span
-                            class="font-bold">{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}</span>
-                        <span class="text-amber-500 font-bold">➔</span>
-                        <span class="font-bold">{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</span>
+                    class="bg-white dark:bg-gray-800 font-black p-5 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-center items-center mb-4">
+                        <div class="text-center">
+
+                            {{-- ID --}}
+                            <span class="font-black uppercase text-gray-900 dark:text-white">Prenotazione</span>
+                            <span
+                                class="font-mono text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-1 px-1 rounded">
+                                #{{ $booking->id }}
+                            </span>
+
+                            <div class="flex justify-center items-center gap-1.5 text-xs uppercase font-black my-3">
+
+                                {{-- PAYMENT STATUS --}}
+                                @if ($booking->payment_status === 'paid')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Pagato parz.
+                                    </span>
+                                @elseif ($booking->payment_status === 'fully_paid')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Pagato intero
+                                    </span>
+                                @elseif ($booking->payment_status === 'penalty_paid')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Penale pagata
+                                    </span>
+                                @elseif ($booking->payment_status === 'refunded_stripe')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Rimb. Stripe
+                                    </span>
+                                @elseif ($booking->payment_status === 'refunded_manual')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Rimb. Manuale
+                                    </span>
+                                @elseif ($booking->payment_status === 'no_refund')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        No Rimborso
+                                    </span>
+                                @elseif ($booking->payment_status === 'unpaid')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Non pagato
+                                    </span>
+                                @else
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Errore
+                                    </span>
+                                @endif
+
+                                {{-- BOOKING STATUS --}}
+                                @if ($booking->status === 'confirmed')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                        Confermata
+                                    </span>
+                                @elseif ($booking->status === 'pending')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                        In attesa
+                                    </span>
+                                @elseif ($booking->status === 'cancellation_pending')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">Richiesta
+                                        Canc.
+                                    </span>
+                                @elseif ($booking->status === 'expired')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Scaduta
+                                    </span>
+                                @elseif ($booking->status === 'cancelled')
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Cancellata
+                                    </span>
+                                @else
+                                    <span
+                                        class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Errore
+                                    </span>
+                                @endif
+
+                            </div>
+
+                            {{-- CUSTOMER INFO --}}
+                            <h3 class="text-gray-900 dark:text-white uppercase mt-1">
+                                {{ $booking->customer_first_name }} {{ $booking->customer_last_name }}
+                            </h3>
+
+                            <p class="text-sm text-gray-500 italic">{{ $booking->customer_email }}</p>
+
+                            <p class="text-sm text-gray-500">{{ $booking->customer_phone }}</p>
+
+                            {{-- BOOKING DATES --}}
+                            <p class="text-amber-500 mt-1">{{ $booking->camper->name }}
+                            </p>
+
+                            <p class="text-gray-700 dark:text-gray-300 ">{{ $booking->start_date->format('d/m/Y') }}
+                                <span class="text-amber-500">➔</span>
+                                {{ $booking->end_date->format('d/m/Y') }}
+                            </p>
+                        </div>
+
+
                     </div>
+
+                    {{-- BALANCE --}}
+                    <div
+                        class="my-4 p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl space-y-2 text-xs uppercase">
+
+                        {{-- Total --}}
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Totale:</span>
+                            <span
+                                class="font-black text-gray-900 dark:text-white">{{ number_format($booking->total_price, 2, ',', '.') }}€
+                            </span>
+                        </div>
+
+                        {{-- Deposit --}}
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Acconto:</span>
+
+                            @if ($booking->payment_status === 'unpaid' && ($booking->status === 'expired' || $booking->status === 'cancelled'))
+                                <span class="text-gray-400">0,00€</span>
+                            @elseif ($booking->payment_status === 'unpaid')
+                                <span class="text-amber-500 animate-pulse">
+                                    {{ number_format($booking->deposit_amount, 2, ',', '.') }}€
+                                </span>
+                            @else
+                                <span class="text-green-600">
+                                    {{ number_format($booking->deposit_amount, 2, ',', '.') }}€
+                                </span>
+                            @endif
+
+                        </div>
+
+                        {{-- Balance --}}
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Saldo:</span>
+
+                            @if (
+                                $booking->status === 'cancelled' &&
+                                    $booking->calculateExpectedRefund()['penalty_amount'] > $booking->deposit_amount &&
+                                    $booking->payment_status !== 'fully_paid' &&
+                                    $booking->payment_status !== 'penalty_paid')
+                                <span class="text-amber-500 animate-pulse">
+                                    {{ number_format($booking->calculateExpectedRefund()['penalty_amount'] - $booking->deposit_amount, 2, ',', '.') }}€
+                                </span>
+                            @elseif ($booking->status === 'cancelled' && $booking->payment_status === 'penalty_paid')
+                                <span class="text-green-600">
+
+                                    {{ number_format($booking->calculateExpectedRefund()['penalty_amount'] - $booking->deposit_amount, 2, ',', '.') }}€
+                                </span>
+                            @elseif ($booking->payment_status === 'fully_paid')
+                                <span class="text-green-600">
+                                    {{ number_format($booking->balance_amount, 2, ',', '.') }}€
+                                </span>
+                            @elseif ($booking->status === 'cancelled' || $booking->status === 'expired')
+                                <span class="text-gray-400">0,00€</span>
+                            @else
+                                <span class="text-amber-500 animate-pulse">
+                                    {{ number_format($booking->balance_amount, 2, ',', '.') }}€
+                                </span>
+                            @endif
+
+                        </div>
+
+                        {{-- Penalty --}}
+                        @if ($booking->status === 'cancelled' && $booking->payment_status === 'no_refund')
+                            <div class="flex justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
+                                <span class="text-gray-400">Penale:</span>
+                                <span
+                                    class="text-amber-500 animate-pulse">-{{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€
+                                </span>
+                            </div>
+                        @elseif ($booking->status === 'cancelled' && $booking->payment_status !== 'no_refund')
+                            <div class="flex justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
+                                <span class="text-gray-400">Penale:</span>
+                                <span
+                                    class="text-red-600">-{{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€
+                                </span>
+                            </div>
+                        @endif
+
+                        {{-- Refund --}}
+                        @if ($booking->refund_amount > 0)
+                            <div class="flex justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
+                                <span class="text-gray-400">Rimborso:</span>
+                                <span
+                                    class="font-black text-green-600">{{ number_format($booking->refund_amount, 2, ',', '.') }}€</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- BUTTONS --}}
+                    <div class="flex flex-col gap-2 uppercase">
+
+                        {{-- Details --}}
+                        <button type="button" wire:click="openBookingDetails('{{ $booking->id }}')"
+                            wire:loading.attr="disabled" wire:target="openBookingDetails('{{ $booking->id }}')"
+                            class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-600 dark:hover:bg-gray-600 border border-gray-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm disabled:opacity-50">
+                            Dettagli
+                        </button>
+
+
+                        {{-- Request Cancellation --}}
+                        @if (($booking->status === 'confirmed' || $booking->status === 'pending') && $booking->payment_status === 'paid')
+                            <button type="button"
+                                onclick="window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
+                                class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                                Annulla Viaggio
+                            </button>
+                        @endif
+
+                        {{-- Pay Penalty --}}
+                        @if (
+                            $booking->status === 'cancelled' &&
+                                $booking->payment_status === 'no_refund' &&
+                                $booking->calculateExpectedRefund()['penalty_amount'] > 0)
+                            <button type="button"
+                                onclick="window.payPenaltyAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] }})"
+                                class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                                Paga Penale
+                            </button>
+                        @endif
+                    </div>
+
                 </div>
+            @endforeach
+        </div>
 
-                {{-- Azioni Mobile --}}
-                <div class="flex flex-col gap-2 mt-4">
+        {{-- PAGING --}}
+        <div class="mt-6 px-4">
+            {{ $bookings->links() }}
+        </div>
 
-                    {{-- Pulsante Conferma (Stile Stefano) --}}
-                    @if ($booking->status === 'pending' && $booking->payment_status === 'paid')
-                        <button type="button"
-                            onclick="window.confirmBookingAction('{{ $booking->id }}', '{{ $booking->camper->name }}')"
-                            class="w-full bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-black py-3 rounded-xl transition-all uppercase shadow-lg shadow-amber-600/20 tracking-widest">
-                            Conferma Prenotazione
-                        </button>
-                    @endif
+        {{-- MODAL --}}
+        <div x-data="{ open: false, b: {} }"
+            @open-booking-modal.window="
+                open = true; 
+                b = $event.detail[0] ? $event.detail[0] : $event.detail;
+            "
+            @keyup.escape.window="open = false"
+            x-effect="if (open) { document.body.style.overflow = 'hidden' } else { document.body.style.overflow = 'auto' }"
+            x-show="open" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
 
-                    {{-- Pulsante Annulla/Rimborsa --}}
-                    @if ($booking->payment_status === 'paid' && $booking->status !== 'cancelled')
-                        <button type="button"
-                            onclick="window.confirmCancelBooking({
-                            id: '{{ $booking->id }}',
-                            refund: {{ $booking->calculateExpectedRefund()['refund_amount'] }},
-                            penalty: {{ $booking->calculateExpectedRefund()['penalty_amount'] }},
-                            percent: {{ $booking->calculateExpectedRefund()['penalty_percent'] }},
-                            remaining: {{ $booking->calculateExpectedRefund()['remaining_penalty'] }},
-                            days: {{ $booking->calculateExpectedRefund()['days'] }},
-                            hasStripe: {{ $booking->stripe_payment_id ? 1 : 0 }}
-                        })"
-                            class="w-full bg-white dark:bg-gray-700 text-red-600 dark:text-red-400 text-[11px] font-black py-3 rounded-xl border border-red-100 dark:border-gray-600 uppercase tracking-widest shadow-sm">
-                            Annulla e Rimborsa
-                        </button>
+            <div x-show="open" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 backdrop-blur-sm"
+                @click="open = false"></div>
 
-                        {{-- Form per il rimborso (nascosto, uno per ogni card mobile) --}}
-                        <form id="refund-form-{{ $booking->id }}" action="{{ route('bookings.refund', $booking) }}"
-                            method="POST" class="hidden">
-                            @csrf
-                            <input type="hidden" name="use_stripe" id="stripe-input-{{ $booking->id }}"
-                                value="0">
-                        </form>
-                    @endif
+            <div class="flex min-h-full items-center justify-center p-3 text-center sm:p-0">
+                <div x-show="open" x-transition:enter="transition ease-out duration-300 transform"
+                    x-transition:enter-start="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
+                    x-transition:enter-end="translate-y-0 sm:scale-100 opacity-100"
+                    x-transition:leave="transition ease-in duration-200 transform"
+                    x-transition:leave-start="translate-y-0 sm:scale-100 opacity-100"
+                    x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
+                    class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-2xl sm:my-3 w-full sm:max-w-lg border border-gray-200 dark:border-gray-700">
+
+                    {{-- Header --}}
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700/50 font-black px-6 py-3 border-b border-gray-100 dark:border-gray-700 ">
+
+                        {{-- ID --}}
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl text-gray-900 dark:text-white uppercase tracking-wider">
+                                Prenotazione
+                                <span class="bg-gray-200 dark:bg-gray-900 py-1 px-1">#<span
+                                        x-text="b.id"></span></span>
+                            </h3>
+
+                            <button @click="open = false" type="button"
+                                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none"
+                                aria-label="Chiudi modale">
+                                <i class="fa-solid fa-xmark text-xl"></i>
+                            </button>
+                        </div>
+
+                        {{-- Booking Created At --}}
+                        <div class="pt-1">
+                            <p class="text-xs text-gray-400 uppercase tracking-widest">
+                                Ricevuta il: <span class="text-gray-700 dark:text-gray-200"
+                                    x-text="b.created_at"></span>
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="p-2 space-y-2">
+
+                        {{-- Customer Info --}}
+                        <div class="text-center">
+                            <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Dati Cliente
+                            </h4>
+
+                            <div
+                                class="bg-gray-50 dark:bg-gray-900/50 font-black rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
+
+                                {{-- Name --}}
+                                <div class="p-2">
+                                    <p class="text-gray-400 uppercase tracking-wider mb-0.5">Nome:
+                                    </p>
+                                    <p class="font-bold text-gray-900 dark:text-white uppercase" x-text="b.name"></p>
+                                </div>
+
+                                {{-- Email --}}
+                                <div class="p-2">
+                                    <p class="text-gray-400 uppercase tracking-wider mb-0.5">Email:
+                                    </p>
+                                    <a :href="'mailto:' + b.email"
+                                        class="font-bold italic text-gray-900 dark:text-white hover:underline block"
+                                        x-text="b.email"></a>
+                                </div>
+
+                                {{-- Phone --}}
+                                <div class="p-2">
+                                    <p class="text-gray-400 uppercase tracking-wider mb-0.5">
+                                        Telefono:</p>
+                                    <p class="font-bold text-gray-900 dark:text-white" x-text="b.phone"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Booking Info --}}
+                        <div class="text-center">
+                            <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Dettagli
+                                Noleggio
+                            </h4>
+
+                            <div
+                                class="bg-gray-50 dark:bg-gray-900/50 font-black rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
+
+                                {{-- Camper --}}
+                                <div class="p-2">
+                                    <p class="text-gray-400 uppercase tracking-wider mb-0.5">
+                                        Veicolo:</p>
+                                    <p class="text-amber-500 uppercase" x-text="b.camper"></p>
+                                </div>
+
+                                {{-- Dates --}}
+                                <div class="p-2">
+                                    <p class="text-gray-400 uppercase tracking-wider mb-0.5">
+                                        Periodo:</p>
+                                    <p class="font-bold text-gray-900 dark:text-white">
+                                        <span x-text="b.start"></span>
+                                        <span class="text-amber-500 mx-1">➔</span>
+                                        <span x-text="b.end"></span>
+                                    </p>
+                                </div>
+
+                                {{-- Payment Status --}}
+                                <div class="p-2">
+                                    <p class="text-gray-400 uppercase tracking-wider mb-1">Stato
+                                        Pagamento:</p>
+
+                                    <div class="uppercase inline-block">
+                                        <template x-if="b.payment_status === 'paid'">
+                                            <p
+                                                class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                Pagato
+                                                Parzialmente</p>
+                                        </template>
+                                        <template x-if="b.payment_status === 'fully_paid'">
+                                            <p
+                                                class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                Pagato
+                                                Intero</p>
+                                        </template>
+                                        <template x-if="b.payment_status === 'penalty_paid'">
+                                            <p
+                                                class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                Penale
+                                                Pagata
+                                            </p>
+                                        </template>
+                                        <template x-if="b.payment_status === 'refunded_stripe'">
+                                            <p
+                                                class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                Rimborso
+                                                Stripe</p>
+                                        </template>
+                                        <template x-if="b.payment_status === 'refunded_manual'">
+                                            <p
+                                                class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                Rimborso
+                                                Manuale</p>
+                                        </template>
+                                        <template x-if="b.payment_status === 'no_refund'">
+                                            <p
+                                                class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                No
+                                                Rimborso</p>
+                                        </template>
+                                        <template x-if="b.payment_status === 'unpaid'">
+                                            <p
+                                                class="px-2 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                                Non pagato</p>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                {{-- Booking Status --}}
+                                <div class="p-2">
+                                    <p class="text-gray-400 uppercase tracking-wider mb-1">Stato
+                                        Prenotazione:</p>
+
+                                    <div class="uppercase inline-block">
+                                        <template x-if="b.status === 'confirmed'">
+                                            <p
+                                                class="px-3 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                Confermata
+                                            </p>
+                                        </template>
+                                        <template x-if="b.status === 'pending'">
+                                            <p
+                                                class="px-3 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                                In
+                                                attesa</p>
+                                        </template>
+                                        <template x-if="b.status === 'cancellation_pending'">
+                                            <p
+                                                class="px-3 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                                Richiesta
+                                                Cancellazione</p>
+                                        </template>
+                                        <template x-if="b.status === 'expired'">
+                                            <p
+                                                class="px-3 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                                Scaduta</p>
+                                        </template>
+                                        <template x-if="b.status === 'cancelled'">
+                                            <p
+                                                class="px-3 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                                Cancellata</p>
+                                        </template>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {{-- Balance --}}
+                        <div class="text-center">
+                            <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Bilancio</h4>
+
+                            <div
+                                class="bg-gray-50 dark:bg-gray-900/50 font-black p-4 rounded-xl space-y-2.5 border border-gray-100 dark:border-gray-700">
+
+                                {{-- Total --}}
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-400 uppercase">Totale Noleggio:</span>
+                                    <span class="font-black text-gray-900 dark:text-white" x-text="b.total"></span>
+                                </div>
+
+                                {{-- Deposit --}}
+                                <div
+                                    class="flex justify-between text-sm pt-2 border-t border-gray-100 dark:border-gray-700">
+                                    <span class="text-gray-400 uppercase">Acconto:</span>
+                                    <template
+                                        x-if="b.payment_status === 'unpaid' && (b.status === 'expired' || b.status === 'cancelled')">
+                                        <span class="text-gray-400">0,00€</span>
+                                    </template>
+
+                                    <template x-if="b.payment_status === 'unpaid' && b.status === 'pending'">
+                                        <span class="text-amber-500 animate-pulse font-black"
+                                            x-text="b.deposit"></span>
+                                    </template>
+
+                                    <template x-if="b.payment_status !== 'unpaid'">
+                                        <span class="text-green-600 font-bold" x-text="b.deposit"></span>
+                                    </template>
+                                </div>
+
+                                {{-- Balance --}}
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-400 uppercase">Saldo Rimanente:</span>
+
+                                    <template
+                                        x-if="b.status === 'cancelled' && (b.penaltyRaw > b.deposit_amount) && b.payment_status !== 'fully_paid' && b.payment_status !== 'penalty_paid'">
+                                        <span class="text-amber-500 animate-pulse font-black"
+                                            x-text="b.balance"></span>
+                                    </template>
+
+                                    <template x-if="b.status === 'cancelled' && b.payment_status === 'penalty_paid'">
+                                        <span class="text-green-600" x-text="b.balance"></span>
+                                    </template>
+
+                                    <template x-if="b.payment_status === 'fully_paid' && b.status !== 'cancelled'">
+                                        <span class="text-green-600" x-text="b.balance"></span>
+                                    </template>
+
+                                    <template
+                                        x-if="(b.status === 'cancelled' || b.status === 'expired') && b.payment_status !== 'fully_paid' && !(b.penaltyRaw > b.deposit_amount)">
+                                        <span class="text-gray-400">0,00€</span>
+                                    </template>
+
+                                    <template
+                                        x-if="b.status !== 'cancelled' && b.status !== 'expired' && b.payment_status !== 'fully_paid'">
+                                        <span class="text-amber-500 animate-pulse" x-text="b.balance"></span>
+                                    </template>
+                                </div>
+
+                                {{-- Penalty --}}
+                                <template x-if="b.status === 'cancelled' && b.penaltyRaw > 0">
+                                    <div
+                                        class="flex justify-between text-sm pt-2 border-t border-gray-100 dark:border-gray-700">
+                                        <span class="text-gray-400 uppercase">Penale applicata:</span>
+                                        <span
+                                            :class="{
+                                                'text-red-600': b.payment_status !== 'no_refund',
+                                                'text-amber-500 animate-pulse': b.payment_status === 'no_refund',
+                                            }"
+                                            x-text="'-' + b.penalty"></span>
+                                    </div>
+                                </template>
+
+                                {{-- Refund --}}
+                                <template x-if="b.refundRaw > 0">
+                                    <div
+                                        class="flex justify-between text-sm pt-2 border-t border-gray-100 dark:border-gray-700">
+                                        <span class="text-gray-400 uppercase">Rimborso:</span>
+                                        <span class="text-green-600" x-text="b.refund"></span>
+                                    </div>
+                                </template>
+
+
+
+                            </div>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
-        @endforeach
-    </div>
-
-    <div class="mt-6 px-4 sm:px-0">
-        {{ $bookings->links() }}
-    </div>
+        </div>
+    @endif
 </div>

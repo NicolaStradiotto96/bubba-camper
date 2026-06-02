@@ -30,7 +30,7 @@ class BookingIndex extends Component
 
             Mail::to($booking->customer_email)->send(new BookingConfirmed($booking));
 
-            session()->flash('booked', "Prenotazione #{$booking->id} confermata.");
+            session()->flash('success', "Prenotazione #{$booking->id} confermata.");
         }
     }
 
@@ -63,12 +63,12 @@ class BookingIndex extends Component
             $booking->payment_status = 'penalty_paid';
             $booking->save();
 
-            session()->flash('booked', "Penale residua registrata con successo per la prenotazione #{$booking->id}. Pratica completata.");
+            session()->flash('success', "Penale residua registrata con successo per la prenotazione #{$booking->id}. Pratica completata.");
         } else {
             $booking->payment_status = 'fully_paid';
             $booking->save();
 
-            session()->flash('booked', "Saldo registrato per #{$booking->id}. Pratica completata.");
+            session()->flash('success', "Saldo registrato per #{$booking->id}. Pratica completata.");
         }
     }
 
@@ -77,6 +77,7 @@ class BookingIndex extends Component
         return [
             'total' => Booking::count(),
             'pending' => Booking::where('status', 'pending')->count(),
+            'cancellation_pending' => Booking::where('status', 'cancellation_pending')->count(),
             'confirmed' => Booking::where('status', 'confirmed')->count(),
             'earnings' => Booking::where('status', 'confirmed')->sum('total_price'),
         ];
@@ -84,6 +85,10 @@ class BookingIndex extends Component
 
     public function openBookingDetails($bookingId)
     {
+        if (!auth()->user()->is_admin) {
+            abort(403);
+        }
+
         try {
             \Illuminate\Support\Facades\Artisan::call('app:cleanup-unpaid-bookings');
         } catch (\Exception $e) {

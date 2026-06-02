@@ -55,7 +55,7 @@
                     <div class="flex items-center">
                         <div
                             class="h-10 w-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold">
-                            M
+                            B
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-bold text-gray-900 dark:text-white">Bruno</p>
@@ -78,7 +78,7 @@
                     <div class="flex items-center">
                         <div
                             class="h-10 w-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold">
-                            G
+                            A
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-bold text-gray-900 dark:text-white">Alessandra</p>
@@ -101,7 +101,7 @@
                     <div class="flex items-center">
                         <div
                             class="h-10 w-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold">
-                            L
+                            M
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-bold text-gray-900 dark:text-white">Matteo</p>

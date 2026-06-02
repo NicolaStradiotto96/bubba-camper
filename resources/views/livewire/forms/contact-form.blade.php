@@ -20,14 +20,14 @@
                 <x-input-label for="name" :value="__('Nome')" />
                 <x-text-input id="name" wire:model="name" type="text" class="block mt-1 w-full" required
                     autocomplete="given-name" />
-                <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                <x-input-error :messages="$errors->get('name')" class="mt-2 text-center" />
             </div>
             {{-- Email --}}
             <div>
                 <x-input-label for="email" :value="__('Email')" />
                 <x-text-input id="email" wire:model="email" type="email" class="block mt-1 w-full" required
                     autocomplete="family-name" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2 text-center" />
             </div>
         </div>
 
@@ -37,7 +37,6 @@
             <div wire:ignore wire:key="contact-calendar-{{ count($this->bookedDates) }}" class="md:col-span-2">
                 <x-input-label for="date_range" :value="__('Seleziona il periodo')" />
 
-                {{-- CORRETTO: Rimosso entangle per distruggere l'errore "cyclic object value" --}}
                 <div x-data="{ booked: @js($this->bookedDates) }">
                     <x-text-input 
                         id="date_range" 
@@ -85,7 +84,7 @@
                         placeholder="Scegli le date di inizio e fine" 
                     />
                 </div>
-                <x-input-error :messages="$errors->get('date_range')" class="mt-2" />
+                <x-input-error :messages="$errors->get('date_range')" class="mt-2 text-center" />
             </div>
         </div>
 
@@ -95,7 +94,7 @@
             <textarea id="message" wire:model="message" rows="5"
                 class="text-center mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm"
                 placeholder="Parlaci del tuo itinerario..."></textarea>
-            <x-input-error :messages="$errors->get('message')" class="mt-2" />
+            <x-input-error :messages="$errors->get('message')" class="mt-2 text-center" />
         </div>
 
         @if (session('success'))
@@ -111,7 +110,7 @@
                 {{ session('error') }}
             </div> @endif
         <div class="flex justify-center">
-        <x-primary-button class="w-full justify-center">
+        <x-primary-button class="w-full flex justify-center items-center py-3">
             <span wire:loading.remove wire:target="sendEmail">{{ __('Invia richiesta') }}</span>
             <span wire:loading wire:target="sendEmail">{{ __('Invio in corso...') }}</span>
         </x-primary-button>

@@ -11,7 +11,7 @@
             </div>
 
             <div class="flex items-center justify-center lg:justify-start">
-                <a href="{{ route('index') }}" wire:navigate
+                <a href="{{ route('show', $camper) }}" wire:navigate
                     class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
                     <i
                         class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
@@ -28,14 +28,20 @@
                     <div
                         class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
                         <img src="{{ asset('storage/' . $camper->image_path) }}"
-                            class="rounded-xl mb-4 w-full h-40 object-cover">
+                            class="rounded-xl mb-4 w-full h-40 object-cover border border-gray-300 dark:border-gray-700">
                         <div class="space-y-2 text-center">
                             <h3 class="font-bold text-gray-900 dark:text-white">{{ $camper->name }}</h3>
-                            <p class="text-sm text-gray-500">
-                                Assistenza stradale inclusa
+                            <p class="text-sm text-gray-400">
+                                Assistenza stradale
                             </p>
-                            <p class="text-sm text-gray-500">
+                            <p class="text-sm text-gray-400">
+                                Assicurazione per il veicolo
+                            </p>
+                            <p class="text-sm text-gray-400">
                                 Sanificazione inclusa
+                            </p>
+                            <p class="text-sm text-gray-400">
+                                Pagamento sicuro
                             </p>
                         </div>
                     </div>

@@ -58,21 +58,19 @@ document.addEventListener('livewire:init', () => {
                 color: theme.color,
                 didOpen: (popup) => {
                     popup.style.border = `2px solid ${theme.border}`;
-                    popup.style.width = '90%';
-                    popup.style.maxWidth = '680px';
                 },
                 customClass: {
-                    popup: 'rounded-xl shadow-2xl',
+                    popup: 'rounded-xl',
                     confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-4 py-2'
                 }
             });
         }
     });
 
+    // Confirm Booking
     window.confirmHostAction = function (id, firstName, lastName, startDate, endDate) {
         const theme = getSwalTheme();
 
-        // Confirm Booking
         Swal.fire({
             title: 'CONFERMA PRENOTAZIONE',
             html: `
@@ -85,7 +83,7 @@ document.addEventListener('livewire:init', () => {
                         ${firstName} ${lastName}
                     </p>
 
-                    <div class="p-3 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
                         <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Periodo Noleggio</p>
                         <p class="text-base text-gray-800 dark:text-gray-200">
                             ${startDate} <span class="text-amber-500 mx-1">➔</span> ${endDate}
@@ -116,10 +114,10 @@ document.addEventListener('livewire:init', () => {
         });
     };
 
-    window.confirmRefundAction = function (id, amount, penalty, hasStripe) {
+    // Cancel Booking
+    window.confirmRefundAction = function (id, amount, penalty_percent, penalty_amount, hasStripe) {
         const theme = getSwalTheme();
 
-        // Cancel Booking
         Swal.fire({
             title: 'ANNULLA PRENOTAZIONE',
             html: `
@@ -129,8 +127,8 @@ document.addEventListener('livewire:init', () => {
                         L'azione non è reversibile.
                     </p>
                     <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
-                        <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Penale Calcolata</p>
-                        <p class="text-lg text-green-500">${penalty}%</p>
+                        <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Penale Calcolata (${penalty_percent}%)</p>
+                        <p class="text-lg text-green-500">${penalty_amount}€</p>
                     </div>
                     <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
                         <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Rimborso Dovuto</p>
@@ -202,10 +200,10 @@ document.addEventListener('livewire:init', () => {
         }
     }
 
+    // Complete Booking
     window.confirmPayment = function (id, balance) {
         const theme = getSwalTheme();
 
-        // Complete Booking
         Swal.fire({
             title: 'REGISTRA SALDO',
             html: `Hai ricevuto il pagamento finale di <b class="text-green-500 text-xl">${balance.toLocaleString('it-IT')}€</b>?<br><small class="text-gray-500">La prenotazione verrà segnata come interamente pagata.</small>`,
@@ -228,6 +226,91 @@ document.addEventListener('livewire:init', () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 Livewire.dispatch('markAsPaid', { bookingId: id });
+            }
+        });
+    };
+
+    // Request Booking Cancellation
+    window.requestUserCancellation = function (bookingId, penaltyAmount) {
+        const theme = getSwalTheme();
+
+        let message = `Sei sicuro di voler richiedere l'annullamento della prenotazione <span
+                                    class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>?`;
+
+        if (penaltyAmount > 0) {
+            message += `<br><br><span class="text-amber-500 font-bold">Attenzione:</span> In base alle tempistiche contrattuali, è prevista una penale di trattenuta pari a <b>${parseFloat(penaltyAmount).toFixed(2)}€</b>.`;
+        } else {
+            message += `<br><br>La tua richiesta sarà presa in carico. Il nostro staff la valuterà e ti darà una risposta il prima possibile.`;
+        }
+
+        Swal.fire({
+            title: 'ANNULLARE IL VIAGGIO?',
+            html: message,
+            icon: 'warning',
+            iconColor: '#ef4444',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'PROCEDI',
+            cancelButtonText: 'CHIUDI',
+            background: theme.background,
+            color: theme.color,
+            didOpen: (popup) => {
+                popup.style.border = `2px solid ${theme.border}`;
+            },
+            customClass: {
+                popup: 'rounded-xl',
+                confirmButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Livewire.dispatch('requestCancellation', { bookingId: bookingId });
+            }
+        });
+    }
+
+    // Pay Penalty
+    window.payPenaltyAction = function (bookingId, penaltyAmount) {
+        const theme = getSwalTheme();
+
+        Swal.fire({
+            title: 'PAGAMENTO PENALE',
+            html: `
+                <div class="text-center space-y-4 px-2 font-black">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Per completare l'annullamento o regolarizzare la prenotazione <span
+                                    class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>, è necessario corrispondere la penale contrattuale pari a:
+                    </p>
+
+                    <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                        <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Importo da pagare</p>
+                        <p class="text-lg text-red-500">${parseFloat(penaltyAmount).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€</p>
+                    </div>
+
+                    <p class="text-xs text-gray-400 italic">
+                        Verrai reindirizzato sulla piattaforma di Stripe per completare la transazione.
+                    </p>
+                </div>
+            `,
+            icon: 'info',
+            iconColor: '#d97706',
+            showCancelButton: true,
+            confirmButtonText: 'PROCEDI',
+            confirmButtonColor: '#d97706',
+            cancelButtonText: 'CHIUDI',
+            background: theme.background,
+            color: theme.color,
+            didOpen: (popup) => {
+                popup.style.border = `2px solid ${theme.border}`;
+            },
+            customClass: {
+                popup: 'rounded-xl',
+                confirmButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Livewire.dispatch('processPenaltyPayment', { bookingId: bookingId });
             }
         });
     };

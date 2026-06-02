@@ -69,7 +69,7 @@ new class extends Component {
 
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 uppercase">
             {{ __('Informazioni Profilo') }}
         </h2>
 
@@ -170,7 +170,7 @@ new class extends Component {
 
             <div wire:ignore class="mt-1">
                 <x-text-input x-ref="phoneInput" type="tel" id="phone" name="phone" autocomplete="tel"
-                    class="block w-full" />
+                    class="block w-full text-start" />
             </div>
 
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />

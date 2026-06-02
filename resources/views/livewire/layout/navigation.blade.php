@@ -15,8 +15,14 @@ new class extends Component {
     }
 }; ?>
 
-<nav x-data="{ open: false }"
-    class="sticky top-0 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border-b border-gray-300 dark:border-gray-700 shadow z-50">
+<nav x-data="{ open: false }" x-init="$watch('open', value => {
+    if (value) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = 'auto';
+    }
+})"
+    class="sticky top-0 bg-white/70 dark:bg-gray-800/95 backdrop-blur-md border-b border-gray-300 dark:border-gray-700 shadow z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20">
@@ -55,12 +61,13 @@ new class extends Component {
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button
-                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white/0 dark:bg-gray-800/0 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm tracking-wider leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white/0 dark:bg-gray-800/0 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                                 <div x-data="{{ json_encode(['name' => auth()->user()->first_name]) }}" x-text="name"
                                     x-on:profile-updated.window="name = $event.detail.first_name"></div>
 
                                 <div class="ms-1">
-                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                    <svg class="fill-current h-4 w-4 transform transition-transform duration-500 ease-in-out"
+                                        :class="{ 'rotate-[180deg]': open }" xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                             d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -116,7 +123,14 @@ new class extends Component {
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{ 'block': open, 'hidden': !open }" class="hidden md:hidden" @click.outside="open = false">
+    <div x-show="open" x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 transform -translate-y-2"
+        x-transition:enter-end="opacity-100 transform translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 transform translate-y-0"
+        x-transition:leave-end="opacity-0 transform -translate-y-2"
+        class="absolute top-20 left-0 w-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-b border-gray-300 dark:border-gray-700 shadow-xl md:hidden max-h-[calc(100vh-80px)] overflow-y-auto"
+        @click.outside="open = false">
 
         <!-- Responsive Settings Options -->
         <div class="py-3 border-t border-gray-200 dark:border-gray-600 text-center">

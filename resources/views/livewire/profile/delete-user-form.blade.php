@@ -24,12 +24,14 @@ new class extends Component {
 
 <section class="space-y-6">
     <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 uppercase">
             {{ __('Elimina Account') }}
         </h2>
 
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __("Una volta eliminato l'account, tutte le relative risorse e i dati verranno cancellati in modo permanente. Prima di procedere con l'eliminazione, ti preghiamo di scaricare tutti i dati o le informazioni che desideri conservare.") }}
+            {{ __("Una volta eliminato l'account, tutte le relative risorse e i dati verranno cancellati in modo permanente.") }}
+            <br>
+            {{ __("Prima di procedere con l'eliminazione, ti preghiamo di scaricare tutti i dati o le informazioni che desideri conservare.") }}
         </p>
     </header>
 
@@ -44,7 +46,9 @@ new class extends Component {
             </h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                {{ __("Una volta eliminato l'account, tutti i dati e le risorse associate verranno rimossi definitivamente. Inserisci la tua password per confermare l'operazione.") }}
+                {{ __("Una volta eliminato l'account, tutti i dati e le risorse associate verranno rimossi definitivamente.") }}
+                <br>
+                {{ __("Inserisci la tua password per confermare l'operazione.") }}
             </p>
 
             <div class="mt-6">

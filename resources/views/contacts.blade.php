@@ -68,7 +68,7 @@
 
                 {{-- MAP --}}
                 <div class="lg:col-span-2 mt-10">
-                    <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white uppercase tracking-wider text-center mb-4">Mappa e indicazioni</h2>
+                    <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white uppercase tracking-wider text-center mb-4">Luogo di ritiro</h2>
                     <div
                         class="w-full h-96 rounded-2xl overflow-hidden shadow-lg border border-gray-300 dark:border-gray-700">
                         <iframe

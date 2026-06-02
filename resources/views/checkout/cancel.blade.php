@@ -8,18 +8,18 @@
                     <livewire:user.payment-reminder />
 
                     <div class="flex flex-col gap-4 items-center">
-                        <p class="text-[11px] text-gray-400 max-w-sm italic">
+                        <p class="text-xs text-gray-400 max-w-md italic text-center">
                             Ricorda: se il tempo scade, la prenotazione verrà annullata automaticamente.
                         </p>
 
                         <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
                             <a href="{{ route('dashboard') }}"
-                                class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm">
+                                class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm uppercase">
                                 Vai alla tua Dashboard
                             </a>
 
                             <a href="{{ route('index') }}"
-                                class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm">
+                                class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm uppercase">
                                 Torna ai Camper
                             </a>
                         </div>

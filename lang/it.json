@@ -63,7 +63,7 @@
     "Edit": "Modifica",
     "Edit :name": "Modifica :name",
     "Email": "Email",
-    "email": ":Attribute non è valido.",
+    "email": ":Attribute non valida.",
     "Email Password Reset Link": "Invia link di reset della password",
     "Enable": "Abilita",
     "Encrypted environment file already exists.": "Il file di ambiente criptato esiste già.",

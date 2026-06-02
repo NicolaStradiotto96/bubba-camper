@@ -40,14 +40,17 @@
                         if (touchStart - touchEnd < -50) prev();
                     "
                         style="touch-action: pan-y;"
-                        class="relative overflow-hidden bg-white dark:bg-gray-800 shadow-xl rounded-xl group border border-gray-300 dark:border-gray-700">
+                        class="relative overflow-hidden bg-white dark:bg-gray-900 shadow-xl rounded-xl group border border-gray-300 dark:border-gray-700">
 
                         <div class="relative h-64 sm:h-80 md:h-[500px] w-full">
                             <template x-for="(slide, index) in slides" :key="index">
                                 <div x-show="activeSlide === index"
                                     x-transition:enter="transition ease-out duration-500"
-                                    x-transition:enter-start="opacity-0 transform translate-x-8"
-                                    x-transition:enter-end="opacity-100 transform translate-x-0"
+                                    x-transition:enter-start="opacity-0"
+                                    x-transition:enter-end="opacity-100"
+                                    x-transition:leave="transition ease-in duration-500"
+                                    x-transition:leave-start="opacity-100"
+                                    x-transition:leave-end="opacity-0"
                                     class="absolute inset-0">
                                     <img :src="'/storage/' + slide" @click="openModal('/storage/' + slide)"
                                         class="w-full h-full object-cover cursor-zoom-in" alt="Dettaglio Camper">
@@ -58,11 +61,11 @@
                         <template x-if="slides.length > 1">
                             <div>
                                 <button @click="prev()"
-                                    class="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-300/50 dark:bg-gray-900/50 p-2 rounded-full text-amber-500 hover:bg-gray-400/50 hover:dark:bg-gray-900 transition opacity-50 group-hover:opacity-100">
+                                    class="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-300/50 dark:bg-gray-900/75 p-2 rounded-full text-amber-500 hover:bg-gray-400/50 hover:dark:bg-gray-900 transition opacity-50 group-hover:opacity-100">
                                     <i class="fa-solid fa-chevron-left text-lg"></i>
                                 </button>
                                 <button @click="next()"
-                                    class="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-300/50 dark:bg-gray-900/50 p-2 rounded-full text-amber-500 hover:bg-gray-400/50 hover:dark:bg-gray-900 transition opacity-50 group-hover:opacity-100">
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-300/50 dark:bg-gray-900/75 p-2 rounded-full text-amber-500 hover:bg-gray-400/50 hover:dark:bg-gray-900 transition opacity-50 group-hover:opacity-100">
                                     <i class="fa-solid fa-chevron-right text-lg"></i>
                                 </button>
                             </div>
@@ -72,7 +75,7 @@
                             <template x-for="(slide, index) in slides" :key="index">
                                 <button @click="activeSlide = index"
                                     :class="activeSlide === index ? 'bg-amber-500 w-6' : 'bg-gray-600/50 dark:bg-white/50 w-2'"
-                                    class="h-2 rounded-full transition-all duration-300"></button>
+                                    class="border border-gray-300 dark:border-gray-700 h-2 rounded-full transition-all duration-300"></button>
                             </template>
                         </div>
 
@@ -98,13 +101,24 @@
                             {{ $camper->description }}
                         </p>
 
-                        <div class="text-center mt-2">
+                        <div class="flex flex-col justify-center items-center mt-2 space-y-2">
                             <button id="btn-description" data-name="{{ $camper->name }}"
                                 data-description="{{ $camper->description }}"
                                 data-full-description="{{ $camper->full_description }}"
-                                class="relative inline-block text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider group transition-colors duration-300 focus:outline-none">
+                                class="relative block text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider group transition-colors duration-300 focus:outline-none">
 
-                                {{ __('Vedi descrizione') }}
+                                {{ __('Descrizione ed equipaggiamento') }}
+
+                                <span
+                                    class="absolute left-0 bottom-0 w-0 h-0.5 bg-amber-600 dark:bg-amber-500 transition-all duration-300 group-hover:w-full"></span>
+                            </button>
+
+                            <button id="btn-description" data-name="{{ $camper->name }}"
+                                data-description="{{ $camper->description }}"
+                                data-full-description="{{ $camper->full_description }}"
+                                class="relative block text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider group transition-colors duration-300 focus:outline-none">
+
+                                {{ __('Cauzione e annullamento') }}
 
                                 <span
                                     class="absolute left-0 bottom-0 w-0 h-0.5 bg-amber-600 dark:bg-amber-500 transition-all duration-300 group-hover:w-full"></span>
@@ -239,7 +253,7 @@
                         <div class="mt-6">
                             <a href="{{ isset($camper->pdf_path) ? asset('storage/' . $camper->pdf_path) : '#' }}"
                                 target="_blank"
-                                class="w-full bg-white dark:bg-gray-800 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all duration-300 group">
+                                class="w-full bg-white dark:bg-gray-800 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:white text-sm font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all duration-300 group">
                                 <i class="fa-solid fa-file-pdf text-red-500 text-lg"></i>
                                 {{ __('Scarica Scheda Tecnica') }}
                             </a>

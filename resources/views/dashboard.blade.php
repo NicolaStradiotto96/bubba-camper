@@ -13,19 +13,19 @@
             @else
                 {{-- USERS DASHBOARD --}}
                 <div
-                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-center border border-gray-300 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg p-6 mx-4 text-center border border-gray-300 dark:border-gray-700">
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Ciao,
                         {{ auth()->user()->first_name }}!
                     </h3>
                     <p class="text-gray-600 dark:text-gray-400">Pronto per la tua prossima avventura con
-                        {{ config('app.name', 'Bubba Camper') }}?
+                        <strong class="text-amber-500">{{ config('app.name', 'Bubba Camper') }}</strong>?
                     </p>
 
                     @if (!auth()->user()->isPayingRightNow())
-                        <div class="mt-8 flex justify-center">
+                        <div class="mt-6 flex justify-center">
                             <div
-                                class=" p-4 bg-amber-100 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800 w-full md:w-1/2">
-                                <p class="text-amber-700 dark:text-amber-400">Scegli le
+                                class="w-full md:w-1/2">
+                                <p class="text-black dark:text-white font-black uppercase">Scegli le
                                     date e parti!</p>
                                 <x-primary-anchor class="mt-3" href="{{ route('index') }}" wire:navigate>
                                     {{ __('Prenota ora') }}
@@ -33,9 +33,9 @@
                             </div>
                         </div>
                     @else
-                        <div class="mt-8">
+                        <div class="mt-8 flex flex-col items-center">
                             <livewire:user.payment-reminder />
-                            <p class="text-[11px] text-gray-400 max-w-sm italic">
+                            <p class="text-xs text-gray-400 max-w-md italic">
                                 *Ricorda: se il tempo scade, la prenotazione verrà annullata automaticamente.
                             </p>
                         </div>
