@@ -132,7 +132,7 @@ document.addEventListener('livewire:init', () => {
                     </div>
                     <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
                         <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Rimborso Dovuto</p>
-                        <p class="text-lg text-red-500">${amount.toLocaleString('it-IT')}€</p>
+                        <p class="text-lg text-red-500">${amount}€</p>
                     </div>
                 </div>
             `,
@@ -180,33 +180,26 @@ document.addEventListener('livewire:init', () => {
                             denyButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2',
                             cancelButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
                         }
-                    }).then((res) => {
-                        if (res.isConfirmed) submitRefund(id, "1");
-                        else if (res.isDenied) submitRefund(id, "0");
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Livewire.dispatch('cancelBooking', { bookingId: id, useStripe: true });
+                        } else if (result.isDenied) {
+                            Livewire.dispatch('cancelBooking', { bookingId: id, useStripe: false });
+                        }
                     });
                 } else {
-                    submitRefund(id, "0");
+                    Livewire.dispatch('cancelBooking', { bookingId: id, useStripe: false });
                 }
             }
         });
     };
-
-    function submitRefund(id, useStripe) {
-        const form = document.getElementById(`refund-form-${id}`);
-        const input = document.getElementById(`stripe-input-${id}`);
-        if (form && input) {
-            input.value = useStripe;
-            form.submit();
-        }
-    }
-
     // Complete Booking
     window.confirmPayment = function (id, balance) {
         const theme = getSwalTheme();
 
         Swal.fire({
             title: 'REGISTRA SALDO',
-            html: `Hai ricevuto il pagamento finale di <b class="text-green-500 text-xl">${balance.toLocaleString('it-IT')}€</b>?<br><small class="text-gray-500">La prenotazione verrà segnata come interamente pagata.</small>`,
+            html: `Hai ricevuto il pagamento finale di <b class="text-green-500 text-xl">${balance}€</b>?<br><small class="text-gray-500">La prenotazione verrà segnata come interamente pagata.</small>`,
             icon: 'success',
             iconColor: '#1fae53',
             showCancelButton: true,
@@ -238,7 +231,7 @@ document.addEventListener('livewire:init', () => {
                                     class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>?`;
 
         if (penaltyAmount > 0) {
-            message += `<br><br><span class="text-amber-500 font-bold">Attenzione:</span> In base alle tempistiche contrattuali, è prevista una penale di trattenuta pari a <b>${parseFloat(penaltyAmount).toFixed(2)}€</b>.`;
+            message += `<br><br><span class="text-amber-500 font-bold">Attenzione:</span> In base alle tempistiche contrattuali, è prevista una penale di trattenuta pari a <b>${penaltyAmount}€</b>.`;
         } else {
             message += `<br><br>La tua richiesta sarà presa in carico. Il nostro staff la valuterà e ti darà una risposta il prima possibile.`;
         }
@@ -278,18 +271,14 @@ document.addEventListener('livewire:init', () => {
             html: `
                 <div class="text-center space-y-4 px-2 font-black">
                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                        Per completare l'annullamento o regolarizzare la prenotazione <span
+                        Per completare l'annullamento e regolarizzare la prenotazione <span
                                     class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>, è necessario corrispondere la penale contrattuale pari a:
                     </p>
 
                     <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
                         <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Importo da pagare</p>
-                        <p class="text-lg text-red-500">${parseFloat(penaltyAmount).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€</p>
+                        <p class="text-lg text-red-500">${penaltyAmount}€</p>
                     </div>
-
-                    <p class="text-xs text-gray-400 italic">
-                        Verrai reindirizzato sulla piattaforma di Stripe per completare la transazione.
-                    </p>
                 </div>
             `,
             icon: 'info',
@@ -309,8 +298,138 @@ document.addEventListener('livewire:init', () => {
                 cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
             }
         }).then((result) => {
+
+            // Payment Method
             if (result.isConfirmed) {
-                Livewire.dispatch('processPenaltyPayment', { bookingId: bookingId });
+                Swal.fire({
+                    title: 'METODO DI PAGAMENTO',
+                    text: "Seleziona come pagare la penale:",
+                    icon: 'question',
+                    iconColor: '#d97706',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'STRIPE',
+                    confirmButtonColor: '#d97706',
+                    denyButtonText: 'BONIFICO',
+                    denyButtonColor: '#d97706',
+                    cancelButtonText: 'CHIUDI',
+                    background: theme.background,
+                    color: theme.color,
+                    didOpen: (popup) => {
+                        popup.style.border = `2px solid ${theme.border}`;
+                    },
+                    customClass: {
+                        popup: 'rounded-xl',
+                        confirmButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                        denyButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                        cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        // Stripe
+                        Livewire.dispatch('processPenaltyPayment', { bookingId: bookingId });
+                    } else if (result.isDenied) {
+
+                        // Manual
+                        Swal.fire({
+                            title: 'CARICA CONTABILE BONIFICO',
+                            html: `
+                                <div class="text-center space-y-3 px-2 font-black">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        Per effettuare il bonifico, esegui il versamento sul seguente conto:
+                                    </p>
+
+                                    <div class="p-3 bg-gray-100 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 select-all cursor-pointer" title="Fai doppio click per selezionare tutto">
+                                        <p class="text-xs uppercase text-gray-400 tracking-widest mb-1 font-sans">IBAN</p>
+                                        <p class="font-mono tracking-wider text-amber-600 dark:text-amber-500 select-all">
+                                            IT15 I030 0203 2809 3462 9714 728
+                                        </p>
+                                    </div>
+
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 pt-2">
+                                        Dopo aver effettuato il pagamento, allega il PDF/foto della ricevuta:
+                                    </p>
+
+                                    <input type="file" id="penalty-file-input" accept=".pdf,.png,.jpg,.jpeg" class="hidden" 
+                                        onchange="document.getElementById('file-chosen-text').innerText = this.files[0] ? this.files[0].name : 'Nessun file selezionato'" />
+                                                    
+                                    <div class="flex flex-col items-center justify-center gap-2 mt-2">
+                                        <button type="button" 
+                                            onclick="document.getElementById('penalty-file-input').click()"
+                                            class="inline-flex items-center gap-2 bg-amber-600 text-white text-xs font-black uppercase tracking-widest py-2 px-4 rounded-xl transition shadow-md cursor-pointer">
+                                            <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                                            Sfoglia File...
+                                        </button>
+                                        <span id="file-chosen-text" class="text-xs text-gray-400 font-sans italic tracking-wide">
+                                            Nessun file selezionato
+                                        </span>
+                                    </div>
+                                </div>
+                            `,
+                            icon: 'question',
+                            iconColor: '#d97706',
+                            showCancelButton: true,
+                            confirmButtonText: 'INVIA',
+                            confirmButtonColor: '#d97706',
+                            cancelButtonText: 'CHIUDI',
+                            background: theme.background,
+                            color: theme.color,
+                            didOpen: (popup) => {
+                                popup.style.border = `2px solid ${theme.border}`;
+                            },
+                            customClass: {
+                                popup: 'rounded-xl',
+                                confirmButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                                cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
+                            },
+                            preConfirm: () => {
+                                const fileInput = document.getElementById('penalty-file-input');
+                                if (!fileInput.files || fileInput.files.length === 0) {
+                                    Swal.showValidationMessage('Devi selezionare un file prima di inviare!');
+                                    return false;
+                                }
+                                return fileInput.files[0];
+                            }
+                        }).then((fileResult) => {
+                            if (fileResult.isConfirmed && fileResult.value) {
+                                const file = fileResult.value;
+
+                                Swal.fire({
+                                    title: 'Caricamento in corso...',
+                                    allowOutsideClick: false,
+                                    didOpen: () => { Swal.showLoading(); }
+                                });
+
+                                const formData = new FormData();
+                                formData.append('receipt', file);
+                                formData.append('booking_id', bookingId);
+
+                                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+                                fetch('/bookings/upload-receipt', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': csrfToken
+                                    },
+                                    body: formData
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            Livewire.dispatch('processPenaltyBankTransfer', { bookingId: bookingId });
+                                            Swal.close();
+                                        } else {
+                                            Swal.fire('Errore', data.message || 'Errore durante il caricamento del file.', 'error');
+                                        }
+                                    })
+                                    .catch(() => {
+                                        Swal.fire('Errore', 'Impossibile connettersi al server per l\'upload.', 'error');
+                                    });
+                            }
+                        });
+                    }
+                });
             }
         });
     };

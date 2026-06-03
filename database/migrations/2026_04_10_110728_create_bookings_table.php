@@ -40,6 +40,8 @@ return new class extends Migration
             
             $table->decimal('refund_amount', 10, 2)->nullable();
 
+            $table->string('penalty_receipt_path')->nullable();
+
             $table->index(['start_date', 'end_date']);
             $table->index(['status', 'payment_status', 'created_at'], 'bookings_cleanup_index');
 

@@ -46,7 +46,7 @@ class CheckoutController extends Controller
                     'currency' => 'eur',
                     'product_data' => [
                         'name' => "Acconto (30%) - Camper: " . $booking->camper->name,
-                        'description' => "Il restante 70% (€" . number_format($booking->balance_amount, 2, ',', '.') . ") verrà pagato al ritiro.",
+                        'description' => "Il restante 70% (€" . number_format($booking->balance_amount, 2, ',', '.') . ") verrà pagato al ritiro del mezzo.",
                     ],
                     'unit_amount' => (int)($booking->deposit_amount * 100),
                 ],

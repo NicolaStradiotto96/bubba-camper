@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
 
-            <div class="space-y-6 xl:col-span-1 flex flex-col items-center text-center">
+            <div class="space-y-4 xl:col-span-1 flex flex-col items-center text-center">
                 <div class="space-y-1">
                     <div class="flex items-center justify-center space-x-2">
                         <x-application-logo size="small" />
@@ -90,7 +90,7 @@
         </div>
 
         <div
-            class="mt-12 border-t border-gray-200 dark:border-gray-800 pt-6 flex flex-col md:flex-row justify-center items-center">
+            class="mt-6 border-t border-gray-200 dark:border-gray-800 pt-6 flex flex-col md:flex-row justify-center items-center">
             <p class="text-base text-gray-400 text-center">
                 &copy; {{ date('Y') }} {{ config('app.name', 'Bubba Camper') }}. Tutti i diritti riservati.
             </p>

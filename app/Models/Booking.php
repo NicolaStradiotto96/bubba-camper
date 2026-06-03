@@ -63,11 +63,17 @@ class Booking extends Model
 
         $totalPenaltyAmount = $this->total_price * $penaltyPercent;
 
-        $actualRefund = max(0, $this->deposit_amount - $totalPenaltyAmount);
+        if (in_array($this->payment_status, ['fully_paid', 'refunded_stripe', 'refunded_manual'])) {
+            $totalAmountPaid = $this->total_price;
+        } else {
+            $totalAmountPaid = $this->deposit_amount ?? 0;
+        }
+
+        $actualRefund = max(0, $totalAmountPaid - $totalPenaltyAmount);
 
         $remainingPenalty = 0;
-        if ($totalPenaltyAmount > $this->deposit_amount) {
-            $remainingPenalty = $totalPenaltyAmount - $this->deposit_amount;
+        if ($totalPenaltyAmount > $totalAmountPaid) {
+            $remainingPenalty = $totalPenaltyAmount - $totalAmountPaid;
         }
 
         return [

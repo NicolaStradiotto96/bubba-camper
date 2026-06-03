@@ -26,25 +26,39 @@ class StripeWebhookController extends Controller
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
             $bookingId = $session->metadata->booking_id ?? null;
+            $paymentType = $session->metadata->payment_type ?? null;
 
             if ($bookingId) {
                 try {
                     $booking = Booking::find($bookingId);
-                    if ($booking && $booking->payment_status !== 'paid') {
-                        $booking->payment_status = 'paid';
+                    if ($booking) {
                         $booking->stripe_payment_id = $session->payment_intent ?? $session->id;
-                        $booking->save();
 
-                        Log::info("Stripe Webhook: Pagamento ricevuto", [
-                            'booking_id' => $bookingId,
-                            'stripe_session_id' => $session->id,
-                            'amount' => $session->amount_total / 100 . '€'
-                        ]);
-                    } else {
-                        Log::error("Ricevuto pagamento Stripe per booking ID {$bookingId} ma non trovato nel DB.");
+                        if ($paymentType === 'penalty') {
+
+                            $booking->payment_status = 'penalty_paid';
+                            $booking->save();
+
+                            Log::info("Stripe Webhook: Pagamento penale ricevuto", [
+                                'booking_id' => $bookingId,
+                                'stripe_session_id' => $session->id,
+                                'amount' => $session->amount_total / 100 . '€'
+                            ]);
+                        } else {
+                            if ($booking->payment_status !== 'paid') {
+                                $booking->payment_status = 'paid';
+                                $booking->save();
+
+                                Log::info("Stripe Webhook: Pagamento acconto (30%) ricevuto", [
+                                    'booking_id' => $bookingId,
+                                    'stripe_session_id' => $session->id,
+                                    'amount' => $session->amount_total / 100 . '€'
+                                ]);
+                            }
+                        }
                     }
                 } catch (\Exception $e) {
-                    Log::error("Errore durante l'aggiornamento della booking {$bookingId}: " . $e->getMessage());
+                    Log::error("Errore durante l'aggiornamento del booking {$bookingId}: " . $e->getMessage());
                 }
             }
         }

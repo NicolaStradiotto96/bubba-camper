@@ -3,8 +3,8 @@
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CamperController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PenaltyController;
 use App\Http\Controllers\PublicController;
-use App\Http\Controllers\RefundController;
 use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,10 +41,10 @@ Route::get('/checkout/cancel/{booking}', [CheckoutController::class, 'cancel'])
 // STRIPE WEBHOOK
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
 
-// REFUND
-Route::post('/bookings/{booking}/refund', [RefundController::class, 'process'])
-    ->middleware(['auth', 'verified', 'admin'])
-    ->name('bookings.refund');
+// PENALTY
+Route::post('/bookings/upload-receipt', [PenaltyController::class, 'uploadPenaltyReceipt'])
+    ->middleware(['auth', 'verified'])
+    ->name('bookings.upload-receipt');
 
 // PRICES
 Route::get('/prezzi', [CamperController::class, "prices"])->name("prices");

@@ -13,6 +13,8 @@ class BookingHistory extends Component
 {
     use WithPagination;
 
+    public $receiptUpload;
+
     public function openBookingDetails($bookingId)
     {
         try {
@@ -24,7 +26,7 @@ class BookingHistory extends Component
 
         $this->dispatch('open-booking-modal', [
             'id'             => $booking->id,
-            'created_at'     => $booking->created_at->format('d/m/Y \a\l\l\e H:i'),
+            'created_at'     => $booking->created_at->timezone('Europe/Rome')->format('d/m/Y \a\l\l\e H:i'),
             'name'           => "{$booking->customer_first_name} {$booking->customer_last_name}",
             'email'          => $booking->customer_email,
             'phone'          => $booking->customer_phone,
@@ -35,18 +37,22 @@ class BookingHistory extends Component
             'deposit'        => number_format($booking->deposit_amount, 2, ',', '.') . '€',
             'deposit_amount' => (float)($booking->deposit_amount ?? 0),
             'balance' => $booking->status === 'cancelled'
-                ? ($booking->calculateExpectedRefund()['penalty_amount'] > $booking->deposit_amount && $booking->payment_status !== 'fully_paid' && $booking->payment_status !== 'penalty_paid'
-                    ? number_format($booking->calculateExpectedRefund()['penalty_amount'] - $booking->deposit_amount, 2, ',', '.') . '€'
-                    : (($booking->payment_status === 'fully_paid' || $booking->payment_status === 'penalty_paid')
+                ? (
+                    (($booking->calculateExpectedRefund()['penalty_amount'] + $booking->calculateExpectedRefund()['refund_amount']) >= $booking->total_price)
+                    ? number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') . '€'
+                    : ($booking->calculateExpectedRefund()['penalty_amount'] > $booking->deposit_amount && $booking->payment_status !== 'penalty_paid'
                         ? number_format($booking->calculateExpectedRefund()['penalty_amount'] - $booking->deposit_amount, 2, ',', '.') . '€'
-                        : '0,00€'))
-                : number_format($booking->balance_amount, 2, ',', '.') . '€',
-            'refund'         => number_format($booking->refund_amount, 2, ',', '.') . '€',
-            'refundRaw'      => (float)($booking->refund_amount ?? 0),
+                        : '0,00€')
+                )
+                : ($booking->payment_status === 'fully_paid' ? '0,00€' : number_format($booking->balance_amount, 2, ',', '.') . '€'),
+            'originalBalance' => number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') . '€',
+            'refund'         => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '.') . '€',
+            'refundRaw'      => (float)$booking->calculateExpectedRefund()['refund_amount'],
             'penalty'        => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '.') . '€',
             'penaltyRaw'     => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
             'status'         => $booking->status,
-            'payment_status' => $booking->payment_status
+            'payment_status' => $booking->payment_status,
+            'penalty_receipt' => $booking->penalty_receipt_path ? asset('storage/' . $booking->penalty_receipt_path) : null,
         ]);
     }
 
@@ -71,13 +77,17 @@ class BookingHistory extends Component
     {
         $booking = auth()->user()->bookings()->findOrFail($bookingId);
 
-        if ($booking->status !== 'cancelled' || $booking->payment_status !== 'no_refund') {
+        if ($booking->status !== 'cancelled' || $booking->payment_status !== 'penalty_pending') {
             return;
         }
 
-        $penaltyAmount = $booking->calculateExpectedRefund()['penalty_amount'] ?? 0;
+        $refundInfo = $booking->calculateExpectedRefund();
+        $totalPenalty = $refundInfo['penalty_amount'] ?? 0;
+        $depositPaid = $booking->deposit_amount ?? 0;
 
-        if ($penaltyAmount <= 0) {
+        $penaltyToPay = $totalPenalty - $depositPaid;
+
+        if ($penaltyToPay <= 0) {
             return;
         }
 
@@ -94,10 +104,10 @@ class BookingHistory extends Component
                 'price_data' => [
                     'currency' => 'eur',
                     'product_data' => [
-                        'name' => "Saldatura Penale di Annullamento - Prenotazione #{$booking->id}",
-                        'description' => "Penale contrattuale calcolata per i termini di cancellazione del viaggio.",
+                        'name' => "Pagamento Penale di Annullamento - Prenotazione #{$booking->id}",
+                        'description' => "Penale di " . number_format($totalPenalty, 2, ',', '.') . "€ meno acconto già versato di " . number_format($depositPaid, 2, ',', '.') . "€.",
                     ],
-                    'unit_amount' => (int)($penaltyAmount * 100),
+                    'unit_amount' => (int)($penaltyToPay * 100),
                 ],
                 'quantity' => 1,
             ]],
@@ -106,6 +116,33 @@ class BookingHistory extends Component
         ]);
 
         return redirect($session->url);
+    }
+
+    #[On('processPenaltyBankTransfer')]
+    public function processPenaltyBankTransfer($bookingId)
+    {
+        $booking = auth()->user()->bookings()->findOrFail($bookingId);
+
+        if ($booking->status !== 'cancelled' || $booking->payment_status !== 'penalty_pending') {
+            return;
+        }
+
+        $sessionKey = 'uploaded_penalty_receipt_' . $booking->id;
+        $path = session($sessionKey);
+
+        if ($path) {
+            $booking->penalty_receipt_path = $path;
+
+            $booking->payment_status = 'penalty_verification';
+            $booking->save();
+
+            session()->forget($sessionKey);
+
+            $this->dispatch('swal:success', [
+                'title' => 'Ricevuta Caricata!',
+                'text' => "La contabile è stata inoltrata. L'amministratore verificherà l'accredito del bonifico e confermerà l'avvenuto pagamento."
+            ]);
+        }
     }
 
     public function render()
