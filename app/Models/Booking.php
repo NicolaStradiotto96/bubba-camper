@@ -15,16 +15,33 @@ class Booking extends Model
     protected $fillable = [
         'start_date',
         'end_date',
+        'total_price',
+        'customer_first_name',
+        'customer_last_name',
+        'customer_email',
+        'customer_phone',
+        'camper_id',
+        'status',
+        'payment_status',
+        'terms_accepted',
+        'terms_accepted_at',
+        'terms_accepted_ip',
+        'contract_version',
+        'driver_license_path',
+        'id_card_path',
+        'documents_status',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'total_price' => 'decimal:2',
-        'deposit_amount' => 'decimal:2',
-        'balance_amount' => 'decimal:2',
-        'refund_requested_at' => 'datetime',
-        'refund_confirmed_at' => 'datetime',
+        'down_payment' => 'decimal:2',
+        'balance_payment' => 'decimal:2',
+        'cancellation_requested_at' => 'datetime',
+        'cancellation_confirmed_at' => 'datetime',
+        'terms_accepted' => 'boolean',
+        'terms_accepted_at' => 'datetime',
     ];
 
     public function getRouteKeyName()
@@ -40,8 +57,8 @@ class Booking extends Model
     protected static function booted()
     {
         static::creating(function ($booking) {
-            $booking->deposit_amount = $booking->total_price * 0.30;
-            $booking->balance_amount = $booking->total_price * 0.70;
+            $booking->down_payment = $booking->total_price * 0.30;
+            $booking->balance_payment = $booking->total_price * 0.70;
         });
     }
 
@@ -66,7 +83,7 @@ class Booking extends Model
         if (in_array($this->payment_status, ['fully_paid', 'refunded_stripe', 'refunded_manual'])) {
             $totalAmountPaid = $this->total_price;
         } else {
-            $totalAmountPaid = $this->deposit_amount ?? 0;
+            $totalAmountPaid = $this->down_payment ?? 0;
         }
 
         $actualRefund = max(0, $totalAmountPaid - $totalPenaltyAmount);

@@ -45,7 +45,7 @@ class PaymentReminder extends Component
 
         $formattedDates = '';
         if ($this->booking) {
-            $start = \Carbon\Carbon::parse($this->booking->start_date)->format('d/m');
+            $start = \Carbon\Carbon::parse($this->booking->start_date)->format('d/m/Y');
             $end = \Carbon\Carbon::parse($this->booking->end_date)->format('d/m/Y');
             $formattedDates = "dal $start al $end";
         }

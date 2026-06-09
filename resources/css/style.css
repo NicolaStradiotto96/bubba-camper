@@ -38,6 +38,10 @@
     color: #000000;
 }
 
+.top-15 {
+    top: 3.75rem;
+}
+
 /* PAGINATION */
 [wire\:click*="page"].focus\:ring-blue-800,
 [wire\:click*="page"]:focus,

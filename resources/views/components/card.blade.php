@@ -21,15 +21,14 @@
         </p>
 
         <div class="mt-6 flex justify-between items-center border-t border-gray-100 dark:border-gray-700 pt-6">
-            @if ($camper->is_active)
-                <span class="text-sm font-bold text-green-600 dark:text-green-500 uppercase mt-1">
-                    Disponibile
-                </span>
-            @else
-                <span class="text-sm font-bold text-red-600 dark:text-red-500 uppercase mt-1">
-                    Non disponibile
-                </span>
-            @endif
+            
+
+
+                <p class="text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 {{ $camper->is_active ? 'text-green-500' : 'text-red-500' }}">
+                    <span
+                        class="w-2 h-2 mb-0.5 rounded-full {{ $camper->is_active ? 'bg-green-500 animate-pulse' : 'bg-red-500 animate-pulse' }}"></span>
+                    {{ $camper->is_active ? 'Disponibile' : 'Non Disponibile' }}
+                </p>
 
             <a href="#">
                 <x-primary-anchor href="{{ route('show', $camper) }}" wire:navigate>

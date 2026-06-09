@@ -71,18 +71,31 @@
         </h2>
     </div>
 
+
     {{-- MESSAGES --}}
-    @if (session()->has('success') || session()->has('cancelled'))
-        <div x-data="{ show: true }" x-show="show"
-            class="mx-4 sm:mx-0 mb-6 p-4 rounded-r-xl border border-l-4 bg-white dark:bg-gray-800 {{ session()->has('success') ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500' }}">
+    <div class="space-y-4" x-data="{ message: '' }" @notify.window="message = $event.detail.message;">
+
+        <div x-show="message" x-transition
+            class="mx-4 sm:mx-0 mb-6 p-4 rounded-r-xl border border-l-4 border-green-500 bg-white text-green-500">
             <div class="flex items-center justify-between font-medium">
-                <span>{{ session('success') ?? session('cancelled') }}</span>
-                <button @click="show = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none"><i
-                        class="fa-solid fa-xmark text-xl"></i></button>
+                <span x-text="message"></span>
+                <button @click="message = ''" class="p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </div>
-    @endif
+
+        @if (session()->has('success') || session()->has('cancelled'))
+            <div x-data="{ show: true }" x-show="show"
+                class="mx-4 sm:mx-0 mb-6 p-4 rounded-r-xl border border-l-4 bg-white dark:bg-gray-800 {{ session()->has('success') ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500' }}">
+                <div class="flex items-center justify-between font-medium">
+                    <span>{{ session('success') ?? session('cancelled') }}</span>
+                    <button @click="show = false"
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none"><i
+                            class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+            </div>
+        @endif
+    </div>
+
 
     {{-- DESKTOP VIEW --}}
     <div
@@ -93,9 +106,9 @@
             <thead class="font-black uppercase text-gray-400 bg-gray-50 dark:bg-gray-700/50">
                 <tr>
                     <th class="px-2 py-4">ID</th>
-                    <th class="px-2 py-4">Cliente</th>
                     <th class="px-2 py-4">Dettagli</th>
                     <th class="px-2 py-4">Pagamento</th>
+                    <th class="px-2 py-4">Documenti</th>
                     <th class="px-2 py-4">Stato</th>
                     <th class="px-2 py-4">Bilancio</th>
                     <th class="px-2 py-4">Azioni</th>
@@ -112,17 +125,8 @@
                                 class="text-xs text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-1 px-1">#{{ $booking->id }}</span>
                         </td>
 
-                        {{-- CUSTOMER INFO --}}
-                        <td class="px-2 py-4">
-                            <p class="text-gray-900 dark:text-white uppercase">
-                                {{ $booking->customer_first_name }} {{ $booking->customer_last_name }}</p>
-                            <p class="text-xs text-gray-500 italic">{{ $booking->customer_email }}</p>
-                            <p class="text-xs text-gray-500">{{ $booking->customer_phone }}</p>
-                        </td>
-
-                        {{-- BOOKING DATES --}}
+                        {{-- DETAILS --}}
                         <td class="px-2 py-4 text-sm">
-
                             <p class="text-amber-500">{{ $booking->camper->name }}</p>
                             <p class="text-gray-700 dark:text-gray-300 ">{{ $booking->start_date->format('d/m/Y') }}
                                 <span class="text-amber-500">➔</span>
@@ -180,6 +184,26 @@
                             @endif
                         </td>
 
+                        {{-- DOCUMENT STATUS --}}
+                        <td class="px-2 py-4 text-xs uppercase">
+                            @if ($booking->documents_status === 'uploaded')
+                                <span
+                                    class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                    Caricati
+                                </span>
+                            @elseif ($booking->documents_status === 'pending')
+                                <span
+                                    class="px-3 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                    In attesa
+                                </span>
+                            @else
+                                <span
+                                    class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                    Errore
+                                </span>
+                            @endif
+                        </td>
+
                         {{-- BOOKING STATUS --}}
                         <td class="px-2 py-4 text-xs uppercase">
                             @if ($booking->status === 'confirmed')
@@ -215,7 +239,6 @@
                             @endif
                         </td>
 
-
                         {{-- BALANCE --}}
                         <td class="px-2 py-4 text-xs uppercase">
                             <div class="flex flex-col items-center gap-1">
@@ -235,10 +258,10 @@
                                         <span class="text-gray-400">0,00€</span>
                                     @elseif ($booking->payment_status === 'unpaid')
                                         <span class="text-amber-500 animate-pulse">
-                                            {{ number_format($booking->deposit_amount, 2, ',', '.') }}€</span>
+                                            {{ number_format($booking->down_payment, 2, ',', '.') }}€</span>
                                     @else
                                         <span
-                                            class="text-green-600">{{ number_format($booking->deposit_amount, 2, ',', '.') }}€</span>
+                                            class="text-green-600">{{ number_format($booking->down_payment, 2, ',', '.') }}€</span>
                                     @endif
                                 </div>
 
@@ -248,25 +271,31 @@
 
                                     @if ($booking->status === 'cancelled')
                                         @if (
-                                            $booking->calculateExpectedRefund()['refund_amount'] > $booking->total_price - $booking->deposit_amount ||
-                                                in_array($booking->payment_status, ['refunded_manual', 'refunded_stripe', 'refund_pending', 'fully_paid', 'penalty_paid']))
+                                            $booking->calculateExpectedRefund()['refund_amount'] > $booking->total_price - $booking->down_payment ||
+                                                in_array($booking->payment_status, [
+                                                    'refunded_manual',
+                                                    'refunded_stripe',
+                                                    'refund_pending',
+                                                    'fully_paid',
+                                                    'penalty_paid',
+                                                ]))
                                             <span class="text-green-600">
-                                                {{ number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') }}€
+                                                {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                                             </span>
                                         @elseif (in_array($booking->payment_status, ['penalty_pending', 'penalty_verification']))
                                             <span class="text-amber-500 animate-pulse">
-                                                {{ number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') }}€
+                                                {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                                             </span>
                                         @else
                                             <span class="text-gray-400">0,00€</span>
                                         @endif
                                     @elseif ($booking->status === 'confirmed')
                                         <span class="text-green-600">
-                                            {{ number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') }}€
+                                            {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                                         </span>
                                     @else
                                         <span class="text-amber-500 animate-pulse">
-                                            {{ number_format($booking->balance_amount, 2, ',', '.') }}€
+                                            {{ number_format($booking->balance_payment, 2, ',', '.') }}€
                                         </span>
                                     @endif
                                 </div>
@@ -319,6 +348,15 @@
                                     Dettagli
                                 </button>
 
+                                {{-- Documents --}}
+                                @if ($booking->payment_status === 'paid' && (!$booking->driver_license_path || !$booking->id_card_path))
+                                    <button type="button"
+                                        @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
+                                        class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                                        Carica Documenti
+                                    </button>
+                                @endif
+
                                 {{-- Complete --}}
                                 @if (
                                     ($booking->status === 'confirmed' ||
@@ -326,7 +364,7 @@
                                             ($booking->payment_status === 'penalty_pending' || $booking->payment_status === 'penalty_verification'))) &&
                                         $booking->payment_status !== 'fully_paid')
                                     <button type="button"
-                                        onclick="confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->deposit_amount) : $booking->balance_amount }})"
+                                        onclick="confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
                                         class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm">
                                         Completa
                                     </button>
@@ -502,11 +540,11 @@
                             <span class="text-gray-400">0,00€</span>
                         @elseif ($booking->payment_status === 'unpaid')
                             <span class="text-amber-500 animate-pulse">
-                                {{ number_format($booking->deposit_amount, 2, ',', '.') }}€
+                                {{ number_format($booking->down_payment, 2, ',', '.') }}€
                             </span>
                         @else
                             <span class="text-green-600">
-                                {{ number_format($booking->deposit_amount, 2, ',', '.') }}€
+                                {{ number_format($booking->down_payment, 2, ',', '.') }}€
                             </span>
                         @endif
 
@@ -518,25 +556,31 @@
 
                         @if ($booking->status === 'cancelled')
                             @if (
-                                $booking->calculateExpectedRefund()['refund_amount'] > $booking->total_price - $booking->deposit_amount ||
-                                    in_array($booking->payment_status, ['refunded_manual', 'refunded_stripe', 'refund_pending', 'fully_paid', 'penalty_paid']))
+                                $booking->calculateExpectedRefund()['refund_amount'] > $booking->total_price - $booking->down_payment ||
+                                    in_array($booking->payment_status, [
+                                        'refunded_manual',
+                                        'refunded_stripe',
+                                        'refund_pending',
+                                        'fully_paid',
+                                        'penalty_paid',
+                                    ]))
                                 <span class="text-green-600">
-                                    {{ number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') }}€
+                                    {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                                 </span>
                             @elseif (in_array($booking->payment_status, ['penalty_pending', 'penalty_verification']))
                                 <span class="text-amber-500 animate-pulse">
-                                    {{ number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') }}€
+                                    {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                                 </span>
                             @else
                                 <span class="text-gray-400">0,00€</span>
                             @endif
                         @elseif ($booking->status === 'confirmed')
                             <span class="text-green-600">
-                                {{ number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') }}€
+                                {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                             </span>
                         @else
                             <span class="text-amber-500 animate-pulse">
-                                {{ number_format($booking->balance_amount, 2, ',', '.') }}€
+                                {{ number_format($booking->balance_payment, 2, ',', '.') }}€
                             </span>
                         @endif
                     </div>
@@ -582,6 +626,14 @@
                         Dettagli
                     </button>
 
+                    {{-- Documents --}}
+                    @if ($booking->payment_status === 'paid' && (!$booking->driver_license_path || !$booking->id_card_path))
+                        <button type="button" @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
+                            class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                            Carica Documenti
+                        </button>
+                    @endif
+
                     {{-- Complete --}}
                     @if (
                         ($booking->status === 'confirmed' ||
@@ -589,7 +641,7 @@
                                 ($booking->payment_status === 'penalty_pending' || $booking->payment_status === 'penalty_verification'))) &&
                             $booking->payment_status !== 'fully_paid')
                         <button type="button"
-                            onclick="confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->deposit_amount) : $booking->balance_amount }})"
+                            onclick="confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
                             class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm">
                             Completa
                         </button>
@@ -623,11 +675,11 @@
         {{ $bookings->links() }}
     </div>
 
-    {{-- MODAL --}}
+    {{-- BOOKING MODAL --}}
     <div x-data="{ open: false, b: {} }"
         @open-booking-modal.window="open = true; b = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.detail ? $event.detail.detail : $event.detail)"
-        @keyup.escape.window="open = false"
-        x-effect="if (open) { document.body.classList.add('overflow-hidden') } else { document.body.classList.remove('overflow-hidden') }"
+        @keydown.escape.window="open = false"
+        x-effect="if (open) { document.body.style.overflow = 'hidden' } else { document.body.style.overflow = 'auto' }"
         x-show="open" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
 
         <div x-show="open" x-transition:enter="transition ease-out duration-300"
@@ -643,11 +695,11 @@
                 x-transition:leave="transition ease-in duration-200 transform"
                 x-transition:leave-start="translate-y-0 sm:scale-100 opacity-100"
                 x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
-                class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-2xl sm:my-3 w-full sm:max-w-lg border border-gray-200 dark:border-gray-700">
+                class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-2xl sm:my-3 w-full sm:max-w-2xl border border-gray-200 dark:border-gray-700">
 
                 {{-- Header --}}
                 <div
-                    class="bg-gray-50 dark:bg-gray-700/50 font-black px-6 py-3 border-b border-gray-100 dark:border-gray-700 ">
+                    class="bg-gray-50 dark:bg-gray-700/50 font-black px-6 py-3 border-b border-gray-100 dark:border-gray-700">
 
                     {{-- ID --}}
                     <div class="flex justify-between items-center">
@@ -681,42 +733,174 @@
                 </div>
 
                 <div class="p-2 space-y-2">
-
-                    {{-- Customer Info --}}
                     <div class="text-center">
-                        <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Dati Cliente</h4>
 
-                        <div
-                            class="bg-gray-50 dark:bg-gray-900/50 font-black rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
+                        <div class="flex flex-col sm:flex-row gap-2">
 
-                            {{-- Name --}}
-                            <div class="p-2">
-                                <p class="text-gray-400 uppercase tracking-wider mb-0.5">Nome:
-                                </p>
-                                <p class="font-bold text-gray-900 dark:text-white uppercase" x-text="b.name"></p>
+                            {{-- Customer Info --}}
+                            <div class="w-full">
+                                <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Dati
+                                    Cliente
+                                </h4>
+                                <div
+                                    class="bg-gray-50 dark:bg-gray-900/50 font-black rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
+
+                                    {{-- Name --}}
+                                    <div class="p-2">
+                                        <p class="text-gray-400 uppercase tracking-wider mb-0.5">Nome:
+                                        </p>
+                                        <p class="px-3 py-0.5 font-black text-gray-900 dark:text-white uppercase border border-transparent"
+                                            x-text="b.name">
+                                        </p>
+                                    </div>
+
+                                    {{-- Email --}}
+                                    <div class="p-2">
+                                        <p class="text-gray-400 uppercase tracking-wider mb-0.5">Email:
+                                        </p>
+                                        <a :href="'mailto:' + b.email"
+                                            class="px-3 py-0.5 font-black italic text-gray-900 dark:text-white hover:underline block border border-transparent"
+                                            x-text="b.email"></a>
+                                    </div>
+
+                                    {{-- Phone --}}
+                                    <div class="p-2">
+                                        <p class="text-gray-400 uppercase tracking-wider mb-0.5">
+                                            Telefono:</p>
+                                        <p class="px-3 py-0.5 font-black text-gray-900 dark:text-white border border-transparent"
+                                            x-text="b.phone"></p>
+                                    </div>
+                                </div>
                             </div>
 
-                            {{-- Email --}}
-                            <div class="p-2">
-                                <p class="text-gray-400 uppercase tracking-wider mb-0.5">Email:
-                                </p>
-                                <a :href="'mailto:' + b.email"
-                                    class="font-bold italic text-gray-900 dark:text-white hover:underline block"
-                                    x-text="b.email"></a>
-                            </div>
+                            {{-- Status --}}
+                            <div class="w-full">
+                                <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Stato
+                                </h4>
+                                <div
+                                    class="bg-gray-50 dark:bg-gray-900/50 font-black rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
 
-                            {{-- Phone --}}
-                            <div class="p-2">
-                                <p class="text-gray-400 uppercase tracking-wider mb-0.5">
-                                    Telefono:</p>
-                                <p class="font-bold text-gray-900 dark:text-white" x-text="b.phone"></p>
+                                    {{-- Payment --}}
+                                    <div class="p-2">
+                                        <p class="text-gray-400 uppercase tracking-wider mb-0.5">Pagamento:
+                                        </p>
+
+                                        <div class="uppercase inline-block">
+                                            <template x-if="b.payment_status === 'paid'">
+                                                <p
+                                                    class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                    Pagato
+                                                    Parzialmente</p>
+                                            </template>
+                                            <template x-if="b.payment_status === 'fully_paid'">
+                                                <p
+                                                    class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                    Pagato
+                                                    Intero</p>
+                                            </template>
+                                            <template x-if="b.payment_status === 'penalty_paid'">
+                                                <p
+                                                    class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                    Penale
+                                                    Pagata
+                                                </p>
+                                            </template>
+                                            <template x-if="b.payment_status === 'refunded_stripe'">
+                                                <p
+                                                    class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                    Rimborso
+                                                    Stripe</p>
+                                            </template>
+                                            <template x-if="b.payment_status === 'refunded_manual'">
+                                                <p
+                                                    class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                    Rimborso
+                                                    Manuale</p>
+                                            </template>
+                                            <template x-if="b.payment_status === 'penalty_pending'">
+                                                <p
+                                                    class="px-2 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                                    Penale da pagare</p>
+                                            </template>
+                                            <template x-if="b.payment_status === 'penalty_verification'">
+                                                <p
+                                                    class="px-2 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                                    Penale in verifica</p>
+                                            </template>
+                                            <template x-if="b.payment_status === 'unpaid'">
+                                                <p
+                                                    class="px-2 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                                    Non pagato</p>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    {{-- Documents --}}
+                                    <div class="p-2">
+                                        <p class="text-gray-400 uppercase tracking-wider mb-0.5">Documenti:
+                                        </p>
+
+                                        <div class="uppercase inline-block">
+                                            <template x-if="b.documents_status === 'uploaded'">
+                                                <p
+                                                    class="px-3 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                    Caricati
+                                                </p>
+                                            </template>
+                                            <template x-if="b.documents_status === 'pending'">
+                                                <p
+                                                    class="px-3 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                                    In
+                                                    attesa</p>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    {{-- Booking --}}
+                                    <div class="p-2">
+                                        <p class="text-gray-400 uppercase tracking-wider mb-0.5">
+                                            Prenotazione:</p>
+
+                                        <div class="uppercase inline-block">
+                                            <template x-if="b.status === 'confirmed'">
+                                                <p
+                                                    class="px-3 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                    Confermata
+                                                </p>
+                                            </template>
+                                            <template x-if="b.status === 'pending'">
+                                                <p
+                                                    class="px-3 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                                    In
+                                                    attesa</p>
+                                            </template>
+                                            <template x-if="b.status === 'cancellation_pending'">
+                                                <p
+                                                    class="px-3 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                                    Richiesta
+                                                    Cancellazione</p>
+                                            </template>
+                                            <template x-if="b.status === 'expired'">
+                                                <p
+                                                    class="px-3 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                                    Scaduta</p>
+                                            </template>
+                                            <template x-if="b.status === 'cancelled'">
+                                                <p
+                                                    class="px-3 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                                    Cancellata</p>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {{-- Booking Info --}}
                     <div class="text-center">
-                        <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Dettagli Noleggio
+                        <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Dettagli
+                            Noleggio
                         </h4>
 
                         <div
@@ -733,103 +917,11 @@
                             <div class="p-2">
                                 <p class="text-gray-400 uppercase tracking-wider mb-0.5">
                                     Periodo:</p>
-                                <p class="font-bold text-gray-900 dark:text-white">
+                                <p class="font-black text-gray-900 dark:text-white">
                                     <span x-text="b.start"></span>
                                     <span class="text-amber-500 mx-1">➔</span>
                                     <span x-text="b.end"></span>
                                 </p>
-                            </div>
-
-                            {{-- Payment Status --}}
-                            <div class="p-2">
-                                <p class="text-gray-400 uppercase tracking-wider mb-1">Stato
-                                    Pagamento:</p>
-
-                                <div class="uppercase inline-block">
-                                    <template x-if="b.payment_status === 'paid'">
-                                        <p
-                                            class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                            Pagato
-                                            Parzialmente</p>
-                                    </template>
-                                    <template x-if="b.payment_status === 'fully_paid'">
-                                        <p
-                                            class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                            Pagato
-                                            Intero</p>
-                                    </template>
-                                    <template x-if="b.payment_status === 'penalty_paid'">
-                                        <p
-                                            class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                            Penale
-                                            Pagata
-                                        </p>
-                                    </template>
-                                    <template x-if="b.payment_status === 'refunded_stripe'">
-                                        <p
-                                            class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                            Rimborso
-                                            Stripe</p>
-                                    </template>
-                                    <template x-if="b.payment_status === 'refunded_manual'">
-                                        <p
-                                            class="px-2 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                            Rimborso
-                                            Manuale</p>
-                                    </template>
-                                    <template x-if="b.payment_status === 'penalty_pending'">
-                                        <p
-                                            class="px-2 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
-                                            Penale da pagare</p>
-                                    </template>
-                                    <template x-if="b.payment_status === 'penalty_verification'">
-                                        <p
-                                            class="px-2 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
-                                            Penale in verifica</p>
-                                    </template>
-                                    <template x-if="b.payment_status === 'unpaid'">
-                                        <p
-                                            class="px-2 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
-                                            Non pagato</p>
-                                    </template>
-                                </div>
-                            </div>
-
-                            {{-- Booking Status --}}
-                            <div class="p-2">
-                                <p class="text-gray-400 uppercase tracking-wider mb-1">Stato
-                                    Prenotazione:</p>
-
-                                <div class="uppercase inline-block">
-                                    <template x-if="b.status === 'confirmed'">
-                                        <p
-                                            class="px-3 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                            Confermata
-                                        </p>
-                                    </template>
-                                    <template x-if="b.status === 'pending'">
-                                        <p
-                                            class="px-3 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
-                                            In
-                                            attesa</p>
-                                    </template>
-                                    <template x-if="b.status === 'cancellation_pending'">
-                                        <p
-                                            class="px-3 py-0.5 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
-                                            Richiesta
-                                            Cancellazione</p>
-                                    </template>
-                                    <template x-if="b.status === 'expired'">
-                                        <p
-                                            class="px-3 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
-                                            Scaduta</p>
-                                    </template>
-                                    <template x-if="b.status === 'cancelled'">
-                                        <p
-                                            class="px-3 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
-                                            Cancellata</p>
-                                    </template>
-                                </div>
                             </div>
 
                         </div>
@@ -871,7 +963,7 @@
                                 <span class="text-gray-400 uppercase">Saldo:</span>
 
                                 <template
-                                    x-if="b.status === 'cancelled' && (b.penaltyRaw > b.deposit_amount) && !['fully_paid', 'penalty_paid', 'refunded_manual','refunded_stripe'].includes(b.payment_status)">
+                                    x-if="b.status === 'cancelled' && (b.penaltyRaw > b.down_payment) && !['fully_paid', 'penalty_paid', 'refunded_manual','refunded_stripe'].includes(b.payment_status)">
                                     <span class="text-amber-500 animate-pulse font-black" x-text="b.balance"></span>
                                 </template>
 
@@ -889,7 +981,7 @@
                                 </template>
 
                                 <template
-                                    x-if="(b.status === 'cancelled' || b.status === 'expired') && !['fully_paid', 'refunded_manual','refunded_stripe'].includes(b.payment_status) && !(b.penaltyRaw > b.deposit_amount)">
+                                    x-if="(b.status === 'cancelled' || b.status === 'expired') && !['fully_paid', 'refunded_manual','refunded_stripe'].includes(b.payment_status) && !(b.penaltyRaw > b.down_payment)">
                                     <span class="text-gray-400 font-black">0,00€</span>
                                 </template>
 
@@ -941,6 +1033,50 @@
 
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    {{-- DOCUMENTS MODAL --}}
+    <div x-data="{ showDocModal: false, selectedBookingId: null }" @open-doc-modal.window="showDocModal = true; selectedBookingId = $event.detail.id"
+        @close-doc-modal.window="showDocModal = false" @keydown.escape.window="showDocModal = false"
+        x-effect="if (showDocModal) { document.body.style.overflow = 'hidden' } else { document.body.style.overflow = 'auto' }"
+        class="fixed inset-0 z-50 flex items-center justify-center p-3" x-cloak x-show="showDocModal">
+
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" x-show="showDocModal"
+            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="showDocModal = false">
+        </div>
+
+        <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-6 w-full sm:max-w-lg border border-gray-200 dark:border-gray-700 shadow-2xl z-10 overflow-hidden"
+            x-show="showDocModal" x-transition:enter="transition ease-out duration-300 transform"
+            x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave="transition ease-in duration-200 transform"
+            x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+            <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-6 w-full sm:max-w-lg">
+
+                <div class="font-black flex flex-col justify-center items-center mb-10">
+                    <i class="fa-solid fa-id-card text-amber-500 text-7xl mb-3"></i>
+                    <h3 class="text-gray-900 dark:text-white uppercase text-center text-4xl">Carica
+                        Documenti</h3>
+                    <p class="block text-xl text-gray-400 mt-2 uppercase">Prenotazione
+                        <span class="text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-1 px-1"
+                            x-text="'#' + selectedBookingId">
+                        </span>
+                    </p>
+                </div>
+
+                <div x-init="$watch('showDocModal', value => { if (value) $dispatch('setBookingId', { id: selectedBookingId }) })">
+                    @livewire('document-uploader', key('doc-uploader-static'))
+                </div>
+
+                <x-secondary-button @click="showDocModal = false"
+                    class="w-full mt-3 flex justify-center items-center">
+                    Chiudi
+                </x-secondary-button>
             </div>
         </div>
     </div>

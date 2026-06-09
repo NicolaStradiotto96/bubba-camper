@@ -11,7 +11,6 @@ class Camper extends Model
         "name",
         "slug",
         "description",
-        "full_description",
         "price_per_day",
         "image_path",
         'images'

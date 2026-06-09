@@ -21,7 +21,7 @@ Route::get('/noleggio/{camper:slug}', [CamperController::class, 'show'])
     ->name('show');
 
 // BOOKING
-Route::get('/booking/{camper:slug}', [BookingController::class, 'show'])
+Route::get('/prenota/{camper:slug}', [BookingController::class, 'show'])
     ->middleware(['auth', 'verified'])
     ->name('booking.show');
 

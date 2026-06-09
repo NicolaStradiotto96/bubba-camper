@@ -59,31 +59,27 @@
                 </div>
                 <div class="mt-7 md:mt-0">
                     <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider text-center">
-                        iNFO
+                        INFO
                     </h3>
-                    <ul class="mt-4 space-y-2 text-base text-gray-500 dark:text-gray-400 text-center">
+                    <ul class="mt-4 space-y-4 text-base text-gray-500 dark:text-gray-400 text-center">
                         <li>
-                            <a href="https://maps.app.goo.gl/YPc96ugg7UmpMZX49" class="flex justify-center items-center"
-                                target="_blank">
-                                <div class="text-xl">
-                                    📍
-                                </div>
-                                <div>
-                                    <p class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                                        Via Chemin Palma, 2/C
-                                        <br>
-                                        36065 Mussolente (VI)
-                                    </p>
-                                </div>
-                            </a>
+                            <p class="text-base text-gray-500">
+                                <i class="fa-solid fa-clock text-amber-500"></i>
+                                <span class="font-bold text-gray-500 dark:text-gray-400">Lun - Dom:</span> 10-13 / 16-20
+                            </p>
                         </li>
-                        <li><a href="https://wa.me/393347538083" target="_blank"
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">📞
+                        <li>
+                            <a href="https://wa.me/393347538083" target="_blank"
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                                <i class="fa-solid fa-phone text-amber-500"></i>
                                 +39 334 753 8083</a>
                         </li>
-                        <li><a href="mailto:info@bubbacamper.com" target="_blank"
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">✉️
-                                info@bubbacamper.com</a></li>
+                        <li>
+                            <a href="mailto:info@bubbacamper.com" target="_blank"
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                                <i class="fa-solid fa-envelope text-amber-500"></i>
+                                info@bubbacamper.com</a>
+                        </li>
                     </ul>
                 </div>
             </div>

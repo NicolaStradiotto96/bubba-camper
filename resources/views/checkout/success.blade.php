@@ -38,14 +38,14 @@
                                 <p class="text-green-500 uppercase tracking-wider text-xs font-bold">Acconto Pagato
                                     (30%)</p>
                                 <p class="text-xl font-black text-green-500">
-                                    {{ number_format($booking->deposit_amount, 2, ',', '.') }}€
+                                    {{ number_format($booking->down_payment, 2, ',', '.') }}€
                                 </p>
                             </div>
                             <div>
                                 <p class="text-amber-500 uppercase tracking-wider text-xs font-bold">Da saldare al
                                     ritiro (70%)</p>
                                 <p class="text-xl font-black text-amber-500">
-                                    {{ number_format($booking->balance_amount, 2, ',', '.') }}€
+                                    {{ number_format($booking->balance_payment, 2, ',', '.') }}€
                                 </p>
                             </div>
                         </div>

@@ -1,8 +1,9 @@
-<div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
+<div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700"
+    x-data="{ showContract: false }">
 
-    <h3 class="text-xl font-bold mb-6 text-gray-900 dark:text-white uppercase text-center">Prenota il tuo viaggio</h3>
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white uppercase text-center">Prenota il tuo viaggio</h3>
 
-    <div class="space-y-4">
+    <div class="space-y-2">
 
         {{-- Calendar --}}
         <div wire:ignore wire:key="calendar-{{ count($this->bookedDates) }}">
@@ -58,7 +59,7 @@
                 });"
                     class="w-full pr-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-xl focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 text-gray-900 dark:text-white flatpickr-animation text-center"
                     placeholder="Scegli quando partire...">
-                <p class="mt-1 text-xs text-gray-400 italic text-center">Minimo 2 giorni di noleggio</p>
+                <p class="mt-1 text-xs text-gray-400 italic text-center">*Minimo 2 giorni di noleggio</p>
             </div>
 
         </div>
@@ -69,7 +70,7 @@
         </div>
 
         {{-- Costs --}}
-        <div class="min-h-[227px] relative flex flex-col">
+        <div class="min-h-[460px] relative flex flex-col">
 
             <div x-show="$wire.days_count >= 2" x-transition:enter="transition ease-out duration-400"
                 x-transition:enter-start="opacity-0 transform scale-95"
@@ -77,7 +78,7 @@
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 transform scale-100"
                 x-transition:leave-end="opacity-0 transform scale-95"
-                class="relative bg-white dark:bg-gray-900 p-5 rounded-xl border-2 border-amber-600 z-10 h-auto">
+                class="relative max-w-[600px] bg-white dark:bg-gray-900 p-5 rounded-xl border-2 border-amber-600 z-10 h-auto">
 
                 <div>
                     <div class="space-y-2">
@@ -108,8 +109,46 @@
                         </div>
                     </div>
 
+                    {{-- Contract --}}
+                    <div class="w-full text-left border-t border-gray-100 dark:border-gray-700 pt-3 mt-2">
+
+
+                        <label
+                            class="block text-xs font-black text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                            <i class="fa-solid fa-file-contract text-amber-500 mr-0.5"></i> Contratto di Noleggio
+                        </label>
+
+                        <div class="relative">
+                            <button type="button" @click="showContract = true"
+                                class="absolute top-3 right-3 flex items-center justify-center z-10 p-2 bg-gray-200 dark:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-amber-500 dark:hover:bg-amber-500 hover:text-white dark:hover:text-black transition-colors"
+                                title="Ingrandisci Contratto">
+                                <i class="fa-solid fa-expand text-xs"></i>
+                            </button>
+
+                            <div
+                                class="w-full h-36 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-[11px] text-gray-600 dark:text-gray-400 font-sans space-y-3 shadow-inner">
+                                <x-contract />
+                            </div>
+                        </div>
+
+                        <div class="my-2 flex items-center justify-center">
+                            <input id="terms_accepted" type="checkbox" wire:model.live="terms_accepted"
+                                class="w-4 h-4 rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-amber-600 shadow-sm focus:ring-amber-500 dark:focus:ring-amber-600 dark:focus:ring-offset-gray-800">
+
+                            <label for="terms_accepted"
+                                class="ml-2 text-[11px] font-semibold text-gray-700 dark:text-gray-300 leading-tight select-none">
+                                Accetto il contratto e approvo specificamente le clausole vessatorie (artt. 1341-1342
+                                c.c.).
+                            </label>
+                        </div>
+
+                        <div class="min-h-[20px] text-center">
+                            <x-input-error :messages="$errors->get('terms_accepted')" class="text-xs" />
+                        </div>
+                    </div>
+
                     <x-primary-button wire:click="saveBooking"
-                        class="w-full mt-5 flex justify-center items-center py-3">
+                        class="w-full mt-3 flex justify-center items-center py-3">
                         <span wire:loading.remove wire:target="saveBooking">Vai al pagamento</span>
                         <span wire:loading wire:target="saveBooking" class="flex items-center">Caricamento...</span>
                     </x-primary-button>
@@ -126,6 +165,36 @@
 
         </div>
 
+    </div>
+
+    {{-- MODAL --}}
+    <div x-show="showContract" x-cloak x-effect="document.body.classList.toggle('overflow-hidden', showContract)"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm"
+        x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-500"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+
+        <div @click.away="showContract = false" @keydown.escape.window="showContract = false"
+            class="w-full max-w-4xl h-[90vh] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+
+            <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-bold text-gray-900 dark:text-white uppercase">Contratto di Noleggio</h3>
+                <button @click="showContract = false"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none"><i
+                        class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 text-sm text-gray-600 dark:text-gray-400">
+                <x-contract />
+            </div>
+
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 text-right">
+                <button @click="showContract = false"
+                    class="px-6 py-2 bg-amber-600 text-white rounded-lg font-bold uppercase text-xs hover:bg-amber-700">
+                    chiudi
+                </button>
+            </div>
+        </div>
     </div>
 
 </div>

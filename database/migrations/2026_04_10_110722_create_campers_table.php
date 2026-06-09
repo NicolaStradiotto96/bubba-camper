@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string("name");
             $table->string("slug")->unique();
             $table->text("description");
-            $table->text('full_description');
 
             $table->string("image_path");
             $table->json("images")->nullable();

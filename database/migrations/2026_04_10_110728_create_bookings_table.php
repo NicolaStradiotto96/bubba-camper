@@ -26,18 +26,28 @@ return new class extends Migration
             $table->date("start_date");
             $table->date("end_date");
 
+            $table->boolean('terms_accepted')->default(false);
+            $table->timestamp('terms_accepted_at')->nullable();
+            $table->ipAddress('terms_accepted_ip')->nullable();
+            $table->string('contract_version');
+
+            $table->string('driver_license_path')->nullable();
+            $table->string('id_card_path')->nullable();
+            $table->string('documents_status')->default('pending')->index();
+
             $table->decimal("total_price", 10, 2);
-            $table->decimal('deposit_amount', 10, 2);
-            $table->decimal('balance_amount', 10, 2);
+            $table->decimal('down_payment', 10, 2);
+            $table->decimal('balance_payment', 10, 2);
+            $table->decimal('security_deposit', 10, 2)->default(500.00);
 
             $table->string('status')->default('pending')->index();
             $table->string('payment_status')->default('unpaid')->index();
 
-            $table->timestamp('refund_requested_at')->nullable();
-            $table->timestamp('refund_confirmed_at')->nullable();
+            $table->timestamp('cancellation_requested_at')->nullable();
+            $table->timestamp('cancellation_confirmed_at')->nullable();
 
             $table->string('stripe_payment_id')->nullable();
-            
+
             $table->decimal('refund_amount', 10, 2)->nullable();
 
             $table->string('penalty_receipt_path')->nullable();

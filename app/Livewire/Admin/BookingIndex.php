@@ -15,6 +15,8 @@ class BookingIndex extends Component
 {
     use WithPagination;
 
+    protected $listeners = ['refresh-page' => '$refresh'];
+
     #[On('confirmBooking')]
     public function confirmBooking($bookingId)
     {
@@ -79,8 +81,7 @@ class BookingIndex extends Component
                 $booking->payment_status = 'penalty_pending';
             }
 
-            $booking->refund_requested_at = now();
-            $booking->refund_confirmed_at = now();
+            $booking->cancellation_confirmed_at = now();
             $booking->save();
 
             Mail::to($booking->customer_email)->send(new BookingCancelled($booking));
@@ -152,23 +153,24 @@ class BookingIndex extends Component
             'start'          => $booking->start_date->format('d/m/Y'),
             'end'            => $booking->end_date->format('d/m/Y'),
             'total'          => number_format($booking->total_price, 2, ',', '.') . '€',
-            'deposit'        => number_format($booking->deposit_amount, 2, ',', '.') . '€',
-            'deposit_amount' => (float)($booking->deposit_amount ?? 0),
+            'deposit'        => number_format($booking->down_payment, 2, ',', '.') . '€',
+            'down_payment' => (float)($booking->down_payment ?? 0),
             'balance' => $booking->status === 'cancelled'
                 ? (
                     (($booking->calculateExpectedRefund()['penalty_amount'] + $booking->calculateExpectedRefund()['refund_amount']) >= $booking->total_price)
-                    ? number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') . '€'
-                    : ($booking->calculateExpectedRefund()['penalty_amount'] > $booking->deposit_amount && $booking->payment_status !== 'penalty_paid'
-                        ? number_format($booking->calculateExpectedRefund()['penalty_amount'] - $booking->deposit_amount, 2, ',', '.') . '€'
+                    ? number_format($booking->total_price - $booking->down_payment, 2, ',', '.') . '€'
+                    : ($booking->calculateExpectedRefund()['penalty_amount'] > $booking->down_payment && $booking->payment_status !== 'penalty_paid'
+                        ? number_format($booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment, 2, ',', '.') . '€'
                         : '0,00€')
                 )
-                : ($booking->payment_status === 'fully_paid' ? '0,00€' : number_format($booking->balance_amount, 2, ',', '.') . '€'),
-            'originalBalance' => number_format($booking->total_price - $booking->deposit_amount, 2, ',', '.') . '€',
+                : ($booking->payment_status === 'fully_paid' ? '0,00€' : number_format($booking->balance_payment, 2, ',', '.') . '€'),
+            'originalBalance' => number_format($booking->total_price - $booking->down_payment, 2, ',', '.') . '€',
             'refund'         => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '.') . '€',
             'refundRaw'      => (float)$booking->calculateExpectedRefund()['refund_amount'],
             'penalty'        => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '.') . '€',
             'penaltyRaw'     => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
             'status'         => $booking->status,
+            'documents_status'         => $booking->documents_status,
             'payment_status' => $booking->payment_status,
             'penalty_receipt' => $booking->penalty_receipt_path ? asset('storage/' . $booking->penalty_receipt_path) : null,
         ]);

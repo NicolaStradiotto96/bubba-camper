@@ -9,12 +9,14 @@ use Livewire\Component;
 
 class BookingForm extends Component
 {
+
     public Camper $camper;
     public $date_range;
     public $start_date;
     public $end_date;
     public $total_price = 0;
     public $days_count = 0;
+    public $terms_accepted = false;
 
     public function mount(Camper $camper)
     {
@@ -24,6 +26,8 @@ class BookingForm extends Component
     public function updated($propertyName, $value)
     {
         if ($propertyName === 'date_range') {
+            $this->resetErrorBag(['date_range', 'days_count']);
+
             if (empty($value)) {
                 $this->total_price = 0;
                 $this->days_count = 0;
@@ -64,7 +68,7 @@ class BookingForm extends Component
     }
     public function getBookedDatesProperty()
     {
-        return Booking::where('camper_id', $this->camper->id)
+        $allDates = Booking::where('camper_id', $this->camper->id)
             ->whereNotIn('status', ['cancelled', 'expired'])
             ->where(function ($query) {
                 $query->where('payment_status', 'paid')
@@ -72,17 +76,25 @@ class BookingForm extends Component
             })
             ->get(['start_date', 'end_date'])
             ->flatMap(function ($booking) {
+                $extendedStart = Carbon::parse($booking->start_date)->subDay();
+
+                $extendedEnd = Carbon::parse($booking->end_date)->addDays(2);
+
                 $period = new \DatePeriod(
-                    Carbon::parse($booking->start_date),
+                    $extendedStart,
                     new \DateInterval('P1D'),
-                    Carbon::parse($booking->end_date)->addDay()
+                    $extendedEnd
                 );
+
                 $dates = [];
                 foreach ($period as $date) {
                     $dates[] = $date->format('d-m-Y');
                 }
                 return $dates;
-            })->toArray();
+            })
+            ->toArray();
+
+        return array_values(array_unique($allDates));
     }
 
     protected function calculateBooking()
@@ -131,11 +143,13 @@ class BookingForm extends Component
             'end_date' => 'required|date|after:start_date',
             'days_count' => 'required|integer|min:2',
             'total_price' => 'required|numeric|min:1',
+            'terms_accepted' => 'required|accepted',
         ], [
             'days_count.min' => 'Il noleggio minimo è di 2 giorni.',
             'total_price.min' => 'Errore nel calcolo del prezzo.',
             'start_date.after_or_equal' => 'La data di inizio non può essere nel passato.',
             'end_date.after' => 'La data di fine deve essere successiva a quella di inizio.',
+            'terms_accepted.accepted' => 'È obbligatorio accettare il contratto di noleggio per procedere.',
         ]);
 
         $alreadyBooked = Booking::where('camper_id', $this->camper->id)
@@ -146,16 +160,17 @@ class BookingForm extends Component
             })
             ->where(function ($query) {
                 $query->whereBetween('start_date', [$this->start_date, $this->end_date])
-                    ->orWhereBetween('end_date', [$this->start_date, $this->end_date])
+                    ->orWhereRaw('? BETWEEN start_date AND DATE_ADD(end_date, INTERVAL 1 DAY)', [$this->start_date])
+                    ->orWhereRaw('DATE_ADD(?, INTERVAL 1 DAY) >= start_date AND ? <= end_date', [$this->end_date, $this->start_date])
                     ->orWhere(function ($sub) {
-                        $sub->where('start_date', '<=', $this->start_date)
-                            ->where('end_date', '>=', $this->end_date);
+                        $sub->where('start_date', '>=', $this->start_date)
+                            ->where('end_date', '<=', $this->end_date);
                     });
             })
             ->exists();
 
         if ($alreadyBooked) {
-            $this->addError('date_range', 'Spiacente, queste date sono già state occupate.');
+            $this->addError('date_range', 'Il camper non è disponibile nelle date selezionate.');
             return;
         }
 
@@ -169,6 +184,10 @@ class BookingForm extends Component
         $booking->camper_id = $this->camper->id;
         $booking->start_date = $this->start_date;
         $booking->end_date = $this->end_date;
+        $booking->terms_accepted = true;
+        $booking->terms_accepted_at = now();
+        $booking->terms_accepted_ip = request()->ip();
+        $booking->contract_version = config('contracts.active_version');
         $this->calculateBooking();
         $booking->total_price = $this->total_price;
         $booking->status = 'pending';
