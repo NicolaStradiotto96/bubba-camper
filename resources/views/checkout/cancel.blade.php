@@ -13,12 +13,12 @@
                         </p>
 
                         <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
-                            <a href="{{ route('dashboard') }}"
+                            <a href="{{ route('dashboard') }}" wire:navigate
                                 class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm uppercase">
                                 Vai alla tua Dashboard
                             </a>
 
-                            <a href="{{ route('index') }}"
+                            <a href="{{ route('index') }}" wire:navigate
                                 class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm uppercase">
                                 Torna ai Camper
                             </a>

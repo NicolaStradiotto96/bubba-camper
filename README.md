@@ -14,7 +14,7 @@ Bubba Camper is a modern web application designed to streamline camper van renta
 
 - Tooling: Vite, Laravel Breeze
 
-- Libraries: intl-tel-input (v27), Flatpickr (Booking calendar)
+- Libraries: intl-tel-input (v27), Flatpickr (Booking calendar), FontAwesome (UI Icons & Navigation)
 
 ## Key Features
 
@@ -25,6 +25,16 @@ Bubba Camper is a modern web application designed to streamline camper van renta
 - Webhook Architecture: Robust backend listener to handle asynchronous payment events (success/failure) and automatically update booking statuses in the database.
 
 - Metadata Management: Seamless synchronization between Stripe sessions and internal database records for reliable tracking.
+
+### Document & Verification Workflow
+
+- Secure Uploads: Integrated multi-file upload system (Driver License & ID Card) using Livewire's `WithFileUploads`.
+
+- Real-time Validation: Client-side file type and size validation with dynamic feedback to ensure compliant uploads.
+
+- Status Management: Automated booking status transitions (e.g., from 'pending documents' to 'awaiting review') ensuring a structured verification workflow.
+
+- Interactive UX: Modal-based document management powered by Alpine.js with seamless state synchronization between the UI and server-side components.
 
 ### Advanced Booking & UI
 

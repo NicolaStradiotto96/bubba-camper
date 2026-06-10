@@ -681,7 +681,7 @@ document.addEventListener('livewire:init', () => {
                                             onclick="document.getElementById('penalty-file-input').click()"
                                             class="inline-flex items-center gap-2 bg-amber-600 text-white text-xs font-black uppercase tracking-widest py-2 px-4 rounded-xl transition shadow-md cursor-pointer">
                                             <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
-                                            Sfoglia File...
+                                            Sfoglia...
                                         </button>
                                         <span id="file-chosen-text" class="text-xs text-gray-400 font-sans italic tracking-wide">
                                             Nessun file selezionato

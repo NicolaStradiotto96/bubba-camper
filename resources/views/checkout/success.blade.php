@@ -20,7 +20,7 @@
                     ricevuto correttamente.
                 </p>
 
-                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 mb-4 inline-block w-full">
+                <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 mb-4 inline-block w-full">
                     <div>
                         <!-- Info Periodo -->
                         <div class="border-b border-gray-200 dark:border-gray-600 pb-4">
@@ -67,12 +67,12 @@
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('dashboard') }}" wire:navigate
                         class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm uppercase">
                         Vai alla tua Dashboard
                     </a>
 
-                    <a href="{{ route('welcome') }}"
+                    <a href="{{ route('welcome') }}" wire:navigate
                         class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm uppercase">
                         Torna alla Home
                     </a>

@@ -8,7 +8,7 @@
     </div>
 
     {{-- CARDS --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8 mx-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 mx-4">
         @foreach ([
         [
             'label' => 'Incasso',
@@ -73,7 +73,7 @@
 
 
     {{-- MESSAGES --}}
-    <div class="space-y-4" x-data="{ message: '' }" @notify.window="message = $event.detail.message;">
+    <div x-data="{ message: '' }" @notify.window="message = $event.detail.message;">
 
         <div x-show="message" x-transition
             class="mx-4 sm:mx-0 mb-6 p-4 rounded-r-xl border border-l-4 border-green-500 bg-white text-green-500">
@@ -109,7 +109,7 @@
                     <th class="px-2 py-4">Dettagli</th>
                     <th class="px-2 py-4">Pagamento</th>
                     <th class="px-2 py-4">Documenti</th>
-                    <th class="px-2 py-4">Stato</th>
+                    <th class="px-2 py-4">Prenotazione</th>
                     <th class="px-2 py-4">Bilancio</th>
                     <th class="px-2 py-4">Azioni</th>
                 </tr>
@@ -184,7 +184,7 @@
                             @endif
                         </td>
 
-                        {{-- DOCUMENT STATUS --}}
+                        {{-- DOCUMENTS STATUS --}}
                         <td class="px-2 py-4 text-xs uppercase">
                             @if ($booking->documents_status === 'uploaded')
                                 <span
@@ -404,120 +404,147 @@
         @foreach ($bookings as $booking)
             <div
                 class="bg-white dark:bg-gray-800 font-black p-5 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
-                <div class="flex justify-center items-center mb-4">
-                    <div class="text-center">
 
-                        {{-- ID --}}
+                <div class="text-center">
+
+                    {{-- ID --}}
+                    <div>
+                        <span class="font-black uppercase text-gray-900 dark:text-white text-xl">Prenotazione</span>
                         <span
-                            class="font-mono text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-1 px-1 rounded">
+                            class="font-mono text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-1 px-1 rounded text-xl">
                             #{{ $booking->id }}
                         </span>
-
-                        <div class="flex justify-center items-center gap-1.5 text-xs uppercase font-black my-3">
-
-                            {{-- PAYMENT STATUS --}}
-                            @if ($booking->payment_status === 'paid')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                    Pagato parz.
-                                </span>
-                            @elseif ($booking->payment_status === 'fully_paid')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                    Pagato intero
-                                </span>
-                            @elseif ($booking->payment_status === 'penalty_paid')
-                                <span
-                                    class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                    Penale pagata
-                                </span>
-                            @elseif ($booking->payment_status === 'refunded_stripe')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                    Rimb. Stripe
-                                </span>
-                            @elseif ($booking->payment_status === 'refunded_manual')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                    Rimb. Manuale
-                                </span>
-                            @elseif ($booking->payment_status === 'penalty_pending')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
-                                    Penale da pagare
-                                </span>
-                            @elseif ($booking->payment_status === 'penalty_verification')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
-                                    Penale in verifica
-                                </span>
-                            @elseif ($booking->payment_status === 'unpaid')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
-                                    Non pagato
-                                </span>
-                            @else
-                                <span
-                                    class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
-                                    Errore
-                                </span>
-                            @endif
-
-                            {{-- BOOKING STATUS --}}
-                            @if ($booking->status === 'confirmed')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
-                                    Confermata
-                                </span>
-                            @elseif ($booking->status === 'pending')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
-                                    In attesa
-                                </span>
-                            @elseif ($booking->status === 'cancellation_pending')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">Richiesta
-                                    Canc.
-                                </span>
-                            @elseif ($booking->status === 'expired')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
-                                    Scaduta
-                                </span>
-                            @elseif ($booking->status === 'cancelled')
-                                <span
-                                    class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
-                                    Cancellata
-                                </span>
-                            @else
-                                <span
-                                    class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
-                                    Errore
-                                </span>
-                            @endif
-
-                        </div>
-
-                        {{-- CUSTOMER INFO --}}
-                        <h3 class="text-gray-900 dark:text-white uppercase mt-1">
-                            {{ $booking->customer_first_name }} {{ $booking->customer_last_name }}
-                        </h3>
-
-                        <p class="text-sm text-gray-500 italic">{{ $booking->customer_email }}</p>
-
-                        <p class="text-sm text-gray-500">{{ $booking->customer_phone }}</p>
-
-                        {{-- BOOKING DATES --}}
-                        <p class="text-amber-500 mt-1">{{ $booking->camper->name }}
-                        </p>
-
-                        <p class="text-gray-700 dark:text-gray-300 ">{{ $booking->start_date->format('d/m/Y') }}
-                            <span class="text-amber-500">➔</span>
-                            {{ $booking->end_date->format('d/m/Y') }}
-                        </p>
                     </div>
 
+                    {{-- BOOKING DATES --}}
+                    <div
+                        class="my-4 p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl space-y-2">
+                        <div class="flex flex-col justify-center items-center">
+                            <p class="text-amber-500">{{ $booking->camper->name }}
+                            </p>
 
+                            <p class="text-gray-700 dark:text-gray-300 ">
+                                {{ $booking->start_date->format('d/m/Y') }}
+                                <span class="text-amber-500">➔</span>
+                                {{ $booking->end_date->format('d/m/Y') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="my-4 p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl space-y-2 text-xs uppercase">
+
+                    {{-- PAYMENT STATUS --}}
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Pagamento:</span>
+
+                        @if ($booking->payment_status === 'paid')
+                            <span
+                                class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                Pagato parz.
+                            </span>
+                        @elseif ($booking->payment_status === 'fully_paid')
+                            <span
+                                class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                Pagato intero
+                            </span>
+                        @elseif ($booking->payment_status === 'penalty_paid')
+                            <span
+                                class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                Penale pagata
+                            </span>
+                        @elseif ($booking->payment_status === 'refunded_stripe')
+                            <span
+                                class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                Rimb. Stripe
+                            </span>
+                        @elseif ($booking->payment_status === 'refunded_manual')
+                            <span
+                                class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                Rimb. Manuale
+                            </span>
+                        @elseif ($booking->payment_status === 'penalty_pending')
+                            <span
+                                class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                Penale da pagare
+                            </span>
+                        @elseif ($booking->payment_status === 'penalty_verification')
+                            <span
+                                class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                Penale in verifica
+                            </span>
+                        @elseif ($booking->payment_status === 'unpaid')
+                            <span
+                                class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                Non pagato
+                            </span>
+                        @else
+                            <span
+                                class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                Errore
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- DOCUMENTS STATUS --}}
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Documenti:</span>
+
+                        @if ($booking->documents_status === 'uploaded')
+                            <span
+                                class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                Caricati
+                            </span>
+                        @elseif ($booking->documents_status === 'pending')
+                            <span
+                                class="px-3 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                In attesa
+                            </span>
+                        @else
+                            <span
+                                class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                Errore
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- BOOKING STATUS --}}
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Prenotazione:</span>
+
+                        @if ($booking->status === 'confirmed')
+                            <span
+                                class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                Confermata
+                            </span>
+                        @elseif ($booking->status === 'pending')
+                            <span
+                                class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
+                                In attesa
+                            </span>
+                        @elseif ($booking->status === 'cancellation_pending')
+                            <span
+                                class="px-2 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">Richiesta
+                                Canc.
+                            </span>
+                        @elseif ($booking->status === 'expired')
+                            <span
+                                class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                Scaduta
+                            </span>
+                        @elseif ($booking->status === 'cancelled')
+                            <span
+                                class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                Cancellata
+                            </span>
+                        @else
+                            <span
+                                class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                Errore
+                            </span>
+                        @endif
+                    </div>
                 </div>
 
                 {{-- BALANCE --}}
@@ -676,11 +703,10 @@
     </div>
 
     {{-- BOOKING MODAL --}}
-    <div x-data="{ open: false, b: {} }"
+    <div x-data="{ open: false, b: {} }" x-init="$watch('open', value => { document.body.classList.toggle('no-scroll', value) })"
         @open-booking-modal.window="open = true; b = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.detail ? $event.detail.detail : $event.detail)"
-        @keydown.escape.window="open = false"
-        x-effect="if (open) { document.body.style.overflow = 'hidden' } else { document.body.style.overflow = 'auto' }"
-        x-show="open" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+        @keydown.escape.window="open = false" x-show="open" class="fixed inset-0 z-50 overflow-y-auto"
+        style="display: none;">
 
         <div x-show="open" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
@@ -1038,9 +1064,9 @@
     </div>
 
     {{-- DOCUMENTS MODAL --}}
-    <div x-data="{ showDocModal: false, selectedBookingId: null }" @open-doc-modal.window="showDocModal = true; selectedBookingId = $event.detail.id"
+    <div x-data="{ showDocModal: false, selectedBookingId: null }" x-init="$watch('showDocModal', value => { document.body.classList.toggle('no-scroll', value) })"
+        @open-doc-modal.window="showDocModal = true; selectedBookingId = $event.detail.id"
         @close-doc-modal.window="showDocModal = false" @keydown.escape.window="showDocModal = false"
-        x-effect="if (showDocModal) { document.body.style.overflow = 'hidden' } else { document.body.style.overflow = 'auto' }"
         class="fixed inset-0 z-50 flex items-center justify-center p-3" x-cloak x-show="showDocModal">
 
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" x-show="showDocModal"

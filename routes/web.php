@@ -3,6 +3,7 @@
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CamperController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PenaltyController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\StripeWebhookController;
@@ -61,5 +62,8 @@ Route::view('dashboard', 'dashboard')
 Route::view('profilo', 'profile')
     ->middleware(['auth'])
     ->name('profile');
+
+// FAQ
+Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 
 require __DIR__ . '/auth.php';

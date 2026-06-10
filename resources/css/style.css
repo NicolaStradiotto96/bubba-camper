@@ -42,6 +42,10 @@
     top: 3.75rem;
 }
 
+.no-scroll {
+    overflow: hidden !important;
+}
+
 /* PAGINATION */
 [wire\:click*="page"].focus\:ring-blue-800,
 [wire\:click*="page"]:focus,

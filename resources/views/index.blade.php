@@ -3,11 +3,11 @@
     <div class="min-h-[calc(100vh-160px)]">
 
         {{-- TITLE --}}
-        <header class="flex flex-col items-center justify-center">
+        <header class="flex flex-col items-center justify-center text-center">
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight tracking-wider">I
                 NOSTRI
                 CAMPER</h1>
-            <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto leading-relaxed px-4 text-center">
+            <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto leading-relaxed px-4">
                 {{ __('Dimentica la routine e riscopri la libertà. Scegli il compagno di viaggio ideale per la tua prossima avventura all\'aria aperta.') }}
             </p>
 

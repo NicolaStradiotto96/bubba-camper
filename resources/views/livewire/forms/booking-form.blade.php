@@ -59,7 +59,7 @@
                 });"
                     class="w-full pr-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-xl focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 text-gray-900 dark:text-white flatpickr-animation text-center"
                     placeholder="Scegli quando partire...">
-                <p class="mt-1 text-xs text-gray-400 italic text-center">*Minimo 2 giorni di noleggio</p>
+                <p class="mt-1 text-xs text-gray-400 italic text-center">Minimo 2 giorni di noleggio</p>
             </div>
 
         </div>

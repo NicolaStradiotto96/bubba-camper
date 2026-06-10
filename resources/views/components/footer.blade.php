@@ -30,13 +30,13 @@
                         Navigazione
                     </h3>
                     <ul class="mt-4 space-y-4 text-center">
-                        <li><a href="{{ route('welcome') }}"
+                        <li><a href="{{ route('welcome') }}" wire:navigate
                                 class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Home</a>
                         </li>
-                        <li><a href="{{ route('index') }}"
+                        <li><a href="{{ route('index') }}" wire:navigate
                                 class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Noleggio</a>
                         </li>
-                        <li><a href="{{ route('prices') }}"
+                        <li><a href="{{ route('prices') }}" wire:navigate
                                 class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Prezzi</a>
                         </li>
                     </ul>
@@ -46,13 +46,13 @@
                         Supporto
                     </h3>
                     <ul class="mt-4 space-y-4 text-center">
-                        <li><a href="{{ route('contacts') }}"
+                        <li><a href="{{ route('contacts') }}" wire:navigate
                                 class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Contatti</a>
                         </li>
-                        <li><a href="#"
+                        <li><a href="{{ route('faq') }}" wire:navigate
                                 class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">FAQ</a>
                         </li>
-                        <li><a href="#"
+                        <li><a href="#" wire:navigate
                                 class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Privacy
                                 Policy</a></li>
                     </ul>

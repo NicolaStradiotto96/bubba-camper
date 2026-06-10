@@ -1,10 +1,10 @@
 <x-app-layout>
 
     {{-- TITLE --}}
-    <header class="flex flex-col items-center justify-center">
+    <header class="flex flex-col items-center justify-center text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight tracking-wider">
             CONTATTI</h1>
-        <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto leading-relaxed px-4 text-center">
+        <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto leading-relaxed px-4">
             {{ __('Scrivici per qualsiasi dubbio o consiglio sulle dotazioni: ti aiuteremo a partire in totale serenità e sicurezza.') }}
         </p>
 

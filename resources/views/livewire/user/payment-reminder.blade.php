@@ -19,7 +19,8 @@
 
         <div class="bg-amber-50 dark:bg-amber-900/10 p-6 rounded-2xl border-2 border-amber-500 mb-4">
             <div class="relative flex items-center justify-center mb-4">
-                <i class="fa-solid fa-clock text-amber-500 opacity-20 animate-spin text-5xl" style="animation-duration: 10s;"></i>
+                <i class="fa-solid fa-clock text-amber-500 opacity-20 animate-spin text-5xl"
+                    style="animation-duration: 10s;"></i>
                 <span class="absolute text-xl font-black text-amber-600 dark:text-amber-500 font-mono">
                     {{ $timeLeft }}
                 </span>
@@ -36,10 +37,10 @@
                 <span>{{ $formattedDates }}</span>
             </div>
 
-            <a href="{{ route('checkout', $booking) }}"
-                class="inline-flex items-center px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-xl transition-all shadow-md hover:shadow-amber-500/50 uppercase tracking-widest">
+            <x-primary-anchor href="{{ route('checkout', $booking) }}"
+                class="px-6 py-3">
                 Paga Ora
-            </a>
+            </x-primary-anchor>
         </div>
     @else
         <div>

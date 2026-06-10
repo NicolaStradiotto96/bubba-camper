@@ -176,10 +176,10 @@ new class extends Component {
             </div>
         @else
             <div class="py-3 border-t border-gray-300 dark:border-gray-700 ">
-                <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')">
+                <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')" wire:navigate>
                     {{ __('Log In') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')" wire:navigate>
                     {{ __('Registrati') }}
                 </x-responsive-nav-link>
             </div>
