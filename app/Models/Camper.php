@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class Camper extends Model
@@ -11,13 +12,17 @@ class Camper extends Model
         "name",
         "slug",
         "description",
-        "price_per_day",
+        'prices',
         "image_path",
-        'images'
+        'images',
+        'attributes',
+        'is_active'
     ];
 
     protected $casts = [
+        'prices' => 'array',
         'images' => 'array',
+        'attributes' => 'array',
     ];
 
     protected static function boot()
@@ -33,14 +38,19 @@ class Camper extends Model
 
     public function getPriceForDate($date = null)
     {
-        $date = $date ?: now();
+        $date = $date ? Carbon::parse($date) : now();
         $month = $date->month;
 
-        if (in_array($month, [7, 8])) return 140;
-        if (in_array($month, [4, 5, 6, 9, 10])) return 120;
-        return 100;
-    }
+        if (in_array($month, [7, 8])) {
+            return $this->prices['high'] ?? $this->prices['low'] ?? 0;
+        }
 
+        if (in_array($month, [4, 5, 6, 9, 10])) {
+            return $this->prices['mid'] ?? $this->prices['low'] ?? 0;
+        }
+
+        return $this->prices['low'] ?? 0;
+    }
     public function getRouteKeyName()
     {
         return 'slug';

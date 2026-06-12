@@ -16,7 +16,7 @@ Bubba Camper is a modern web application designed to streamline camper van renta
 
 - Libraries: intl-tel-input (v27), Flatpickr (Booking calendar), FontAwesome (UI Icons & Navigation)
 
-## Key Features
+## KEY FEATURES
 
 ### Secure Payment System
 
@@ -53,6 +53,10 @@ Bubba Camper is a modern web application designed to streamline camper van renta
 - CSRF Protection: Hardened security layers with specific exclusions for external API communications (Webhooks).
 
 - SEO & Performance: Optimized for fast loading and search engine visibility.
+
+### Work in progress
+
+- [ ] **Language Strings:** Move hardcoded UI strings to localization files (`lang/`) for future multi-language support.
 
 ## DEVELOPER
 

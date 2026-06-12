@@ -17,8 +17,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
             'first_name' => 'Test',
             'last_name' => 'User',
@@ -39,15 +37,17 @@ class DatabaseSeeder extends Seeder
             'name' => 'McLouis Glamys 226',
             'slug' => Str::slug('McLouis Glamys 226'),
             'description' => 'Il 6 posti perfetto: mansardato, doppio matrimoniale e garage di grande dimensioni.',
+            'prices' => [
+                'low' => 100,
+                'medium' => 100,
+                'high' => 100,
+            ],
             'image_path' => 'campers/1.webp',
             'images' => [
                 'campers/1.webp',
                 'campers/2.webp',
                 'campers/3.webp',
             ],
-            'seats' => 6,
-            'beds' => 6,
-            'is_active' => true,
         ]);
     }
 }

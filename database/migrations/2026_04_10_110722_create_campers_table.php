@@ -17,12 +17,13 @@ return new class extends Migration
             $table->string("name");
             $table->string("slug")->unique();
             $table->text("description");
+            $table->json('prices');
 
             $table->string("image_path");
-            $table->json("images")->nullable();
+            $table->json("images");
 
-            $table->integer("seats")->default(4);
-            $table->integer("beds")->default(4);
+            $table->json('attributes')->nullable();
+
             $table->boolean("is_active")->default(true);
 
             $table->timestamps();

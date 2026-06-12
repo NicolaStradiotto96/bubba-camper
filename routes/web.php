@@ -7,6 +7,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PenaltyController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Livewire\Admin\CamperManager;
 use Illuminate\Support\Facades\Route;
 
 // HOME
@@ -57,6 +58,16 @@ Route::get('/contatti', [PublicController::class, "contacts"])->name("contacts")
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+// CREATE CAMPER
+Route::get('/admin/campers/create', CamperManager::class)
+    ->middleware(['auth', 'admin'])
+    ->name('campers.create');
+
+// EDIT CAMPER
+Route::get('/admin/campers/{camper}/edit', CamperManager::class)
+    ->middleware(['auth', 'admin'])
+    ->name('campers.edit');
 
 // PROFILE
 Route::view('profilo', 'profile')

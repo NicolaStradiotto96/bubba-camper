@@ -120,7 +120,7 @@
                 Scopri i nostri camper
             </h2>
             <div class="flex flex-wrap justify-center gap-8">
-                @foreach ($campers as $camper)
+                @foreach ($campers->take(3) as $camper)
                     <div class="w-full md:w-[calc(50%-2rem)] lg:w-[calc(33.333%-2rem)] max-w-sm">
                         <x-card :camper="$camper" />
                     </div>

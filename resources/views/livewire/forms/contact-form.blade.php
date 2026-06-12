@@ -92,7 +92,7 @@
         <div>
             <x-input-label for="message" :value="__('Il tuo messaggio')" />
             <textarea id="message" wire:model="message" rows="5"
-                class="text-center mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm"
+                class="text-center mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm resize-none"
                 placeholder="Parlaci del tuo itinerario..."></textarea>
             <x-input-error :messages="$errors->get('message')" class="mt-2 text-center" />
         </div>

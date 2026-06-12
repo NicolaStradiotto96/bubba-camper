@@ -122,10 +122,18 @@ class BookingForm extends Component
 
     protected function getDayPrice($date)
     {
+        if (method_exists($this->camper, 'getPriceForDate')) {
+            return $this->camper->getPriceForDate($date);
+        }
+
         $month = $date->month;
-        if (in_array($month, [7, 8])) return 140;
-        if (in_array($month, [4, 5, 6, 9, 10])) return 120;
-        return 100;
+        if (in_array($month, [7, 8])) {
+            return $this->camper->price_high ?? 140;
+        }
+        if (in_array($month, [4, 5, 6, 9, 10])) {
+            return $this->camper->price_medium ?? 120;
+        }
+        return $this->camper->price_low ?? 100;
     }
 
     public function saveBooking()

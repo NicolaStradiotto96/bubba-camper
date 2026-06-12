@@ -12,7 +12,7 @@ class FaqController extends Controller
         $faqs = [
             [
                 'q' => 'Cosa è incluso nel prezzo del noleggio?',
-                'a' => 'Il prezzo include il chilometraggio indicato, l\'assicurazione Kasko con franchigia, l\'assistenza stradale 24/7, l\'attrezzatura da cucina di base, il cavo elettrico per le colonnine e i cunei livellatori.'
+                'a' => 'Il prezzo include il chilometraggio indicato, l\'assicurazione Kasko completa di copertura per furto, incendio, atti vandalici ed eventi atmosferici, l\'assistenza stradale 24/7, il tubo per il carico dell\'acqua, la bombola del gas, il cavo elettrico per le colonnine e i cunei livellatori.'
             ],
             [
                 'q' => 'Quali documenti devo presentare per il ritiro?',
@@ -41,6 +41,10 @@ class FaqController extends Controller
             [
                 'q' => 'Dove posso consultare il contratto di noleggio?',
                 'a' => 'Puoi leggere il contratto di noleggio completo online oppure scaricarlo in formato PDF cliccando qui: <a href="' . asset('storage/contracts/v1/Contratto-Noleggio.pdf') . '" target="_blank" class="text-amber-500 font-semibold hover:underline">Visualizza Contratto PDF</a>'
+            ],
+            [
+                'q' => 'Dove posso consultare la polizza assicurativa?',
+                'a' => 'Puoi visualizzare la polizza assicurativa o scaricarla in formato PDF cliccando qui: <a href="' . asset('storage/contracts/v1/Polizza-Assicurativa.pdf') . '" target="_blank" class="text-amber-500 font-semibold hover:underline">Visualizza Polizza Assicurativa PDF</a>.'
             ],
         ];
 

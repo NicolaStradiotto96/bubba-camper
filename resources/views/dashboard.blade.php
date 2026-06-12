@@ -9,6 +9,15 @@
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             @if (auth()->user()->is_admin)
                 {{-- ADMIN DASHBOARD --}}
+                <div class="mb-6 flex justify-center px-4 sm:px-0">
+                    <x-primary-anchor href="{{ route('campers.create') }}" wire:navigate
+                        class="inline-flex items-center gap-2 !p-5 text-xs sm:text-base">
+                        <i class="fa-solid fa-van-shuttle transition-transform group-hover:scale-110"></i>
+                        <i class="fa-solid fa-plus text-[10px] -ml-1"></i>
+                        Aggiungi Nuovo Camper
+                    </x-primary-anchor>
+                </div>
+
                 <livewire:admin.booking-index />
             @else
                 {{-- USERS DASHBOARD --}}
@@ -23,8 +32,7 @@
 
                     @if (!auth()->user()->isPayingRightNow())
                         <div class="mt-6 flex justify-center">
-                            <div
-                                class="w-full md:w-1/2">
+                            <div class="w-full md:w-1/2">
                                 <p class="text-black dark:text-white font-black uppercase">Scegli le
                                     date e parti!</p>
                                 <x-primary-anchor class="mt-3" href="{{ route('index') }}" wire:navigate>
@@ -42,7 +50,6 @@
                     @endif
 
                 </div>
-
                 <livewire:user.booking-history />
             @endif
 
