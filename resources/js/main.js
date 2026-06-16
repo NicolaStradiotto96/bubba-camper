@@ -182,6 +182,37 @@ document.addEventListener('livewire:init', () => {
         });
     };
 
+    // Invoice
+    window.confirmInvoice = function (id) {
+        const theme = getSwalTheme();
+
+        Swal.fire({
+            title: 'FATTURA PRENOTAZIONE',
+            html: `Vuoi impostare lo stato della prenotazione <span class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${id}</span> su "Fatturata"?`,
+            icon: 'success',
+            iconColor: '#1fae53',
+            showCancelButton: true,
+            confirmButtonText: 'PROCEDI',
+            confirmButtonColor: '#1fae53',
+            cancelButtonText: 'CHIUDI',
+            background: theme.background,
+            color: theme.color,
+            didOpen: (popup) => {
+                popup.style.border = `2px solid ${theme.border}`;
+            },
+            customClass: {
+                popup: 'rounded-xl',
+                confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2',
+                cancelButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Livewire.dispatch('markAsInvoiced', { bookingId: id });
+            }
+        });
+    };
+
+
     // Request Booking Cancellation
     window.requestUserCancellation = function (bookingId, penaltyAmount) {
         const theme = getSwalTheme();
@@ -324,6 +355,15 @@ document.addEventListener('livewire:init', () => {
                                             Nessun file selezionato
                                         </span>
                                     </div>
+
+                                    <div id="penalty-preview-container" class="hidden mt-3 flex flex-col items-center justify-center min-h-[96px]">
+                                        <div class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                                            <img id="penalty-img-preview" src="" class="hidden h-24 w-40 object-cover rounded-lg">
+                                            <div id="penalty-pdf-preview" class="hidden flex flex-col items-center justify-center h-24 w-40 text-red-500 rounded-lg">
+                                                <i class="fa-solid fa-file-pdf text-3xl mb-1"></i>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             `,
                             icon: 'question',
@@ -336,6 +376,35 @@ document.addEventListener('livewire:init', () => {
                             color: theme.color,
                             didOpen: (popup) => {
                                 popup.style.border = `2px solid ${theme.border}`;
+
+                                const fileInput = document.getElementById('penalty-file-input');
+
+                                if (fileInput) {
+                                    fileInput.addEventListener('change', function () {
+                                        const file = this.files[0];
+                                        const textEl = document.getElementById('file-chosen-text');
+                                        const previewContainer = document.getElementById('penalty-preview-container');
+                                        const imgPreview = document.getElementById('penalty-img-preview');
+                                        const pdfPreview = document.getElementById('penalty-pdf-preview');
+
+                                        if (file) {
+                                            textEl.innerText = file.name;
+                                            previewContainer.classList.remove('hidden');
+
+                                            if (file.type.match('image.*')) {
+                                                imgPreview.src = URL.createObjectURL(file);
+                                                imgPreview.classList.remove('hidden');
+                                                pdfPreview.classList.add('hidden');
+                                            } else if (file.type === 'application/pdf') {
+                                                imgPreview.classList.add('hidden');
+                                                pdfPreview.classList.remove('hidden');
+                                            }
+                                        } else {
+                                            textEl.innerText = 'Nessun file selezionato';
+                                            previewContainer.classList.add('hidden');
+                                        }
+                                    });
+                                }
                             },
                             customClass: {
                                 popup: 'rounded-xl',
@@ -352,7 +421,7 @@ document.addEventListener('livewire:init', () => {
                                 }
 
                                 if (fileInput.files[0].size > maxSize) {
-                                    Swal.showValidationMessage('Il file è troppo grande! Il limite massimo è 5MB.');
+                                    Swal.showValidationMessage('Il file è troppo grande! Il limite massimo è 8MB.');
                                     return false;
                                 }
 
@@ -365,7 +434,22 @@ document.addEventListener('livewire:init', () => {
                                 Swal.fire({
                                     title: 'Caricamento in corso...',
                                     allowOutsideClick: false,
-                                    didOpen: () => { Swal.showLoading(); }
+                                    background: theme.background,
+                                    color: theme.color,
+                                    didOpen: (popup) => {
+                                        popup.style.border = `2px solid ${theme.border}`;
+
+                                        Swal.showLoading();
+
+                                        const loader = popup.querySelector('.swal2-loader');
+                                        if (loader) {
+                                            loader.style.borderTopColor = '#d97706';
+                                            loader.style.borderBottomColor = '#d97706';
+                                        }
+                                    },
+                                    customClass: {
+                                        popup: 'rounded-xl',
+                                    }
                                 });
 
                                 const formData = new FormData();
@@ -374,7 +458,7 @@ document.addEventListener('livewire:init', () => {
 
                                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-                                fetch('/bookings/upload-receipt', {
+                                fetch('/prenotazione/carica-contabile', {
                                     method: 'POST',
                                     headers: {
                                         'X-CSRF-TOKEN': csrfToken
@@ -387,11 +471,35 @@ document.addEventListener('livewire:init', () => {
                                             Livewire.dispatch('processPenaltyBankTransfer', { bookingId: bookingId });
                                             Swal.close();
                                         } else {
-                                            Swal.fire('Errore', data.message || 'Errore durante il caricamento del file.', 'error');
+                                            Swal.fire({
+                                                title: 'Errore',
+                                                text: 'Errore durante il caricamento del file.',
+                                                icon: 'error',
+                                                background: theme.background,
+                                                color: theme.color,
+                                                confirmButtonColor: '#d97706',
+                                                didOpen: (popup) => { popup.style.border = `2px solid ${theme.border}`; },
+                                                customClass: {
+                                                    popup: 'rounded-xl',
+                                                    confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
+                                                }
+                                            });
                                         }
                                     })
                                     .catch(() => {
-                                        Swal.fire('Errore', 'Impossibile connettersi al server per l\'upload.', 'error');
+                                        Swal.fire({
+                                            title: 'Errore',
+                                            text: errr || 'Impossibile connettersi al server per l\'upload.',
+                                            icon: 'error',
+                                            background: theme.background,
+                                            color: theme.color,
+                                            confirmButtonColor: '#d97706',
+                                            didOpen: (popup) => { popup.style.border = `2px solid ${theme.border}`; },
+                                            customClass: {
+                                                popup: 'rounded-xl',
+                                                confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
+                                            }
+                                        });
                                     });
                             }
                         });

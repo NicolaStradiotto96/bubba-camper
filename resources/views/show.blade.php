@@ -451,7 +451,7 @@
                         </div>
                     </div>
 
-                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 mt-2">
+                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1">
 
                         {{-- Deposit --}}
                         <div class="py-3 border-b border-gray-100 dark:border-gray-700">
@@ -465,11 +465,6 @@
                                         <div class="py-2">{{ $item['label'] }} <span
                                                 class="text-white ml-1 font-bold">{{ $item['value'] }}</span></div>
                                     @endforeach
-                                @else
-                                    <div class="py-2">Modalità di consegna <span
-                                            class="text-white ml-1 font-bold">Contanti - Carta</span></div>
-                                    <div class="py-2">Importo <span class="text-white ml-1 font-bold">500€</span>
-                                    </div>
                                 @endif
                             </div>
                         </div>

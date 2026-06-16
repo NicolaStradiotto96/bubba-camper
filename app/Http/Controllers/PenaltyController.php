@@ -30,4 +30,24 @@ class PenaltyController extends Controller
 
         return response()->json(['success' => false, 'message' => 'File non ricevuto.']);
     }
+
+    public function success(Booking $booking)
+    {
+        if ($booking->user_id !== auth()->id()) {
+            abort(403, 'Azione non autorizzata.');
+        }
+
+        return redirect()->route('dashboard')
+            ->with('success', "Penale corrisposta con successo. La prenotazione #{$booking->id} è stata annullata ufficialmente.");
+    }
+
+    public function cancel(Booking $booking)
+    {
+        if ($booking->user_id !== auth()->id()) {
+            abort(403, 'Azione non autorizzata.');
+        }
+
+        return redirect()->route('dashboard')
+            ->with('cancelled', "Il pagamento della penale per la prenotazione #{$booking->id} è stato annullato. La pratica rimane in sospeso.");
+    }
 }

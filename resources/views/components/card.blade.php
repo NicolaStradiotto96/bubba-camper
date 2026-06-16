@@ -8,7 +8,7 @@
 
         @auth
             @if (auth()->user()->is_admin)
-                <a href="{{ route('campers.edit', $camper) }}" wire:navigate
+                <a href="{{ route('camper.edit', $camper) }}" wire:navigate
                     class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-md font-black text-xs uppercase tracking-wider shadow-lg transition-colors flex items-center gap-1">
                     <i class="fa-solid fa-pen-to-square"></i> Modifica
                 </a>
@@ -16,7 +16,7 @@
         @endauth
 
         <div
-            class="absolute top-4 right-4 z-10 px-3 py-1.5 bg-amber-600 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-lg">
+            class="absolute top-4 right-4 z-10 px-3 py-1.5 bg-amber-600 text-white rounded-xl font-black text-xs tracking-wider shadow-lg">
             {{ $camper->getPriceForDate() }}€ / gg
         </div>
     </div>

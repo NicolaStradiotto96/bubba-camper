@@ -76,10 +76,12 @@
     <div x-data="{ message: '' }" @notify.window="message = $event.detail.message;">
 
         <div x-show="message" x-transition
-            class="mx-4 sm:mx-0 mb-6 p-4 rounded-r-xl border border-l-4 border-green-500 bg-white text-green-500">
+            class="mx-4 sm:mx-0 mb-6 p-4 rounded-r-xl border border-l-4 bg-white dark:bg-gray-800 border-green-500 text-green-500">
             <div class="flex items-center justify-between font-medium">
                 <span x-text="message"></span>
-                <button @click="message = ''" class="p-1"><i class="fa-solid fa-xmark"></i></button>
+                <button @click="message = ''"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none"><i
+                        class="fa-solid fa-xmark text-xl"></i></button>
             </div>
         </div>
 
@@ -196,6 +198,11 @@
                                     class="px-3 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
                                     In attesa
                                 </span>
+                            @elseif ($booking->documents_status === 'not_required')
+                                <span
+                                    class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                    Annullati
+                                </span>
                             @else
                                 <span
                                     class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
@@ -210,6 +217,11 @@
                                 <span
                                     class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
                                     Confermata
+                                </span>
+                            @elseif ($booking->status === 'invoiced')
+                                <span
+                                    class="px-3 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                    Fatturata
                                 </span>
                             @elseif ($booking->status === 'pending')
                                 <span
@@ -289,7 +301,7 @@
                                         @else
                                             <span class="text-gray-400">0,00€</span>
                                         @endif
-                                    @elseif ($booking->status === 'confirmed')
+                                    @elseif ($booking->payment_status === 'fully_paid')
                                         <span class="text-green-600">
                                             {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                                         </span>
@@ -367,6 +379,14 @@
                                         onclick="confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
                                         class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm">
                                         Completa
+                                    </button>
+                                @endif
+
+                                {{-- Invoice --}}
+                                @if ($booking->status === 'confirmed' && $booking->payment_status === 'fully_paid')
+                                    <button type="button" onclick="confirmInvoice('{{ $booking->id }}')"
+                                        class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                                        Fattura
                                     </button>
                                 @endif
 
@@ -501,6 +521,11 @@
                                 class="px-3 py-1 rounded-full border border-amber-500 bg-white dark:bg-gray-900 text-amber-500 animate-pulse">
                                 In attesa
                             </span>
+                        @elseif ($booking->documents_status === 'not_required')
+                            <span
+                                class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                Annullati
+                            </span>
                         @else
                             <span
                                 class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
@@ -517,6 +542,11 @@
                             <span
                                 class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
                                 Confermata
+                            </span>
+                        @elseif ($booking->status === 'invoiced')
+                            <span
+                                class="px-2 py-1 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                Fatturata
                             </span>
                         @elseif ($booking->status === 'pending')
                             <span
@@ -601,7 +631,7 @@
                             @else
                                 <span class="text-gray-400">0,00€</span>
                             @endif
-                        @elseif ($booking->status === 'confirmed')
+                        @elseif ($booking->payment_status === 'fully_paid')
                             <span class="text-green-600">
                                 {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                             </span>
@@ -671,6 +701,14 @@
                             onclick="confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
                             class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm">
                             Completa
+                        </button>
+                    @endif
+
+                    {{-- Invoice --}}
+                    @if ($booking->status === 'confirmed' && $booking->payment_status === 'fully_paid')
+                        <button type="button" onclick="confirmInvoice('{{ $booking->id }}')"
+                            class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                            Fattura
                         </button>
                     @endif
 
@@ -879,6 +917,11 @@
                                                     In
                                                     attesa</p>
                                             </template>
+                                            <template x-if="b.documents_status === 'not_required'">
+                                                <p
+                                                    class="px-3 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                                    Annullati</p>
+                                            </template>
                                         </div>
                                     </div>
 
@@ -892,6 +935,12 @@
                                                 <p
                                                     class="px-3 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
                                                     Confermata
+                                                </p>
+                                            </template>
+                                            <template x-if="b.status === 'invoiced'">
+                                                <p
+                                                    class="px-3 py-0.5 rounded-full border border-green-500 bg-white dark:bg-gray-900 text-green-500">
+                                                    Fatturata
                                                 </p>
                                             </template>
                                             <template x-if="b.status === 'pending'">

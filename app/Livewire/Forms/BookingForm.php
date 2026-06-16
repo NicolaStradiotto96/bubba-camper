@@ -17,6 +17,7 @@ class BookingForm extends Component
     public $total_price = 0;
     public $days_count = 0;
     public $terms_accepted = false;
+    public $privacy_accepted = false;
 
     public function mount(Camper $camper)
     {
@@ -26,7 +27,7 @@ class BookingForm extends Component
     public function updated($propertyName, $value)
     {
         if ($propertyName === 'date_range') {
-            $this->resetErrorBag(['date_range', 'days_count']);
+            $this->resetErrorBag(['date_range', 'days_count', 'terms_accepted', 'privacy_accepted']);
 
             if (empty($value)) {
                 $this->total_price = 0;
@@ -40,7 +41,7 @@ class BookingForm extends Component
             if ($this->start_date && $this->end_date) {
                 $this->calculateBooking();
 
-                $this->resetErrorBag(['date_range', 'days_count']);
+                $this->resetErrorBag(['date_range', 'days_count', 'terms_accepted', 'privacy_accepted']);
 
                 $this->validateOnly('days_count', [
                     'days_count' => 'integer|min:2'
@@ -152,12 +153,14 @@ class BookingForm extends Component
             'days_count' => 'required|integer|min:2',
             'total_price' => 'required|numeric|min:1',
             'terms_accepted' => 'required|accepted',
+            'privacy_accepted' => 'required|accepted',
         ], [
             'days_count.min' => 'Il noleggio minimo è di 2 giorni.',
             'total_price.min' => 'Errore nel calcolo del prezzo.',
             'start_date.after_or_equal' => 'La data di inizio non può essere nel passato.',
             'end_date.after' => 'La data di fine deve essere successiva a quella di inizio.',
             'terms_accepted.accepted' => 'È obbligatorio accettare il contratto di noleggio per procedere.',
+            'privacy_accepted.accepted' => 'È obbligatorio accettare l\'informativa sulla privacy per procedere.',
         ]);
 
         $alreadyBooked = Booking::where('camper_id', $this->camper->id)
@@ -193,8 +196,9 @@ class BookingForm extends Component
         $booking->start_date = $this->start_date;
         $booking->end_date = $this->end_date;
         $booking->terms_accepted = true;
-        $booking->terms_accepted_at = now();
-        $booking->terms_accepted_ip = request()->ip();
+        $booking->privacy_accepted = true;
+        $booking->terms_and_privacy_accepted_at = now();
+        $booking->terms_and_privacy_accepted_ip = request()->ip();
         $booking->contract_version = config('contracts.active_version');
         $this->calculateBooking();
         $booking->total_price = $this->total_price;
@@ -205,7 +209,7 @@ class BookingForm extends Component
 
         $this->dispatch('clear-calendar');
 
-        $this->reset(['date_range', 'start_date', 'end_date', 'total_price', 'days_count']);
+        $this->reset(['date_range', 'start_date', 'end_date', 'total_price', 'days_count', 'terms_accepted', 'privacy_accepted']);
 
         return redirect()->route('checkout', $booking);
     }

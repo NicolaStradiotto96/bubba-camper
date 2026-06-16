@@ -39,8 +39,8 @@ class DatabaseSeeder extends Seeder
             'description' => 'Il 6 posti perfetto: mansardato, doppio matrimoniale e garage di grande dimensioni.',
             'prices' => [
                 'low' => 100,
-                'medium' => 100,
-                'high' => 100,
+                'mid' => 120,
+                'high' => 140,
             ],
             'image_path' => 'campers/1.webp',
             'images' => [

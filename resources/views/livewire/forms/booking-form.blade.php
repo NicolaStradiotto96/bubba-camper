@@ -8,9 +8,6 @@
         {{-- Calendar --}}
         <div wire:ignore wire:key="calendar-{{ count($this->bookedDates) }}">
 
-            <label class="block text-sm font-black text-gray-700 dark:text-gray-300 mb-2 uppercase text-center">Seleziona
-                le date</label>
-
             <div class="relative" x-data="{ booked: @js($this->bookedDates) }">
                 <input type="text" id="date_range" name="date_range" autocomplete="off" x-init="if ($el._flatpickr) { $el._flatpickr.destroy(); }
                 
@@ -29,6 +26,9 @@
                         $wire.$refresh();
                     },
                     onChange: function(selectedDates, dateStr) {
+                        $wire.set('terms_accepted', false);
+                        $wire.set('privacy_accepted', false);
+                
                         if (selectedDates.length === 1) {
                             $wire.set('days_count', 0);
                             $wire.set('total_price', 0);
@@ -57,20 +57,20 @@
                         $el._flatpickr.clear();
                     }
                 });"
-                    class="w-full pr-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-xl focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 text-gray-900 dark:text-white flatpickr-animation text-center"
+                    class="w-full p-2 mt-3 border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-xl focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 text-gray-900 dark:text-white flatpickr-animation text-center"
                     placeholder="Scegli quando partire...">
                 <p class="mt-1 text-xs text-gray-400 italic text-center">Minimo 2 giorni di noleggio</p>
             </div>
 
         </div>
 
-        <div class="min-h-[20px] text-center">
-            <x-input-error :messages="$errors->get('date_range')" />
-            <x-input-error :messages="$errors->get('days_count')" />
+        <div class="min-h-[16px] text-center">
+            <x-input-error :messages="$errors->get('date_range')" class="text-xs" />
+            <x-input-error :messages="$errors->get('days_count')" class="text-xs" />
         </div>
 
         {{-- Costs --}}
-        <div class="min-h-[460px] relative flex flex-col">
+        <div class="grid grid-cols-1 grid-rows-1 relative w-full max-w-[600px]">
 
             <div x-show="$wire.days_count >= 2" x-transition:enter="transition ease-out duration-400"
                 x-transition:enter-start="opacity-0 transform scale-95"
@@ -78,7 +78,7 @@
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 transform scale-100"
                 x-transition:leave-end="opacity-0 transform scale-95"
-                class="relative max-w-[600px] bg-white dark:bg-gray-900 p-5 rounded-xl border-2 border-amber-600 z-10 h-auto">
+                class="col-start-1 row-start-1 bg-white dark:bg-gray-900 p-5 rounded-xl border-2 border-amber-600 z-10 h-full flex flex-col justify-between">
 
                 <div>
                     <div class="space-y-2">
@@ -110,9 +110,7 @@
                     </div>
 
                     {{-- Contract --}}
-                    <div class="w-full text-left border-t border-gray-100 dark:border-gray-700 pt-3 mt-2">
-
-
+                    <div class="w-full text-left border-t border-gray-100 dark:border-gray-700 pt-2 mt-2">
                         <label
                             class="block text-xs font-black text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
                             <i class="fa-solid fa-file-contract text-amber-500 mr-0.5"></i> Contratto di Noleggio
@@ -126,38 +124,62 @@
                             </button>
 
                             <div
-                                class="w-full h-36 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-[11px] text-gray-600 dark:text-gray-400 font-sans space-y-3 shadow-inner">
+                                class="w-full h-32 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-[11px] text-gray-600 dark:text-gray-400 font-sans space-y-3 shadow-inner">
                                 <x-contract />
                             </div>
                         </div>
 
-                        <div class="my-2 flex items-center justify-center">
-                            <input id="terms_accepted" type="checkbox" wire:model.live="terms_accepted"
-                                class="w-4 h-4 rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-amber-600 shadow-sm focus:ring-amber-500 dark:focus:ring-amber-600 dark:focus:ring-offset-gray-800">
-
-                            <label for="terms_accepted"
-                                class="ml-2 text-[11px] font-semibold text-gray-700 dark:text-gray-300 leading-tight select-none">
-                                Accetto il contratto e approvo specificamente le clausole vessatorie (artt. 1341-1342
-                                c.c.).
-                            </label>
+                        {{-- Terms --}}
+                        <div class="flex items-start gap-3 mt-2">
+                            <div class="flex items-center h-5 mt-1.5">
+                                <input id="terms_accepted" wire:model="terms_accepted" type="checkbox"
+                                    class="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500 dark:focus:ring-amber-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer">
+                            </div>
+                            <div class="text-xs">
+                                <label for="terms_accepted"
+                                    class="font-bold text-gray-700 dark:text-gray-300 select-none cursor-pointer">
+                                    Accetto il <button type="button" @click="showContract = true"
+                                        class="text-amber-500 hover:underline font-bold focus:outline-none">Contratto di
+                                        Noleggio</button> e i termini di cancellazione.
+                                </label>
+                                <p class="text-[10px] text-gray-500 dark:text-gray-400">Dichiaro di approvare il
+                                    pagamento dell'acconto del 30% e il depósito della cauzione di 500€ al ritiro.</p>
+                                <div class="min-h-[16px]">
+                                    <x-input-error :messages="$errors->get('terms_accepted')" class="text-xs" />
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="min-h-[20px] text-center">
-                            <x-input-error :messages="$errors->get('terms_accepted')" class="text-xs" />
+                        {{-- Privacy --}}
+                        <div class="flex items-start gap-3 mt-1">
+                            <div class="flex items-center h-5 mt-1.5">
+                                <input id="privacy_accepted" wire:model="privacy_accepted" type="checkbox"
+                                    class="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500 dark:focus:ring-amber-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer">
+                            </div>
+                            <div class="text-xs">
+                                <label for="privacy_accepted"
+                                    class="font-bold text-gray-700 dark:text-gray-300 select-none cursor-pointer">
+                                    Ho letto e accetto l'<a href="{{ route('faq') }}#privacy" target="_blank"
+                                        class="text-amber-500 hover:underline">Informativa sulla Privacy</a>.
+                                </label>
+                                <p class="text-[10px] text-gray-500 dark:text-gray-400">Consento al trattamento dei dati
+                                    per la gestione della prenotazione e dei documenti di guida.</p>
+                                <div class="min-h-[16px]">
+                                    <x-input-error :messages="$errors->get('privacy_accepted')" class="text-xs" />
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <x-primary-button wire:click="saveBooking"
-                        class="w-full mt-3 flex justify-center items-center py-3">
-                        <span wire:loading.remove wire:target="saveBooking">Vai al pagamento</span>
-                        <span wire:loading wire:target="saveBooking" class="flex items-center">Caricamento...</span>
-                    </x-primary-button>
                 </div>
 
+                <x-primary-button wire:click="saveBooking" class="w-full mt-3 flex justify-center items-center">
+                    <span wire:loading.remove wire:target="saveBooking">Vai al pagamento</span>
+                    <span wire:loading wire:target="saveBooking" class="flex items-center">Caricamento...</span>
+                </x-primary-button>
             </div>
 
-            <div
-                class="absolute inset-0 p-5 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl flex flex-col items-center justify-center z-0 h-auto">
+            <div x-show="$wire.days_count < 2"
+                class="col-start-1 row-start-1 p-5 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl flex flex-col items-center justify-center z-0 min-h-[488px]">
                 <p class="text-sm text-gray-400 text-center italic">
                     Seleziona un intervallo di date per vedere il preventivo.
                 </p>

@@ -8,7 +8,7 @@
         <form wire:submit.prevent="saveCamper" class="space-y-8">
 
             {{-- GENERAL INFORMATIONS --}}
-            <section class="p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <section class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
                 <h3
                     class="text-base sm:text-lg font-bold text-amber-500 uppercase tracking-widest mb-4 flex justify-center items-center gap-2">
                     <i class="fa-solid fa-info-circle"></i> Informazioni Generali
@@ -17,8 +17,7 @@
                     <div class="grid grid-cols-1 justify-center items-center">
                         <div>
                             <x-input-label for="name" value="Nome Camper" />
-                            <x-text-input wire:model="name" id="name" class="block mt-1 w-full" type="text"
-                                placeholder="es: McLouis Glamys 226" />
+                            <x-text-input wire:model="name" id="name" class="block mt-1 w-full" type="text" />
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
                     </div>
@@ -68,14 +67,15 @@
 
             {{-- MAIN INFORMATIONS --}}
             <section x-data="{ open: false }"
-                class="p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
 
                 <div @click="open = !open" class="flex justify-between items-center cursor-pointer">
                     <h3
                         class="font-bold text-amber-500 uppercase tracking-widest flex justify-center items-center gap-2">
                         <i class="fa-solid fa-van-shuttle"></i>Caratteristiche Principali
                     </h3>
-                    <button type="button" class="text-gray-500 hover:text-amber-500 transition-colors">
+                    <button type="button"
+                        class="text-gray-500 hover:text-amber-500 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500">
                         <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                     </button>
                 </div>
@@ -94,24 +94,14 @@
                                     <div class="flex gap-2">
                                         <x-text-input
                                             wire:model="camperAttributes.main.{{ $subCategory }}.{{ $index }}.label"
-                                            placeholder="Etichetta" class="w-1/2" />
+                                            placeholder="Etichetta"
+                                            class="w-1/2 bg-transparent dark:bg-transparent cursor-not-allowed font-black"
+                                            disabled />
                                         <x-text-input
                                             wire:model="camperAttributes.main.{{ $subCategory }}.{{ $index }}.value"
                                             placeholder="Valore" class="w-1/2" />
-                                        <button type="button"
-                                            wire:click="removeRow('main', '{{ $subCategory }}', {{ $index }})"
-                                            class="text-red-500 hover:text-red-700 p-2">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
                                     </div>
                                 @endforeach
-                                <div class="flex justify-center items-center">
-                                    <x-secondary-button type="button"
-                                        wire:click="addRow('main', '{{ $subCategory }}')"
-                                        class="text-amber-500 text-sm font-bold uppercase">
-                                        + Aggiungi riga a {{ $subCategory }}
-                                    </x-secondary-button>
-                                </div>
                             </div>
                         @endforeach
                     </div>
@@ -120,14 +110,15 @@
 
             {{-- SPECS --}}
             <section x-data="{ open: false }"
-                class="p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
 
                 <div @click="open = !open" class="flex justify-between items-center cursor-pointer">
                     <h3
                         class="font-bold text-amber-500 uppercase tracking-widest flex justify-center items-center gap-2">
                         <i class="fa-solid fa-gears"></i>Caratteristiche Tecniche
                     </h3>
-                    <button type="button" class="text-gray-500 hover:text-amber-500 transition-colors">
+                    <button type="button"
+                        class="text-gray-500 hover:text-amber-500 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500">
                         <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                     </button>
                 </div>
@@ -178,14 +169,15 @@
 
             {{-- EQUIPMENT --}}
             <section x-data="{ open: false }"
-                class="p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
 
                 <div @click="open = !open" class="flex justify-between items-center cursor-pointer">
                     <h3
                         class="font-bold text-amber-500 uppercase tracking-widest flex justify-center items-center gap-2">
                         <i class="fa-solid fa-toolbox"></i>Equipaggiamento
                     </h3>
-                    <button type="button" class="text-gray-500 hover:text-amber-500 transition-colors">
+                    <button type="button"
+                        class="text-gray-500 hover:text-amber-500 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500">
                         <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                     </button>
                 </div>
@@ -236,14 +228,15 @@
 
             {{-- POLICIES --}}
             <section x-data="{ open: false }"
-                class="p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
 
                 <div @click="open = !open" class="flex justify-between items-center cursor-pointer">
                     <h3
                         class="font-bold text-amber-500 uppercase tracking-widest flex justify-center items-center gap-2">
                         <i class="fa-solid fa-hand-holding-dollar"></i>Cauzione
                     </h3>
-                    <button type="button" class="text-gray-500 hover:text-amber-500 transition-colors">
+                    <button type="button"
+                        class="text-gray-500 hover:text-amber-500 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500">
                         <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                     </button>
                 </div>
@@ -262,24 +255,14 @@
                                     <div class="flex gap-2">
                                         <x-text-input
                                             wire:model="camperAttributes.policies.{{ $subCategory }}.{{ $index }}.label"
-                                            placeholder="Etichetta" class="w-1/2" />
+                                            placeholder="Etichetta"
+                                            class="w-1/2 bg-transparent dark:bg-transparent cursor-not-allowed font-black"
+                                            disabled />
                                         <x-text-input
                                             wire:model="camperAttributes.policies.{{ $subCategory }}.{{ $index }}.value"
                                             placeholder="Valore" class="w-1/2" />
-                                        <button type="button"
-                                            wire:click="removeRow('policies', '{{ $subCategory }}', {{ $index }})"
-                                            class="text-red-500 hover:text-red-700 p-2">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
                                     </div>
                                 @endforeach
-                                <div class="flex justify-center items-center">
-                                    <x-secondary-button type="button"
-                                        wire:click="addRow('policies', '{{ $subCategory }}')"
-                                        class="text-amber-500 text-sm font-bold uppercase">
-                                        + Aggiungi riga a {{ $subCategory }}
-                                    </x-secondary-button>
-                                </div>
                             </div>
                         @endforeach
                     </div>
@@ -287,7 +270,7 @@
             </section>
 
             {{-- IMAGES --}}
-            <section class="p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <section class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
                 <h3 class="text-amber-500 font-bold uppercase mb-6 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-images"></i> Contenuti Multimediali
                 </h3>
@@ -329,8 +312,7 @@
                                     <img src="{{ $main_image->temporaryUrl() }}" class="h-24 w-40 object-cover">
                                 </div>
                             @elseif ($isEditMode && $image_path)
-                                <span
-                                    class="text-xs uppercase font-black tracking-wider text-gray-400 mb-1">Immagine
+                                <span class="text-xs uppercase font-black tracking-wider text-gray-400 mb-1">Immagine
                                     attuale</span>
                                 <div
                                     class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
@@ -377,7 +359,8 @@
                         <div class="mt-4 min-h-[96px] flex flex-col items-center justify-center w-full">
 
                             @if ($images && empty($errors->get('images.*')))
-                                <span class="text-xs uppercase font-black tracking-wider text-amber-500 mb-1">Nuove immagini</span>
+                                <span class="text-xs uppercase font-black tracking-wider text-amber-500 mb-1">Nuove
+                                    immagini</span>
                                 <div
                                     class="flex flex-wrap justify-center gap-3 max-h-24 overflow-y-auto p-1 w-full mb-3">
                                     @foreach ($images as $index => $img)
@@ -394,7 +377,8 @@
                             @endif
 
                             @if ($isEditMode && !empty($old_images))
-                                <span class="text-xs uppercase font-black tracking-wider text-gray-400 mb-1">Galleria attuale</span>
+                                <span class="text-xs uppercase font-black tracking-wider text-gray-400 mb-1">Galleria
+                                    attuale</span>
                                 <div class="flex flex-wrap justify-center gap-3 max-h-24 overflow-y-auto p-1 w-full">
                                     @foreach ($old_images as $index => $old_img)
                                         <div
@@ -426,7 +410,7 @@
                 </div>
             </section>
 
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
 
                 <div class="flex items-center gap-3 w-full sm:w-auto justify-start">
                     @if ($isEditMode)
@@ -437,7 +421,10 @@
                     @endif
                 </div>
 
-                <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <div class="flex flex-col-reverse sm:flex-row items-center gap-3 w-full sm:w-auto justify-end">
+                    <x-secondary-button href="{{ route('dashboard') }}" wire:navigate class="w-full sm:w-auto justify-center">
+                        Annulla
+                    </x-secondary-button>
                     <x-primary-button wire:loading.attr="disabled" class="w-full sm:w-auto justify-center">
                         {{ $isEditMode ? 'Salva Modifiche' : 'Crea Camper' }}
                     </x-primary-button>

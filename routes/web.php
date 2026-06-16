@@ -7,6 +7,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PenaltyController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Livewire\Admin\BookingManager;
 use App\Livewire\Admin\CamperManager;
 use Illuminate\Support\Facades\Route;
 
@@ -28,15 +29,15 @@ Route::get('/prenota/{camper:slug}', [BookingController::class, 'show'])
     ->name('booking.show');
 
 // CHECKOUT
-Route::get('/checkout/{booking}', [CheckoutController::class, 'show'])
+Route::get('/prenotazione/{booking}', [CheckoutController::class, 'show'])
     ->middleware(['auth', 'verified', 'throttle:5,5'])
     ->name('checkout');
 
-Route::get('/checkout/success/{booking}', [CheckoutController::class, 'success'])
+Route::get('/prenotazione/{booking}/confermata', [CheckoutController::class, 'success'])
     ->middleware(['auth', 'verified'])
     ->name('checkout.success');
 
-Route::get('/checkout/cancel/{booking}', [CheckoutController::class, 'cancel'])
+Route::get('/prenotazione/{booking}/non-confermata', [CheckoutController::class, 'cancel'])
     ->middleware(['auth', 'verified'])
     ->name('checkout.cancel');
 
@@ -44,9 +45,17 @@ Route::get('/checkout/cancel/{booking}', [CheckoutController::class, 'cancel'])
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
 
 // PENALTY
-Route::post('/bookings/upload-receipt', [PenaltyController::class, 'uploadPenaltyReceipt'])
+Route::post('/prenotazione/carica-contabile', [PenaltyController::class, 'uploadPenaltyReceipt'])
     ->middleware(['auth', 'verified'])
     ->name('bookings.upload-receipt');
+
+Route::get('/prenotazione/{booking}/pagamento-penale-confermato', [PenaltyController::class, 'success'])
+    ->middleware(['auth', 'verified'])
+    ->name('penalty.success');
+
+Route::get('/prenotazione/{booking}/pagamento-penale-non-confermato', [PenaltyController::class, 'cancel'])
+    ->middleware(['auth', 'verified'])
+    ->name('penalty.cancel');
 
 // PRICES
 Route::get('/prezzi', [CamperController::class, "prices"])->name("prices");
@@ -60,14 +69,19 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 // CREATE CAMPER
-Route::get('/admin/campers/create', CamperManager::class)
+Route::get('/admin/camper/crea', CamperManager::class)
     ->middleware(['auth', 'admin'])
-    ->name('campers.create');
+    ->name('camper.create');
 
 // EDIT CAMPER
-Route::get('/admin/campers/{camper}/edit', CamperManager::class)
+Route::get('/admin/camper/{camper}/modifica', CamperManager::class)
     ->middleware(['auth', 'admin'])
-    ->name('campers.edit');
+    ->name('camper.edit');
+
+// CREATE BOOKING
+Route::get('/admin/prenotazione/crea', BookingManager::class)
+    ->middleware(['auth', 'admin'])
+    ->name('booking.create');
 
 // PROFILE
 Route::view('profilo', 'profile')

@@ -115,8 +115,8 @@ class BookingHistory extends Component
                 ],
                 'quantity' => 1,
             ]],
-            'success_url' => route('checkout.success', $booking) . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => route('checkout.cancel', $booking),
+            'success_url' => route('penalty.success', $booking) . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => route('penalty.cancel', $booking),
         ]);
 
         return redirect($session->url);
@@ -142,10 +142,9 @@ class BookingHistory extends Component
 
             session()->forget($sessionKey);
 
-            $this->dispatch('swal:success', [
-                'title' => 'Ricevuta Caricata!',
-                'text' => "La contabile è stata inoltrata. L'amministratore verificherà l'accredito del bonifico e confermerà l'avvenuto pagamento."
-            ]);
+            session()->flash('success', "La contabile è stata inoltrata con successo. L'amministratore verificherà l'accredito del bonifico.");
+
+            return $this->redirect(route('dashboard'), navigate: true);
         }
     }
 

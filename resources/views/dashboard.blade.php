@@ -9,13 +9,23 @@
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             @if (auth()->user()->is_admin)
                 {{-- ADMIN DASHBOARD --}}
-                <div class="mb-6 flex justify-center px-4 sm:px-0">
-                    <x-primary-anchor href="{{ route('campers.create') }}" wire:navigate
-                        class="inline-flex items-center gap-2 !p-5 text-xs sm:text-base">
-                        <i class="fa-solid fa-van-shuttle transition-transform group-hover:scale-110"></i>
-                        <i class="fa-solid fa-plus text-[10px] -ml-1"></i>
-                        Aggiungi Nuovo Camper
-                    </x-primary-anchor>
+                <div class="mb-6 flex flex-col justify-center items-center gap-4 px-4 sm:px-0">
+
+                    <div>
+                        <x-primary-anchor href="{{ route('camper.create') }}" wire:navigate
+                            class="inline-flex items-center gap-2 !p-5 text-xs sm:text-base">
+                            <i class="fa-solid fa-van-shuttle transition-transform group-hover:scale-110"></i>
+                            Crea Nuovo Camper
+                        </x-primary-anchor>
+                    </div>
+
+                    <div>
+                        <x-primary-anchor href="{{ route('booking.create') }}" wire:navigate
+                            class="inline-flex items-center gap-2 !p-5 text-xs sm:text-base">
+                            <i class="fa-solid fa-calendar-plus transition-transform group-hover:scale-110"></i>
+                            Crea Nuova Prenotazione
+                        </x-primary-anchor>
+                    </div>
                 </div>
 
                 <livewire:admin.booking-index />

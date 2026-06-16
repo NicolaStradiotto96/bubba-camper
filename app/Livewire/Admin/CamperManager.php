@@ -60,6 +60,34 @@ class CamperManager extends Component
         return ['label' => $label, 'value' => $value];
     }
 
+    private function orderEquipment()
+    {
+        $customOrder = ['Alla guida', 'Vita a bordo', 'Cucina / Dinette', 'Zona bagno', 'Esterno'];
+
+        $orderedEquipment = [];
+        foreach ($customOrder as $key) {
+            if (isset($this->camperAttributes['equipment'][$key])) {
+                $orderedEquipment[$key] = $this->camperAttributes['equipment'][$key];
+            }
+        }
+
+        $this->camperAttributes['equipment'] = $orderedEquipment;
+    }
+
+    private function orderSpecs()
+    {
+        $customOrder = ['Caratteristiche tecniche', 'Autonomia'];
+
+        $orderedSpecs = [];
+        foreach ($customOrder as $key) {
+            if (isset($this->camperAttributes['specs'][$key])) {
+                $orderedSpecs[$key] = $this->camperAttributes['specs'][$key];
+            }
+        }
+
+        $this->camperAttributes['specs'] = $orderedSpecs;
+    }
+
     public function mount(?Camper $camper = null)
     {
         if ($camper && $camper->exists) {
@@ -76,6 +104,9 @@ class CamperManager extends Component
 
             if (!empty($camper->attributes)) {
                 $this->camperAttributes = $camper->attributes;
+
+                $this->orderEquipment();
+                $this->orderSpecs();
                 return;
             }
         }
@@ -175,6 +206,9 @@ class CamperManager extends Component
             $this->createItem('Modalità di consegna', 'Contanti - Carta'),
             $this->createItem('Importo', '500€'),
         ];
+
+        $this->orderEquipment();
+        $this->orderSpecs();
     }
 
     public function addRow($category, $subCategory)

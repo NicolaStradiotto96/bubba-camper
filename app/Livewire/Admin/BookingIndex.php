@@ -50,6 +50,7 @@ class BookingIndex extends Component
         $penaltyPercent = $refundInfo['penalty_percent'] ?? 0;
 
         $booking->status = 'cancelled';
+        $booking->documents_status = 'not_required';
 
         if ($booking->payment_status === 'fully_paid' && $penaltyPercent >= 100) {
 
@@ -107,13 +108,30 @@ class BookingIndex extends Component
             $booking->payment_status = 'penalty_paid';
             $booking->save();
 
-            session()->flash('success', "Penale residua registrata con successo per la prenotazione #{$booking->id}. Pratica completata.");
+            session()->flash('success', "Penale residua registrata con successo per la prenotazione #{$booking->id}.");
         } else {
             $booking->payment_status = 'fully_paid';
             $booking->save();
 
-            session()->flash('success', "Saldo registrato per #{$booking->id}. Pratica completata.");
+            session()->flash('success', "Saldo registrato per #{$booking->id}.");
         }
+    }
+
+    #[On('markAsInvoiced')]
+    public function markAsInvoiced($bookingId)
+    {
+        if (!auth()->user()->is_admin) {
+            abort(403);
+        }
+
+        $booking = Booking::findOrFail($bookingId);
+
+        $booking->status = 'invoiced';
+        $booking->save();
+
+        session()->flash('success', "La prenotazione #{$bookingId} è stata contrassegnata come Fatturata.");
+
+        return $this->redirect(route('dashboard'), navigate: true);
     }
 
     public function getStatsProperty()

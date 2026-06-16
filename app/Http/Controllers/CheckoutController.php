@@ -59,7 +59,7 @@ class CheckoutController extends Controller
         return redirect($session->url);
     }
 
-    public function success(Booking $booking, Request $request)
+    public function success(Booking $booking)
     {
         if ($booking->user_id !== auth()->id()) {
             abort(403, 'Azione non autorizzata.');

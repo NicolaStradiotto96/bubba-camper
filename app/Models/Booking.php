@@ -22,10 +22,10 @@ class Booking extends Model
         'customer_phone',
         'camper_id',
         'status',
-        'payment_status',
         'terms_accepted',
-        'terms_accepted_at',
-        'terms_accepted_ip',
+        'privacy_accepted',
+        'terms_and_privacy_accepted_at',
+        'terms_and_privacy_accepted_ip',
         'contract_version',
         'driver_license_path',
         'id_card_path',
@@ -41,7 +41,8 @@ class Booking extends Model
         'cancellation_requested_at' => 'datetime',
         'cancellation_confirmed_at' => 'datetime',
         'terms_accepted' => 'boolean',
-        'terms_accepted_at' => 'datetime',
+        'privacy_accepted' => 'boolean',
+        'terms_and_privacy_accepted_at' => 'datetime',
     ];
 
     public function getRouteKeyName()

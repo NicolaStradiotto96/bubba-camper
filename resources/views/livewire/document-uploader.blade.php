@@ -21,8 +21,26 @@
                         <i class="fa-solid fa-cloud-arrow-up"></i> Sfoglia...
                     </button>
 
-                    <span wire:ignore id="text-license" class="text-xs text-gray-400 font-sans italic mt-1">Nessun
+                    <span wire:ignore id="text-license" class="text-xs text-gray-400 font-sans italic mt-2">Nessun
                         file selezionato</span>
+                </div>
+
+                {{-- Preview --}}
+                <div class="mt-3 min-h-[96px] flex flex-col items-center justify-center">
+                    @if ($driver_license && empty($errors->get('driver_license')))
+                        <div
+                            class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                            @if (in_array($driver_license->getClientOriginalExtension(), ['pdf']))
+                                <div
+                                    class="flex flex-col items-center justify-center h-20 w-36 text-red-500 rounded-lg">
+                                    <i class="fa-solid fa-file-pdf text-2xl mb-1"></i>
+                                </div>
+                            @else
+                                <img src="{{ $driver_license->temporaryUrl() }}"
+                                    class="h-20 w-36 object-cover rounded-lg">
+                            @endif
+                        </div>
+                    @endif
                 </div>
 
                 <div class="min-h-[40px] text-center mt-1">
@@ -45,8 +63,25 @@
                         <i class="fa-solid fa-cloud-arrow-up"></i> Sfoglia...
                     </button>
 
-                    <span wire:ignore id="text-idcard" class="text-xs text-gray-400 font-sans italic mt-1">Nessun
+                    <span wire:ignore id="text-idcard" class="text-xs text-gray-400 font-sans italic mt-2">Nessun
                         file selezionato</span>
+                </div>
+
+                {{-- Preview --}}
+                <div class="mt-3 min-h-[96px] flex flex-col items-center justify-center">
+                    @if ($id_card && empty($errors->get('id_card')))
+                        <div
+                            class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                            @if (in_array($id_card->getClientOriginalExtension(), ['pdf']))
+                                <div
+                                    class="flex flex-col items-center justify-center h-20 w-36 text-red-500 rounded-lg">
+                                    <i class="fa-solid fa-file-pdf text-2xl mb-1"></i>
+                                </div>
+                            @else
+                                <img src="{{ $id_card->temporaryUrl() }}" class="h-20 w-36 object-cover rounded-lg">
+                            @endif
+                        </div>
+                    @endif
                 </div>
 
                 <div class="min-h-[40px] text-center mt-1">

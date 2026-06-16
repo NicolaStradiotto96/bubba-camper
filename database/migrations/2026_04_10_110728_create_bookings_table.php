@@ -27,8 +27,9 @@ return new class extends Migration
             $table->date("end_date");
 
             $table->boolean('terms_accepted')->default(false);
-            $table->timestamp('terms_accepted_at')->nullable();
-            $table->ipAddress('terms_accepted_ip')->nullable();
+            $table->boolean('privacy_accepted')->default(false);
+            $table->timestamp('terms_and_privacy_accepted_at')->nullable();
+            $table->ipAddress('terms_and_privacy_accepted_ip')->nullable();
             $table->string('contract_version');
 
             $table->string('driver_license_path')->nullable();

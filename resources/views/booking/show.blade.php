@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <div class="bg-gray-50 dark:bg-gray-900 flex items-center justify-center min-h-[calc(100vh-160px)]">
-        <div class="max-w-5xl mx-auto px-4 w-full py-8">
+        <div class="max-w-5xl mx-auto px-4 w-full">
 
             <div class="mb-4">
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-white uppercase text-center">
