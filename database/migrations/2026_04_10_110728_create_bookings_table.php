@@ -37,9 +37,14 @@ return new class extends Migration
             $table->string('documents_status')->default('pending')->index();
 
             $table->decimal("total_price", 10, 2);
+
             $table->decimal('down_payment', 10, 2);
+            $table->boolean('down_paid')->default(false);
+            $table->timestamp('down_paid_at')->nullable();
+
             $table->decimal('balance_payment', 10, 2);
-            $table->decimal('security_deposit', 10, 2)->default(500.00);
+            $table->boolean('balance_paid')->default(false);
+            $table->timestamp('balance_paid_at')->nullable();
 
             $table->string('status')->default('pending')->index();
             $table->string('payment_status')->default('unpaid')->index();

@@ -73,10 +73,57 @@ document.addEventListener('livewire:init', () => {
         });
     };
 
-    // Cancel Booking
+    // Refund
     window.confirmRefundAction = function (id, amount, penalty_percent, penalty_amount, hasStripe) {
         const theme = getSwalTheme();
+        const amountToRefund = parseFloat(amount);
 
+        const askRefundMethod = (applyPenalty, byAdmin) => {
+            if (amountToRefund > 0 && hasStripe) {
+                Swal.fire({
+                    title: 'METODO DI RIMBORSO',
+                    text: "Scegli come rimborsare il denaro al cliente:",
+                    icon: 'question',
+                    iconColor: '#ef4444',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'STRIPE',
+                    confirmButtonColor: '#ef4444',
+                    denyButtonText: 'MANUALE',
+                    denyButtonColor: '#ef4444',
+                    cancelButtonText: 'CHIUDI',
+                    background: theme.background,
+                    color: theme.color,
+                    didOpen: (popup) => {
+                        popup.style.border = `2px solid ${theme.border}`;
+                    },
+                    customClass: {
+                        popup: 'rounded-xl',
+                        confirmButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                        denyButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                        cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed || result.isDenied) {
+                        Livewire.dispatch('cancelBooking', {
+                            bookingId: id,
+                            applyPenalty: applyPenalty,
+                            byAdmin: byAdmin,
+                            useStripe: result.isConfirmed
+                        });
+                    }
+                });
+            } else {
+                Livewire.dispatch('cancelBooking', {
+                    bookingId: id,
+                    applyPenalty: applyPenalty,
+                    byAdmin: byAdmin,
+                    useStripe: false
+                });
+            }
+        };
+
+        // Cancel Booking
         Swal.fire({
             title: 'ANNULLA PRENOTAZIONE',
             html: `
@@ -98,8 +145,11 @@ document.addEventListener('livewire:init', () => {
             icon: 'warning',
             iconColor: '#ef4444',
             showCancelButton: true,
-            confirmButtonText: 'PROCEDI',
+            showDenyButton: true,
+            confirmButtonText: 'CON PENALE',
             confirmButtonColor: '#ef4444',
+            denyButtonText: 'SENZA PENALE',
+            denyButtonColor: '#ef4444',
             cancelButtonText: 'CHIUDI',
             background: theme.background,
             color: theme.color,
@@ -109,49 +159,18 @@ document.addEventListener('livewire:init', () => {
             customClass: {
                 popup: 'rounded-xl',
                 confirmButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                denyButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
                 cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
             }
-
-            // Refund
         }).then((result) => {
             if (result.isConfirmed) {
-                if (amount > 0 && hasStripe) {
-                    Swal.fire({
-                        title: 'METODO DI RIMBORSO',
-                        text: "Scegli come rimborsare il denaro al cliente:",
-                        icon: 'question',
-                        iconColor: '#ef4444',
-                        showDenyButton: true,
-                        showCancelButton: true,
-                        confirmButtonText: 'STRIPE',
-                        confirmButtonColor: '#ef4444',
-                        denyButtonText: 'MANUALE',
-                        denyButtonColor: '#ef4444',
-                        cancelButtonText: 'CHIUDI',
-                        background: theme.background,
-                        color: theme.color,
-                        didOpen: (popup) => {
-                            popup.style.border = `2px solid ${theme.border}`;
-                        },
-                        customClass: {
-                            popup: 'rounded-xl',
-                            confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2',
-                            denyButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2',
-                            cancelButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Livewire.dispatch('cancelBooking', { bookingId: id, useStripe: true });
-                        } else if (result.isDenied) {
-                            Livewire.dispatch('cancelBooking', { bookingId: id, useStripe: false });
-                        }
-                    });
-                } else {
-                    Livewire.dispatch('cancelBooking', { bookingId: id, useStripe: false });
-                }
+                askRefundMethod(true, false)
+            } else if (result.isDenied) {
+                askRefundMethod(false, true);
             }
         });
     };
+
     // Complete Booking
     window.confirmPayment = function (id, balance) {
         const theme = getSwalTheme();
@@ -211,7 +230,6 @@ document.addEventListener('livewire:init', () => {
             }
         });
     };
-
 
     // Request Booking Cancellation
     window.requestUserCancellation = function (bookingId, penaltyAmount) {

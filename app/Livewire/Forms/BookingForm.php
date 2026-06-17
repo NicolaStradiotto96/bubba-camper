@@ -70,7 +70,7 @@ class BookingForm extends Component
     public function getBookedDatesProperty()
     {
         $allDates = Booking::where('camper_id', $this->camper->id)
-            ->whereNotIn('status', ['cancelled', 'expired'])
+            ->whereNotIn('status', Booking::getExcludedStatuses())
             ->where(function ($query) {
                 $query->where('payment_status', 'paid')
                     ->orWhere('created_at', '>=', now()->subMinutes(15));
@@ -164,7 +164,7 @@ class BookingForm extends Component
         ]);
 
         $alreadyBooked = Booking::where('camper_id', $this->camper->id)
-            ->whereNotIn('status', ['cancelled', 'expired'])
+            ->whereNotIn('status', Booking::getExcludedStatuses())
             ->where(function ($q) {
                 $q->where('payment_status', 'paid')
                     ->orWhere('created_at', '>=', now()->subMinutes(15));
@@ -202,8 +202,12 @@ class BookingForm extends Component
         $booking->contract_version = config('contracts.active_version');
         $this->calculateBooking();
         $booking->total_price = $this->total_price;
-        $booking->status = 'pending';
+        $booking->down_paid = false;
+        $booking->down_paid_at = null;
+        $booking->balance_paid = false;
+        $booking->balance_paid_at = null;
         $booking->payment_status = 'unpaid';
+        $booking->status = 'pending';
 
         $booking->save();
 

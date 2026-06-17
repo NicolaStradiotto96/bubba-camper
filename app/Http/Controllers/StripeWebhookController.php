@@ -37,6 +37,8 @@ class StripeWebhookController extends Controller
                         if ($paymentType === 'penalty') {
 
                             $booking->payment_status = 'penalty_paid';
+                            $booking->balance_paid = true;
+                            $booking->balance_paid_at = now();
                             $booking->save();
 
                             Log::info("Stripe Webhook: Pagamento penale ricevuto", [
@@ -47,6 +49,8 @@ class StripeWebhookController extends Controller
                         } else {
                             if ($booking->payment_status !== 'paid') {
                                 $booking->payment_status = 'paid';
+                                $booking->down_paid = true;
+                                $booking->down_paid_at = now();
                                 $booking->save();
 
                                 Log::info("Stripe Webhook: Pagamento acconto (30%) ricevuto", [

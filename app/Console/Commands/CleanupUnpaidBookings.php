@@ -26,6 +26,7 @@ class CleanupUnpaidBookings extends Command
 
         foreach ($expiredBookings as $booking) {
             $booking->status = 'expired';
+            $booking->documents_status = 'not_required';
             $booking->save();
 
             try {

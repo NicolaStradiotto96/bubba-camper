@@ -31,13 +31,13 @@
                     </h3>
                     <ul class="mt-4 space-y-4 text-center">
                         <li><a href="{{ route('welcome') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Home</a>
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Home</a>
                         </li>
                         <li><a href="{{ route('index') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Noleggio</a>
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Noleggio</a>
                         </li>
                         <li><a href="{{ route('prices') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Prezzi</a>
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Prezzi</a>
                         </li>
                     </ul>
                 </div>
@@ -47,13 +47,13 @@
                     </h3>
                     <ul class="mt-4 space-y-4 text-center">
                         <li><a href="{{ route('contacts') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Contatti</a>
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Contatti</a>
                         </li>
                         <li><a href="{{ route('faq') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">FAQ</a>
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">FAQ</a>
                         </li>
                         <li><a href="#" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">Privacy
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Privacy
                                 Policy</a></li>
                     </ul>
                 </div>
@@ -70,13 +70,13 @@
                         </li>
                         <li>
                             <a href="https://wa.me/393347538083" target="_blank"
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <i class="fa-solid fa-phone text-amber-500"></i>
                                 +39 334 753 8083</a>
                         </li>
                         <li>
                             <a href="mailto:info@bubbacamper.com" target="_blank"
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <i class="fa-solid fa-envelope text-amber-500"></i>
                                 info@bubbacamper.com</a>
                         </li>

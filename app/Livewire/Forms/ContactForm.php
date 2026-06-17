@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Mail\ContactRequest;
+use App\Models\Booking;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
@@ -68,7 +69,7 @@ class ContactForm extends Component
     public function getBookedDatesProperty()
     {
         // BOOKED DATES
-        return \App\Models\Booking::where('status', '!=', 'cancelled')
+        return Booking::whereNotIn('status', Booking::getExcludedStatuses())
             ->get(['start_date', 'end_date'])
             ->flatMap(function ($booking) {
                 $dates = [];

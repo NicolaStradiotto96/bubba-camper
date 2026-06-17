@@ -63,6 +63,8 @@ class BookingManager extends Component
         $booking->end_date = $this->end_date;
         $booking->total_price = $this->total_price;
         $booking->down_payment = $this->down_payment;
+        $booking->down_paid = true;
+        $booking->down_paid_at = now();
         $booking->balance_payment = $this->balance_payment;
         $booking->status = 'confirmed';
         $booking->payment_status = 'paid';
@@ -83,7 +85,7 @@ class BookingManager extends Component
 
     public function getBookedDatesProperty()
     {
-        return \App\Models\Booking::where('status', '!=', 'cancelled')
+        return Booking::whereNotIn('status', Booking::getExcludedStatuses())
             ->get(['start_date', 'end_date'])
             ->flatMap(function ($booking) {
                 $dates = [];

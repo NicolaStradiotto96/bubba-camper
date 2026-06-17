@@ -63,6 +63,11 @@ class Booking extends Model
         });
     }
 
+    public static function getExcludedStatuses()
+    {
+        return ['cancelled', 'cancelled_by_admin', 'expired'];
+    }
+
     public function calculateExpectedRefund()
     {
         $today = now()->startOfDay();
@@ -79,20 +84,23 @@ class Booking extends Model
             $penaltyPercent = 0.1;
         }
 
-        $totalPenaltyAmount = $this->total_price * $penaltyPercent;
-
-        if (in_array($this->payment_status, ['fully_paid', 'refunded_stripe', 'refunded_manual'])) {
-            $totalAmountPaid = $this->total_price;
+        if ($this->status === 'cancelled_by_admin') {
+            $totalPenaltyAmount = 0;
         } else {
-            $totalAmountPaid = $this->down_payment ?? 0;
+            $totalPenaltyAmount = $this->total_price * $penaltyPercent;
+        }
+
+        $totalAmountPaid = 0;
+        if ($this->down_paid) {
+            $totalAmountPaid += $this->down_payment;
+        }
+        if ($this->balance_paid) {
+            $totalAmountPaid += $this->balance_payment;
         }
 
         $actualRefund = max(0, $totalAmountPaid - $totalPenaltyAmount);
 
-        $remainingPenalty = 0;
-        if ($totalPenaltyAmount > $totalAmountPaid) {
-            $remainingPenalty = $totalPenaltyAmount - $totalAmountPaid;
-        }
+        $remainingPenalty = max(0, $totalPenaltyAmount - $totalAmountPaid);
 
         return [
             'refund_amount' => $actualRefund,

@@ -194,6 +194,11 @@
                                         class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
                                         Cancellata
                                     </span>
+                                @elseif ($booking->status === 'cancelled_by_admin')
+                                    <span
+                                        class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                        Annullata
+                                    </span>
                                 @else
                                     <span
                                         class="px-3 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
@@ -217,14 +222,17 @@
                                     {{-- Deposit --}}
                                     <div class="flex justify-between w-36">
                                         <span class="text-gray-400">Acconto:</span>
-                                        @if ($booking->payment_status === 'unpaid' && ($booking->status === 'expired' || $booking->status === 'cancelled'))
+
+                                        @if ($booking->down_paid)
+                                            <span class="text-green-600">
+                                                {{ number_format($booking->down_payment, 2, ',', '.') }}€
+                                            </span>
+                                        @elseif (str_starts_with($booking->status, 'cancelled') || $booking->status === 'expired')
                                             <span class="text-gray-400">0,00€</span>
-                                        @elseif ($booking->payment_status === 'unpaid')
-                                            <span class="text-amber-500 animate-pulse">
-                                                {{ number_format($booking->down_payment, 2, ',', '.') }}€</span>
                                         @else
-                                            <span
-                                                class="text-green-600">{{ number_format($booking->down_payment, 2, ',', '.') }}€</span>
+                                            <span class="text-amber-500 animate-pulse">
+                                                {{ number_format($booking->down_payment, 2, ',', '.') }}€
+                                            </span>
                                         @endif
                                     </div>
 
@@ -232,30 +240,17 @@
                                     <div class="flex justify-between w-36 pt-1">
                                         <span class="text-gray-400">Saldo:</span>
 
-                                        @if ($booking->status === 'cancelled')
-                                            @if (
-                                                $booking->calculateExpectedRefund()['refund_amount'] > $booking->total_price - $booking->down_payment ||
-                                                    in_array($booking->payment_status, [
-                                                        'refunded_manual',
-                                                        'refunded_stripe',
-                                                        'refund_pending',
-                                                        'fully_paid',
-                                                        'penalty_paid',
-                                                    ]))
-                                                <span class="text-green-600">
-                                                    {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
-                                                </span>
-                                            @elseif (in_array($booking->payment_status, ['penalty_pending', 'penalty_verification']))
-                                                <span class="text-amber-500 animate-pulse">
-                                                    {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
-                                                </span>
-                                            @else
-                                                <span class="text-gray-400">0,00€</span>
-                                            @endif
-                                        @elseif ($booking->payment_status === 'fully_paid')
+                                        @if ($booking->balance_paid)
                                             <span class="text-green-600">
                                                 {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                                             </span>
+                                        @elseif (str_starts_with($booking->status, 'cancelled') &&
+                                                in_array($booking->payment_status, ['penalty_pending', 'penalty_verification']))
+                                            <span class="text-amber-500 animate-pulse">
+                                                {{ number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '.') }}€
+                                            </span>
+                                        @elseif (str_starts_with($booking->status, 'cancelled') || $booking->status === 'expired')
+                                            <span class="text-gray-400">0,00€</span>
                                         @else
                                             <span class="text-amber-500 animate-pulse">
                                                 {{ number_format($booking->balance_payment, 2, ',', '.') }}€
@@ -271,7 +266,7 @@
                                             class="flex justify-between w-36 pt-1 border-t border-gray-100 dark:border-gray-700">
                                             <span class="text-gray-400">Penale:</span>
                                             <span
-                                                class="text-amber-500 animate-pulse">-{{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€
+                                                class="text-amber-500 animate-pulse">{{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€
                                             </span>
                                         </div>
                                     @elseif (
@@ -287,7 +282,7 @@
                                     @endif
 
                                     {{-- Refund --}}
-                                    @if ($booking->status === 'cancelled' && $booking->calculateExpectedRefund()['refund_amount'] > 0)
+                                    @if (str_starts_with($booking->status, 'cancelled') && $booking->calculateExpectedRefund()['refund_amount'] > 0)
                                         <div
                                             class="flex justify-between w-36 pt-1 border-t border-gray-100 dark:border-gray-700">
                                             <span class="text-gray-400">Rimborso:</span>
@@ -307,7 +302,7 @@
                                     <button type="button" wire:click="openBookingDetails('{{ $booking->id }}')"
                                         wire:loading.attr="disabled"
                                         wire:target="openBookingDetails('{{ $booking->id }}')"
-                                        class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-600 dark:hover:bg-gray-600 border border-gray-600 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm disabled:opacity-50">
+                                        class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-600 dark:hover:bg-gray-600 border border-gray-600 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-600">
                                         Dettagli
                                     </button>
 
@@ -315,17 +310,8 @@
                                     @if ($booking->payment_status === 'paid' && (!$booking->driver_license_path || !$booking->id_card_path))
                                         <button type="button"
                                             @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
-                                            class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                                            class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             Carica Documenti
-                                        </button>
-                                    @endif
-
-                                    {{-- Request Cancellation --}}
-                                    @if (($booking->status === 'confirmed' || $booking->status === 'pending') && $booking->payment_status === 'paid')
-                                        <button type="button"
-                                            onclick="window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
-                                            class="bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-2 px-3 rounded-xl uppercase tracking-widest shadow-sm">
-                                            Annulla Viaggio
                                         </button>
                                     @endif
 
@@ -336,8 +322,17 @@
                                             ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) > 0)
                                         <button type="button"
                                             onclick="window.payPenaltyAction('{{ $booking->id }}', {{ ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) }})"
-                                            class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                                            class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             Paga Penale
+                                        </button>
+                                    @endif
+
+                                    {{-- Request Cancellation --}}
+                                    @if (($booking->status === 'confirmed' || $booking->status === 'pending') && $booking->payment_status === 'paid')
+                                        <button type="button"
+                                            onclick="window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
+                                            class="bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-2 px-3 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
+                                            Annulla Viaggio
                                         </button>
                                     @endif
                                 </div>
@@ -500,6 +495,11 @@
                                     class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
                                     Cancellata
                                 </span>
+                            @elseif ($booking->status === 'cancelled_by_admin')
+                                <span
+                                    class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                    Annullata
+                                </span>
                             @else
                                 <span
                                     class="px-2 py-1 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
@@ -543,30 +543,17 @@
                         <div class="flex justify-between">
                             <span class="text-gray-400">Saldo:</span>
 
-                            @if ($booking->status === 'cancelled')
-                                @if (
-                                    $booking->calculateExpectedRefund()['refund_amount'] > $booking->total_price - $booking->down_payment ||
-                                        in_array($booking->payment_status, [
-                                            'refunded_manual',
-                                            'refunded_stripe',
-                                            'refund_pending',
-                                            'fully_paid',
-                                            'penalty_paid',
-                                        ]))
-                                    <span class="text-green-600">
-                                        {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
-                                    </span>
-                                @elseif (in_array($booking->payment_status, ['penalty_pending', 'penalty_verification']))
-                                    <span class="text-amber-500 animate-pulse">
-                                        {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
-                                    </span>
-                                @else
-                                    <span class="text-gray-400">0,00€</span>
-                                @endif
-                            @elseif ($booking->payment_status === 'fully_paid')
+                            @if ($booking->balance_paid)
                                 <span class="text-green-600">
                                     {{ number_format($booking->total_price - $booking->down_payment, 2, ',', '.') }}€
                                 </span>
+                            @elseif (str_starts_with($booking->status, 'cancelled') &&
+                                    in_array($booking->payment_status, ['penalty_pending', 'penalty_verification']))
+                                <span class="text-amber-500 animate-pulse">
+                                    {{ number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '.') }}€
+                                </span>
+                            @elseif (str_starts_with($booking->status, 'cancelled') || $booking->status === 'expired')
+                                <span class="text-gray-400">0,00€</span>
                             @else
                                 <span class="text-amber-500 animate-pulse">
                                     {{ number_format($booking->balance_payment, 2, ',', '.') }}€
@@ -581,7 +568,7 @@
                             <div class="flex justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
                                 <span class="text-gray-400">Penale:</span>
                                 <span
-                                    class="text-amber-500 animate-pulse">-{{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€
+                                    class="text-amber-500 animate-pulse">{{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€
                                 </span>
                             </div>
                         @elseif (
@@ -596,7 +583,7 @@
                         @endif
 
                         {{-- Refund --}}
-                        @if ($booking->status === 'cancelled' && $booking->calculateExpectedRefund()['refund_amount'] > 0)
+                        @if (str_starts_with($booking->status, 'cancelled') && $booking->calculateExpectedRefund()['refund_amount'] > 0)
                             <div class="flex justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
                                 <span class="text-gray-400">Rimborso:</span>
                                 <span
@@ -611,7 +598,7 @@
                         {{-- Details --}}
                         <button type="button" wire:click="openBookingDetails('{{ $booking->id }}')"
                             wire:loading.attr="disabled" wire:target="openBookingDetails('{{ $booking->id }}')"
-                            class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-600 dark:hover:bg-gray-600 border border-gray-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm disabled:opacity-50">
+                            class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-600 dark:hover:bg-gray-600 border border-gray-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-600">
                             Dettagli
                         </button>
 
@@ -619,17 +606,8 @@
                         @if ($booking->payment_status === 'paid' && (!$booking->driver_license_path || !$booking->id_card_path))
                             <button type="button"
                                 @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
-                                class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                                class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 Carica Documenti
-                            </button>
-                        @endif
-
-                        {{-- Request Cancellation --}}
-                        @if (($booking->status === 'confirmed' || $booking->status === 'pending') && $booking->payment_status === 'paid')
-                            <button type="button"
-                                onclick="window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
-                                class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm">
-                                Annulla Viaggio
                             </button>
                         @endif
 
@@ -640,8 +618,17 @@
                                 ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) > 0)
                             <button type="button"
                                 onclick="window.payPenaltyAction('{{ $booking->id }}', {{ ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) }})"
-                                class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm">
+                                class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 Paga Penale
+                            </button>
+                        @endif
+
+                        {{-- Request Cancellation --}}
+                        @if (($booking->status === 'confirmed' || $booking->status === 'pending') && $booking->payment_status === 'paid')
+                            <button type="button"
+                                onclick="window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
+                                class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
+                                Annulla Viaggio
                             </button>
                         @endif
                     </div>
@@ -874,6 +861,11 @@
                                                         class="px-3 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
                                                         Cancellata</p>
                                                 </template>
+                                                <template x-if="b.status === 'cancelled_by_admin'">
+                                                    <p
+                                                        class="px-3 py-0.5 rounded-full border border-red-500 bg-white dark:bg-gray-900 text-red-500">
+                                                        Annullata</p>
+                                                </template>
                                             </div>
                                         </div>
                                     </div>
@@ -915,6 +907,7 @@
                         <div class="text-center">
                             <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Bilancio</h4>
 
+
                             <div
                                 class="bg-gray-50 dark:bg-gray-900/50 font-black p-4 rounded-xl space-y-2.5 border border-gray-100 dark:border-gray-700">
 
@@ -928,18 +921,18 @@
                                 <div
                                     class="flex justify-between text-sm pt-2 border-t border-gray-100 dark:border-gray-700">
                                     <span class="text-gray-400 uppercase">Acconto:</span>
-                                    <template
-                                        x-if="b.payment_status === 'unpaid' && (b.status === 'expired' || b.status === 'cancelled')">
-                                        <span class="text-gray-400">0,00€</span>
+
+                                    <template x-if="b.down_paid">
+                                        <span class="text-green-600 font-bold" x-text="b.deposit"></span>
                                     </template>
 
-                                    <template x-if="b.payment_status === 'unpaid' && b.status === 'pending'">
-                                        <span class="text-amber-500 animate-pulse font-black"
-                                            x-text="b.deposit"></span>
-                                    </template>
-
-                                    <template x-if="b.payment_status !== 'unpaid'">
-                                        <span class="text-green-600 font-black" x-text="b.deposit"></span>
+                                    <template x-if="!b.down_paid">
+                                        <span
+                                            :class="(b.status.startsWith('cancelled') || b.status === 'expired') ?
+                                            'text-gray-400' : 'text-amber-500 animate-pulse'"
+                                            class="font-black"
+                                            x-text="(b.status.startsWith('cancelled') || b.status === 'expired') ? '0,00€' : b.deposit">
+                                        </span>
                                     </template>
                                 </div>
 
@@ -947,32 +940,23 @@
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-400 uppercase">Saldo:</span>
 
+                                    <template x-if="b.balance_paid">
+                                        <span class="text-green-600 font-black" x-text="b.balance"></span>
+                                    </template>
+
                                     <template
-                                        x-if="b.status === 'cancelled' && (b.penaltyRaw > b.down_payment) && !['fully_paid', 'penalty_paid', 'refunded_manual','refunded_stripe'].includes(b.payment_status)">
+                                        x-if="b.status.startsWith('cancelled') && !b.balance_paid && ['penalty_pending', 'penalty_verification'].includes(b.payment_status)">
                                         <span class="text-amber-500 animate-pulse font-black"
-                                            x-text="b.balance"></span>
-                                    </template>
-
-                                    <template x-if="b.status === 'cancelled' && b.payment_status === 'penalty_paid'">
-                                        <span class="text-green-600 font-black" x-text="b.balance"></span>
+                                            x-text="b.remainingPenalty"></span>
                                     </template>
 
                                     <template
-                                        x-if="b.status === 'cancelled' && ['fully_paid', 'refunded_manual','refunded_stripe'].includes(b.payment_status)">
-                                        <span class="text-green-600 font-black" x-text="b.balance"></span>
-                                    </template>
-
-                                    <template x-if="b.status !== 'cancelled' && b.payment_status === 'fully_paid'">
-                                        <span class="text-green-600 font-black" x-text="b.originalBalance"></span>
-                                    </template>
-
-                                    <template
-                                        x-if="(b.status === 'cancelled' || b.status === 'expired') && !['fully_paid', 'refunded_manual','refunded_stripe'].includes(b.payment_status) && !(b.penaltyRaw > b.down_payment)">
+                                        x-if="(b.status.startsWith('cancelled') || b.status === 'expired') && !b.balance_paid && !['penalty_pending', 'penalty_verification'].includes(b.payment_status)">
                                         <span class="text-gray-400 font-black">0,00€</span>
                                     </template>
 
                                     <template
-                                        x-if="b.status !== 'cancelled' && b.status !== 'expired' && b.payment_status !== 'fully_paid'">
+                                        x-if="!b.status.startsWith('cancelled') && b.status !== 'expired' && !b.balance_paid">
                                         <span class="text-amber-500 animate-pulse font-black"
                                             x-text="b.balance"></span>
                                     </template>
@@ -986,17 +970,19 @@
                                         <span
                                             :class="{
                                                 'text-amber-500 animate-pulse': ['penalty_pending',
-                                                    'penalty_verification'
-                                                ].includes(b.payment_status),
-                                                'text-red-600': !['penalty_pending', 'penalty_verification'].includes(b
-                                                    .payment_status)
+                                                        'penalty_verification'
+                                                    ]
+                                                    .includes(b.payment_status),
+                                                'text-red-600': !['penalty_pending', 'penalty_verification']
+                                                    .includes(b
+                                                        .payment_status)
                                             }"
                                             x-text="'-' + b.penalty"></span>
                                     </div>
                                 </template>
 
                                 {{-- Refund --}}
-                                <template x-if="b.status === 'cancelled' && b.refundRaw > 0">
+                                <template x-if="b.status.startsWith('cancelled') && b.refundRaw > 0">
                                     <div
                                         class="flex justify-between text-sm pt-2 border-t border-gray-100 dark:border-gray-700">
                                         <span class="text-gray-400 uppercase">Rimborso:</span>

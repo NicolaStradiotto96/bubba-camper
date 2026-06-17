@@ -5,7 +5,6 @@ namespace App\Livewire\Admin;
 use App\Mail\BookingCancelled;
 use App\Mail\BookingConfirmed;
 use App\Models\Booking;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -37,62 +36,69 @@ class BookingIndex extends Component
     }
 
     #[On('cancelBooking')]
-    public function cancelBooking($bookingId, $useStripe = false)
+    public function cancelBooking($bookingId, $applyPenalty = true, $useStripe = false, $byAdmin = false)
     {
-        if (!auth()->user()->is_admin) {
-            abort(403);
-        }
+        if (!auth()->user()->is_admin) abort(403);
 
         $booking = Booking::findOrFail($bookingId);
 
-        $refundInfo = $booking->calculateExpectedRefund();
-        $refundAmount = $refundInfo['refund_amount'] ?? 0;
-        $penaltyPercent = $refundInfo['penalty_percent'] ?? 0;
 
-        $booking->status = 'cancelled';
+        $totalPaid = ($booking->payment_status === 'fully_paid')
+            ? $booking->total_price
+            : ($booking->down_payment ?? 0);
+
+        if ($applyPenalty) {
+            $refundInfo = $booking->calculateExpectedRefund();
+            $refundAmount = $refundInfo['refund_amount'] ?? 0;
+            $remainingPenalty = $refundInfo['remaining_penalty'] ?? 0;
+        } else {
+            $refundAmount = $totalPaid;
+            $remainingPenalty = 0;
+        }
+
+        $refundAmount = min($refundAmount, $totalPaid);
+
+        $booking->status = $byAdmin ? 'cancelled_by_admin' : 'cancelled';
         $booking->documents_status = 'not_required';
 
-        if ($booking->payment_status === 'fully_paid' && $penaltyPercent >= 100) {
-
-            $booking->payment_status = 'penalty_paid';
-            $booking->save();
-
-            Mail::to($booking->customer_email)->send(new BookingCancelled($booking));
-
-            session()->flash('success', "Prenotazione #{$booking->id} annullata. Importo interamente trattenuto come penale.");
-        } else {
-
-            if ($refundAmount > 0) {
-                if ($useStripe && $booking->stripe_payment_id) {
-                    try {
-                        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
-                        \Stripe\Refund::create([
-                            'charge' => $booking->stripe_payment_id,
-                            'amount' => (int)($refundAmount * 100),
-                        ]);
-                        $booking->payment_status = 'refunded_stripe';
-                    } catch (\Exception $e) {
-                        session()->flash('error', "Errore nel rimborso automatico Stripe: " . $e->getMessage());
-                        return;
-                    }
-                } else {
-                    $booking->payment_status = 'refunded_manual';
+        if ($refundAmount > 0) {
+            if ($useStripe && $booking->stripe_payment_id) {
+                try {
+                    \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+                    \Stripe\Refund::create([
+                        'payment_intent' => $booking->stripe_payment_id,
+                        'amount' => (int)($refundAmount * 100),
+                    ]);
+                    $booking->payment_status = 'refunded_stripe';
+                } catch (\Exception $e) {
+                    session()->flash('error', "Errore Stripe: " . $e->getMessage());
+                    return;
                 }
+            } else {
+                $booking->payment_status = 'refunded_manual';
+            }
+        } else {
+            if ($totalPaid >= $booking->calculateExpectedRefund()['penalty_amount']) {
+                $booking->payment_status = 'penalty_paid';
+                $booking->balance_paid = true;
+                $booking->balance_paid_at = now();
             } else {
                 $booking->payment_status = 'penalty_pending';
             }
-
-            $booking->cancellation_confirmed_at = now();
-            $booking->save();
-
-            Mail::to($booking->customer_email)->send(new BookingCancelled($booking));
-
-            $flashMessage = $refundAmount > 0
-                ? "Prenotazione #{$booking->id} annullata. Rimborso di " . number_format($refundAmount, 2, ',', '.') . "€ registrato a sistema."
-                : "Prenotazione #{$booking->id} annullata.";
-
-            session()->flash('cancelled', $flashMessage);
         }
+
+        $booking->cancellation_confirmed_at = now();
+        $booking->save();
+
+        Mail::to($booking->customer_email)->send(new BookingCancelled($booking));
+
+        $msg = $refundAmount > 0
+            ? "Prenotazione annullata. Rimborso di " . number_format($refundAmount, 2, ',', '.') . "€ registrato."
+            : ($remainingPenalty > 0
+                ? "Prenotazione annullata. Penale residua di " . number_format($remainingPenalty, 2, ',', '.') . "€ in sospeso."
+                : "Prenotazione annullata. Nessun rimborso dovuto.");
+
+        session()->flash('cancelled', $msg);
     }
 
     #[On('markAsPaid')]
@@ -106,11 +112,15 @@ class BookingIndex extends Component
 
         if ($booking->status === 'cancelled') {
             $booking->payment_status = 'penalty_paid';
+            $booking->balance_paid = true;
+            $booking->balance_paid_at = now();
             $booking->save();
 
             session()->flash('success', "Penale residua registrata con successo per la prenotazione #{$booking->id}.");
         } else {
             $booking->payment_status = 'fully_paid';
+            $booking->balance_paid = true;
+            $booking->balance_paid_at = now();
             $booking->save();
 
             session()->flash('success', "Saldo registrato per #{$booking->id}.");
@@ -161,36 +171,31 @@ class BookingIndex extends Component
         $booking = Booking::with('camper')->findOrFail($bookingId);
 
         $this->dispatch('open-booking-modal', [
-            'id'             => $booking->id,
-            'ulid'           => $booking->ulid,
-            'created_at'     => $booking->created_at->timezone('Europe/Rome')->format('d/m/Y \a\l\l\e H:i'),
-            'name'           => "{$booking->customer_first_name} {$booking->customer_last_name}",
-            'email'          => $booking->customer_email,
-            'phone'          => $booking->customer_phone,
-            'camper'         => $booking->camper->name,
-            'start'          => $booking->start_date->format('d/m/Y'),
-            'end'            => $booking->end_date->format('d/m/Y'),
-            'total'          => number_format($booking->total_price, 2, ',', '.') . '€',
-            'deposit'        => number_format($booking->down_payment, 2, ',', '.') . '€',
-            'down_payment' => (float)($booking->down_payment ?? 0),
-            'balance' => $booking->status === 'cancelled'
-                ? (
-                    (($booking->calculateExpectedRefund()['penalty_amount'] + $booking->calculateExpectedRefund()['refund_amount']) >= $booking->total_price)
-                    ? number_format($booking->total_price - $booking->down_payment, 2, ',', '.') . '€'
-                    : ($booking->calculateExpectedRefund()['penalty_amount'] > $booking->down_payment && $booking->payment_status !== 'penalty_paid'
-                        ? number_format($booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment, 2, ',', '.') . '€'
-                        : '0,00€')
-                )
-                : ($booking->payment_status === 'fully_paid' ? '0,00€' : number_format($booking->balance_payment, 2, ',', '.') . '€'),
-            'originalBalance' => number_format($booking->total_price - $booking->down_payment, 2, ',', '.') . '€',
-            'refund'         => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '.') . '€',
-            'refundRaw'      => (float)$booking->calculateExpectedRefund()['refund_amount'],
-            'penalty'        => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '.') . '€',
-            'penaltyRaw'     => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
-            'status'         => $booking->status,
-            'documents_status'         => $booking->documents_status,
-            'payment_status' => $booking->payment_status,
-            'penalty_receipt' => $booking->penalty_receipt_path ? asset('storage/' . $booking->penalty_receipt_path) : null,
+            'id'               => $booking->id,
+            'ulid'             => $booking->ulid,
+            'created_at'       => $booking->created_at->timezone('Europe/Rome')->format('d/m/Y \a\l\l\e H:i'),
+            'name'             => "{$booking->customer_first_name} {$booking->customer_last_name}",
+            'email'            => $booking->customer_email,
+            'phone'            => $booking->customer_phone,
+            'camper'           => $booking->camper->name,
+            'start'            => $booking->start_date->format('d/m/Y'),
+            'end'              => $booking->end_date->format('d/m/Y'),
+            'total'            => number_format($booking->total_price, 2, ',', '.') . '€',
+            'deposit'          => number_format($booking->down_payment, 2, ',', '.') . '€',
+            'down_payment'     => (float)($booking->down_payment ?? 0),
+            'down_paid'        => (bool)$booking->down_paid,
+            'balance_paid'     => (bool)$booking->balance_paid,
+            'balance'          => number_format($booking->balance_payment, 2, ',', '.') . '€',
+            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '.') . '€', // AGGIUNTO
+            'originalBalance'  => number_format($booking->total_price - $booking->down_payment, 2, ',', '.') . '€',
+            'refund'           => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '.') . '€',
+            'refundRaw'        => (float)$booking->calculateExpectedRefund()['refund_amount'],
+            'penalty'          => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '.') . '€',
+            'penaltyRaw'       => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
+            'status'           => $booking->status,
+            'documents_status' => $booking->documents_status,
+            'payment_status'   => $booking->payment_status,
+            'penalty_receipt'  => $booking->penalty_receipt_path ? asset('storage/' . $booking->penalty_receipt_path) : null,
         ]);
     }
 
