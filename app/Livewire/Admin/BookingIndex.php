@@ -29,6 +29,8 @@ class BookingIndex extends Component
             $booking->status = 'confirmed';
             $booking->save();
 
+            $this->dispatch('booking-updated');
+
             Mail::to($booking->customer_email)->send(new BookingConfirmed($booking));
 
             session()->flash('success', "Prenotazione #{$booking->id} confermata.");
@@ -90,6 +92,9 @@ class BookingIndex extends Component
         $booking->cancellation_confirmed_at = now();
         $booking->save();
 
+        $this->dispatch('booking-updated');
+
+
         Mail::to($booking->customer_email)->send(new BookingCancelled($booking));
 
         $msg = $refundAmount > 0
@@ -146,7 +151,7 @@ class BookingIndex extends Component
 
     public function getStatsProperty()
     {
-        return [
+        $stats = [
             'total' => Booking::count(),
             'pending' => Booking::where('status', 'pending')->count(),
             'cancellation_pending' => Booking::where('status', 'cancellation_pending')->count(),
@@ -154,6 +159,18 @@ class BookingIndex extends Component
             'penalty_verification' => Booking::where('payment_status', 'penalty_verification')->count(),
             'confirmed' => Booking::where('status', 'confirmed')->count(),
             'earnings' => Booking::where('status', 'confirmed')->sum('total_price'),
+        ];
+
+        $totalPending = $stats['pending'] + $stats['cancellation_pending'] + $stats['penalty_verification'];
+
+        return [
+            'counts' => $stats,
+            'totalPending' => $totalPending,
+            'style' => [
+                'border' => $totalPending > 0 ? 'border-amber-500' : 'border-green-500',
+                'bg'     => $totalPending > 0 ? 'bg-amber-50 dark:bg-amber-900/20' : 'bg-green-50 dark:bg-green-900/20',
+                'text'   => $totalPending > 0 ? 'text-amber-500' : 'text-green-500',
+            ]
         ];
     }
 
@@ -167,6 +184,9 @@ class BookingIndex extends Component
             \Illuminate\Support\Facades\Artisan::call('app:cleanup-unpaid-bookings');
         } catch (\Exception $e) {
         }
+
+        $this->dispatch('booking-updated');
+
 
         $booking = Booking::with('camper')->findOrFail($bookingId);
 
@@ -196,6 +216,31 @@ class BookingIndex extends Component
             'documents_status' => $booking->documents_status,
             'payment_status'   => $booking->payment_status,
             'penalty_receipt'  => $booking->penalty_receipt_path ? asset('storage/' . $booking->penalty_receipt_path) : null,
+            'refund_receipt'   => $booking->refund_receipt_path ? asset('storage/' . $booking->refund_receipt_path) : null,
+            'dl_front' => $booking->driver_license_front_path
+                ? route('admin.view-doc', [
+                    'bookingId' => $booking->id,
+                    'filename' => basename($booking->driver_license_front_path)
+                ])
+                : null,
+            'dl_back' => $booking->driver_license_back_path
+                ? route('admin.view-doc', [
+                    'bookingId' => $booking->id,
+                    'filename' => basename($booking->driver_license_back_path)
+                ])
+                : null,
+            'id_front' => $booking->id_card_front_path
+                ? route('admin.view-doc', [
+                    'bookingId' => $booking->id,
+                    'filename' => basename($booking->id_card_front_path)
+                ])
+                : null,
+            'id_back' => $booking->id_card_back_path
+                ? route('admin.view-doc', [
+                    'bookingId' => $booking->id,
+                    'filename' => basename($booking->id_card_back_path)
+                ])
+                : null,
         ]);
     }
 

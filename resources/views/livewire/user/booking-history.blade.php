@@ -307,7 +307,12 @@
                                     </button>
 
                                     {{-- Documents --}}
-                                    @if ($booking->payment_status === 'paid' && (!$booking->driver_license_path || !$booking->id_card_path))
+                                    @if (
+                                        $booking->payment_status === 'paid' &&
+                                            (!$booking->driver_license_front_path ||
+                                                !$booking->driver_license_back_path ||
+                                                !$booking->id_card_front_path ||
+                                                !$booking->id_card_back_path))
                                         <button type="button"
                                             @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
@@ -603,7 +608,12 @@
                         </button>
 
                         {{-- Documents --}}
-                        @if ($booking->payment_status === 'paid' && (!$booking->driver_license_path || !$booking->id_card_path))
+                        @if (
+                            $booking->payment_status === 'paid' &&
+                                (!$booking->driver_license_front_path ||
+                                    !$booking->driver_license_back_path ||
+                                    !$booking->id_card_front_path ||
+                                    !$booking->id_card_back_path))
                             <button type="button"
                                 @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
@@ -654,14 +664,14 @@
                 x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 backdrop-blur-sm"
                 @click="open = false"></div>
 
-            <div class="flex min-h-full items-center justify-center p-3 text-center sm:p-0">
+            <div class="flex min-h-full items-center justify-center p-3 text-center">
                 <div x-show="open" x-transition:enter="transition ease-out duration-300 transform"
                     x-transition:enter-start="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
                     x-transition:enter-end="translate-y-0 sm:scale-100 opacity-100"
                     x-transition:leave="transition ease-in duration-200 transform"
                     x-transition:leave-start="translate-y-0 sm:scale-100 opacity-100"
                     x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
-                    class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-2xl sm:my-3 w-full sm:max-w-2xl border border-gray-200 dark:border-gray-700">
+                    class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-2xl sm:my-3 w-full sm:max-w-2xl border-2 border-gray-200 dark:border-gray-700">
 
                     {{-- Header --}}
                     <div
@@ -928,10 +938,11 @@
 
                                     <template x-if="!b.down_paid">
                                         <span
-                                            :class="(b.status.startsWith('cancelled') || b.status === 'expired') ?
+                                            :class="((b && b.status && b.status.startsWith('cancelled')) || b
+                                                .status === 'expired') ?
                                             'text-gray-400' : 'text-amber-500 animate-pulse'"
                                             class="font-black"
-                                            x-text="(b.status.startsWith('cancelled') || b.status === 'expired') ? '0,00€' : b.deposit">
+                                            x-text="((b && b.status && b.status.startsWith('cancelled')) || b.status === 'expired') ? '0,00€' : b.deposit">
                                         </span>
                                     </template>
                                 </div>
@@ -945,18 +956,18 @@
                                     </template>
 
                                     <template
-                                        x-if="b.status.startsWith('cancelled') && !b.balance_paid && ['penalty_pending', 'penalty_verification'].includes(b.payment_status)">
+                                        x-if="(b && b.status && b.status.startsWith('cancelled')) && !b.balance_paid && ['penalty_pending', 'penalty_verification'].includes(b.payment_status)">
                                         <span class="text-amber-500 animate-pulse font-black"
                                             x-text="b.remainingPenalty"></span>
                                     </template>
 
                                     <template
-                                        x-if="(b.status.startsWith('cancelled') || b.status === 'expired') && !b.balance_paid && !['penalty_pending', 'penalty_verification'].includes(b.payment_status)">
+                                        x-if="((b && b.status && b.status.startsWith('cancelled')) || b.status === 'expired') && !b.balance_paid && !['penalty_pending', 'penalty_verification'].includes(b.payment_status)">
                                         <span class="text-gray-400 font-black">0,00€</span>
                                     </template>
 
                                     <template
-                                        x-if="!b.status.startsWith('cancelled') && b.status !== 'expired' && !b.balance_paid">
+                                        x-if="!(b && b.status && b.status.startsWith('cancelled')) && b.status !== 'expired' && !b.balance_paid">
                                         <span class="text-amber-500 animate-pulse font-black"
                                             x-text="b.balance"></span>
                                     </template>
@@ -982,7 +993,8 @@
                                 </template>
 
                                 {{-- Refund --}}
-                                <template x-if="b.status.startsWith('cancelled') && b.refundRaw > 0">
+                                <template
+                                    x-if="(b && b.status && b.status.startsWith('cancelled')) && b.refundRaw > 0">
                                     <div
                                         class="flex justify-between text-sm pt-2 border-t border-gray-100 dark:border-gray-700">
                                         <span class="text-gray-400 uppercase">Rimborso:</span>
@@ -993,15 +1005,29 @@
                             </div>
 
                             {{-- Receipt --}}
-                            <template x-if="b.penalty_receipt">
-                                <div class="text-center pt-2">
-                                    <a :href="b.penalty_receipt" target="_blank"
-                                        class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 hover:bg-green-100 border border-green-500 text-green-600 dark:text-green-500 hover:bg-green-700/20 dark:hover:bg-green-700/20 hover:text-green-400 dark:hover:text-green-400 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm">
-                                        <i class="fa-solid fa-file-lines text-base"></i>
-                                        Visualizza Contabile
-                                    </a>
-                                </div>
-                            </template>
+                            <div class="space-y-2">
+                                {{-- Penalty --}}
+                                <template x-if="b.penalty_receipt">
+                                    <div class="text-center pt-2">
+                                        <a :href="b.penalty_receipt" target="_blank"
+                                            class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40">
+                                            <i class="fa-solid fa-file-lines text-base"></i>
+                                            Visualizza Contabile Penale
+                                        </a>
+                                    </div>
+                                </template>
+
+                                {{-- Refund --}}
+                                <template x-if="b.refund_receipt">
+                                    <div class="text-center pt-2">
+                                        <a :href="b.refund_receipt" target="_blank"
+                                            class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40">
+                                            <i class="fa-solid fa-file-lines text-base"></i>
+                                            Visualizza Contabile Rimborso
+                                        </a>
+                                    </div>
+                                </template>
+                            </div>
 
                         </div>
 
@@ -1015,44 +1041,36 @@
         <div x-data="{ showDocModal: false, selectedBookingId: null }" x-init="$watch('showDocModal', value => { document.body.classList.toggle('no-scroll', value) })"
             @open-doc-modal.window="showDocModal = true; selectedBookingId = $event.detail.id"
             @close-doc-modal.window="showDocModal = false" @keydown.escape.window="showDocModal = false"
-            class="fixed inset-0 z-50 flex items-center justify-center p-3" x-cloak x-show="showDocModal">
+            class="fixed inset-0 z-50 flex justify-center p-3 overflow-y-auto items-start sm:items-center" x-cloak
+            x-show="showDocModal">
 
             <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" x-show="showDocModal"
                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                @click="showDocModal = false">
+                x-transition:enter-end="opacity-100" @click="showDocModal = false">
             </div>
 
-            <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-6 w-full sm:max-w-lg border border-gray-200 dark:border-gray-700 shadow-2xl z-10 overflow-hidden"
+            <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-6 w-full sm:max-w-lg border-2 border-gray-200 dark:border-gray-700 shadow-2xl z-10 my-auto"
                 x-show="showDocModal" x-transition:enter="transition ease-out duration-300 transform"
-                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                x-transition:leave="transition ease-in duration-200 transform"
-                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-6 w-full sm:max-w-lg">
+                x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100">
 
-                    <div class="font-black flex flex-col justify-center items-center mb-10">
-                        <i class="fa-solid fa-id-card text-amber-500 text-7xl mb-3"></i>
-                        <h3 class="text-gray-900 dark:text-white uppercase text-center text-4xl">Carica
-                            Documenti</h3>
-                        <p class="block text-xl text-gray-400 mt-2 uppercase">Prenotazione
-                            <span class="text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-1 px-1"
-                                x-text="'#' + selectedBookingId">
-                            </span>
-                        </p>
-                    </div>
-
-                    <div x-init="$watch('showDocModal', value => { if (value) $dispatch('setBookingId', { id: selectedBookingId }) })">
-                        @livewire('document-uploader', key('doc-uploader-static'))
-                    </div>
-
-                    <x-secondary-button @click="showDocModal = false"
-                        class="w-full mt-3 flex justify-center items-center">
-                        Chiudi
-                    </x-secondary-button>
+                <div class="font-black flex flex-col justify-center items-center mb-6">
+                    <i class="fa-solid fa-id-card text-amber-500 text-5xl mb-3"></i>
+                    <h3 class="text-gray-900 dark:text-white uppercase text-center text-2xl">Carica Documenti</h3>
+                    <p class="text-md text-gray-400 mt-1 uppercase">Prenotazione
+                        <span class="text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-0.5 px-1 rounded"
+                            x-text="'#' + selectedBookingId"></span>
+                    </p>
                 </div>
+
+                <div x-init="$watch('showDocModal', value => { if (value) $dispatch('setBookingId', { id: selectedBookingId }) })">
+                    @livewire('document-uploader', key('doc-uploader-static'))
+                </div>
+
+                <x-secondary-button @click="showDocModal = false; $dispatch('reset-uploader')"
+                    class="w-full mt-4 flex justify-center items-center">
+                    Chiudi
+                </x-secondary-button>
             </div>
         </div>
     @endif

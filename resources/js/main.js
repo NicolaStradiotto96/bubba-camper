@@ -104,12 +104,106 @@ document.addEventListener('livewire:init', () => {
                         cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
                     }
                 }).then((result) => {
-                    if (result.isConfirmed || result.isDenied) {
+                    if (result.isConfirmed) {
                         Livewire.dispatch('cancelBooking', {
                             bookingId: id,
                             applyPenalty: applyPenalty,
                             byAdmin: byAdmin,
-                            useStripe: result.isConfirmed
+                            useStripe: true
+                        });
+                    } else if (result.isDenied) {
+                        Swal.fire({
+                            title: 'RIMBORSO CLIENTE',
+                            html: `
+                                <div class="text-center space-y-3 px-2 font-black">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        Per completare il rimborso manuale, allega la contabile del bonifico:
+                                    </p>
+                                                        
+                                    <input type="file" id="refund-file-input" accept=".pdf,.png,.jpg,.jpeg" class="hidden" 
+                                        onchange="document.getElementById('refund-file-chosen-text').innerText = this.files[0] ? this.files[0].name : 'Nessun file selezionato'" />
+                                                                
+                                    <div class="flex flex-col items-center justify-center gap-2 mt-2">
+                                        <button type="button" 
+                                            onclick="document.getElementById('refund-file-input').click()"
+                                            class="inline-flex items-center gap-2 bg-amber-600 text-white text-xs font-black uppercase tracking-widest py-2 px-4 rounded-xl transition shadow-md cursor-pointer hover:bg-amber-700">
+                                            <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                                            Sfoglia...
+                                        </button>
+                                        <span id="refund-file-chosen-text" class="text-xs text-gray-400 font-sans italic tracking-wide">
+                                            Nessun file selezionato
+                                        </span>
+                                    </div>
+                                                        
+                                    <div id="refund-preview-container" class="hidden mt-3 flex flex-col items-center justify-center min-h-[96px]">
+                                        <div class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                                            <img id="refund-img-preview" src="" class="hidden h-24 w-40 object-cover rounded-lg">
+                                            <div id="refund-pdf-preview" class="hidden flex flex-col items-center justify-center h-24 w-40 text-red-500 rounded-lg">
+                                                <i class="fa-solid fa-file-pdf text-3xl mb-1"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `,
+                            icon: 'info',
+                            iconColor: '#d97706',
+                            showCancelButton: true,
+                            confirmButtonText: 'INVIA',
+                            confirmButtonColor: '#d97706',
+                            cancelButtonText: 'CHIUDI',
+                            background: theme.background,
+                            color: theme.color,
+                            didOpen: (popup) => {
+                                popup.style.border = `2px solid ${theme.border}`;
+
+                                const fileInput = document.getElementById('refund-file-input');
+                                fileInput.addEventListener('change', function () {
+                                    const file = this.files[0];
+                                    const previewContainer = document.getElementById('refund-preview-container');
+                                    const imgPreview = document.getElementById('refund-img-preview');
+                                    const pdfPreview = document.getElementById('refund-pdf-preview');
+
+                                    if (file) {
+                                        previewContainer.classList.remove('hidden');
+                                        if (file.type.match('image.*')) {
+                                            imgPreview.src = URL.createObjectURL(file);
+                                            imgPreview.classList.remove('hidden');
+                                            pdfPreview.classList.add('hidden');
+                                        } else if (file.type === 'application/pdf') {
+                                            imgPreview.classList.add('hidden');
+                                            pdfPreview.classList.remove('hidden');
+                                        }
+                                    }
+                                });
+                            },
+                            customClass: {
+                                popup: 'rounded-xl',
+                                confirmButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                                cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
+                            },
+                            preConfirm: () => {
+                                const file = document.getElementById('refund-file-input').files[0];
+                                if (!file) {
+                                    Swal.showValidationMessage('Seleziona il file della contabile!');
+                                    return false;
+                                }
+                                return file;
+                            }
+                        }).then((fileResult) => {
+                            if (fileResult.isConfirmed) {
+                                const formData = new FormData();
+                                formData.append('receipt', fileResult.value);
+                                formData.append('booking_id', id);
+                                formData.append('type', 'refund');
+
+                                fetch('/prenotazione/carica-contabile', {
+                                    method: 'POST',
+                                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                                    body: formData
+                                }).then(() => {
+                                    Livewire.dispatch('cancelBooking', { bookingId: id, applyPenalty: applyPenalty, byAdmin: byAdmin, useStripe: false });
+                                });
+                            }
                         });
                     }
                 });
@@ -374,17 +468,19 @@ document.addEventListener('livewire:init', () => {
                                         </span>
                                     </div>
 
-                                    <div id="penalty-preview-container" class="hidden mt-3 flex flex-col items-center justify-center min-h-[96px]">
-                                        <div class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
-                                            <img id="penalty-img-preview" src="" class="hidden h-24 w-40 object-cover rounded-lg">
-                                            <div id="penalty-pdf-preview" class="hidden flex flex-col items-center justify-center h-24 w-40 text-red-500 rounded-lg">
-                                                <i class="fa-solid fa-file-pdf text-3xl mb-1"></i>
+                                    <div class="mt-3 border border-transparent min-h-[100px]">
+                                        <div id="penalty-preview-container" class="hidden flex flex-col items-center justify-center min-h-[96px]">
+                                            <div class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                                                <img id="penalty-img-preview" src="" class="hidden h-24 w-40 object-cover rounded-lg">
+                                                <div id="penalty-pdf-preview" class="hidden flex flex-col items-center justify-center h-24 w-40 text-red-500 rounded-lg">
+                                                    <i class="fa-solid fa-file-pdf text-3xl mb-1"></i>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             `,
-                            icon: 'question',
+                            icon: 'info',
                             iconColor: '#d97706',
                             showCancelButton: true,
                             confirmButtonText: 'INVIA',
@@ -431,7 +527,7 @@ document.addEventListener('livewire:init', () => {
                             },
                             preConfirm: () => {
                                 const fileInput = document.getElementById('penalty-file-input');
-                                const maxSize = 8 * 1024 * 1024;
+                                const maxSize = 5 * 1024 * 1024;
 
                                 if (!fileInput.files || fileInput.files.length === 0) {
                                     Swal.showValidationMessage('Devi selezionare un file prima di inviare!');
@@ -439,7 +535,7 @@ document.addEventListener('livewire:init', () => {
                                 }
 
                                 if (fileInput.files[0].size > maxSize) {
-                                    Swal.showValidationMessage('Il file è troppo grande! Il limite massimo è 8MB.');
+                                    Swal.showValidationMessage('Il file è troppo grande! Il limite massimo è 5MB.');
                                     return false;
                                 }
 
@@ -447,7 +543,6 @@ document.addEventListener('livewire:init', () => {
                             }
                         }).then((fileResult) => {
                             if (fileResult.isConfirmed && fileResult.value) {
-                                const file = fileResult.value;
 
                                 Swal.fire({
                                     title: 'Caricamento in corso...',
@@ -471,8 +566,9 @@ document.addEventListener('livewire:init', () => {
                                 });
 
                                 const formData = new FormData();
-                                formData.append('receipt', file);
+                                formData.append('receipt', fileResult.value);
                                 formData.append('booking_id', bookingId);
+                                formData.append('type', 'penalty');
 
                                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 

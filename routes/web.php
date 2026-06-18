@@ -10,6 +10,7 @@ use App\Http\Controllers\StripeWebhookController;
 use App\Livewire\Admin\BookingManager;
 use App\Livewire\Admin\CamperManager;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 // HOME
 Route::get('/', [PublicController::class, "welcome"])
@@ -82,6 +83,20 @@ Route::get('/admin/camper/{camper}/modifica', CamperManager::class)
 Route::get('/admin/prenotazione/crea', BookingManager::class)
     ->middleware(['auth', 'admin'])
     ->name('booking.create');
+
+Route::get('/documento/view/{bookingId}/{filename}', function ($bookingId, $filename) {
+    if (!auth()->check() || !auth()->user()->is_admin) {
+        abort(403);
+    }
+
+    $path = "documents/{$bookingId}/{$filename}";
+
+    if (!Storage::disk('local')->exists($path)) {
+        abort(404);
+    }
+
+    return Storage::disk('local')->response($path);
+})->name('admin.view-doc');
 
 // PROFILE
 Route::view('profilo', 'profile')

@@ -11,19 +11,27 @@ class PenaltyController extends Controller
     {
         $request->validate([
             'booking_id' => 'required|exists:bookings,id',
-            'receipt' => 'required|file|mimes:pdf,png,jpg,jpeg|max:8192',
+            'receipt' => 'required|file|mimes:pdf,png,jpg,jpeg|max:5120',
+            'type' => 'required|in:refund,penalty'
         ]);
 
         $booking = Booking::findOrFail($request->booking_id);
 
-        if ($booking->user_id !== auth()->id()) {
+        if (!auth()->user()->is_admin && $booking->user_id !== auth()->id()) {
             return response()->json(['success' => false, 'message' => 'Azione non autorizzata.'], 403);
         }
 
         if ($request->hasFile('receipt')) {
-            $path = $request->file('receipt')->store('penalty_receipts', 'public');
+            $folder = ($request->type === 'refund') ? 'refund_receipts' : 'penalty_receipts';
+            $path = $request->file('receipt')->store($folder, 'public');
 
-            session(['uploaded_penalty_receipt_' . $booking->id => $path]);
+            if ($request->type === 'refund') {
+                $booking->refund_receipt_path = $path;
+            } else {
+                $booking->penalty_receipt_path = $path;
+            }
+
+            $booking->save();
 
             return response()->json(['success' => true]);
         }

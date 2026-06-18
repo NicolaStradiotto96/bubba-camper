@@ -27,9 +27,14 @@ class Booking extends Model
         'terms_and_privacy_accepted_at',
         'terms_and_privacy_accepted_ip',
         'contract_version',
-        'driver_license_path',
-        'id_card_path',
+        'driver_license_front_path',
+        'driver_license_back_path',
+        'id_card_front_path',
+        'id_card_back_path',
         'documents_status',
+        'documents_status',
+        'penalty_receipt_path',
+        'refund_receipt_path',
     ];
 
     protected $casts = [

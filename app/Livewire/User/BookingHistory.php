@@ -51,6 +51,7 @@ class BookingHistory extends Component
             'documents_status' => $booking->documents_status,
             'payment_status'   => $booking->payment_status,
             'penalty_receipt'  => $booking->penalty_receipt_path ? asset('storage/' . $booking->penalty_receipt_path) : null,
+            'refund_receipt'  => $booking->refund_receipt_path ? asset('storage/' . $booking->refund_receipt_path) : null,
         ]);
     }
 

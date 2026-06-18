@@ -13,7 +13,9 @@ new class extends Component {
 
         $this->redirect('/', navigate: true);
     }
-}; ?>
+};
+
+?>
 
 <nav x-data="{ open: false }" x-init="$watch('open', value => {
     if (value) {
@@ -57,6 +59,9 @@ new class extends Component {
                 {{-- <div class="flex items-center ml-auto">
                     <x-theme-toggle />
                 </div> --}}
+                <div class="flex items-center ml-auto -mr-3">
+                    <livewire:admin-notification />
+                </div>
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -78,8 +83,10 @@ new class extends Component {
                         </x-slot>
 
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                                {{ __('Dashboard') }}
+                            <x-dropdown-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate
+                                class="flex justify-center items-center">
+                                <livewire:admin-notification />
+                                <span>{{ __('Dashboard') }}</span>
                             </x-dropdown-link>
                             <x-dropdown-link :href="route('profile')" :active="request()->routeIs('profile')" wire:navigate>
                                 {{ __('Profilo') }}

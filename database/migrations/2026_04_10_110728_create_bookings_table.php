@@ -32,8 +32,10 @@ return new class extends Migration
             $table->ipAddress('terms_and_privacy_accepted_ip')->nullable();
             $table->string('contract_version');
 
-            $table->string('driver_license_path')->nullable();
-            $table->string('id_card_path')->nullable();
+            $table->string('driver_license_front_path')->nullable();
+            $table->string('driver_license_back_path')->nullable();
+            $table->string('id_card_front_path')->nullable();
+            $table->string('id_card_back_path')->nullable();
             $table->string('documents_status')->default('pending')->index();
 
             $table->decimal("total_price", 10, 2);
@@ -54,8 +56,7 @@ return new class extends Migration
 
             $table->string('stripe_payment_id')->nullable();
 
-            $table->decimal('refund_amount', 10, 2)->nullable();
-
+            $table->string('refund_receipt_path')->nullable();
             $table->string('penalty_receipt_path')->nullable();
 
             $table->index(['start_date', 'end_date']);
