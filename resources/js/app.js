@@ -7,6 +7,17 @@ import "flatpickr/dist/flatpickr.css";
 window.flatpickr = flatpickr;
 flatpickr.localize(Italian);
 
+// GLIGHTBOX
+import GLightbox from 'glightbox';
+window.GLightbox = GLightbox;
+
+document.addEventListener('livewire:navigated', () => {
+    const lightbox = GLightbox({
+        touchNavigation: true,
+        loop: true,
+    });
+});
+
 // INTERNATIONAL TELEPHONE INPUT
 import intlTelInput from 'intl-tel-input';
 import 'intl-tel-input/styles';

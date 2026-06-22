@@ -7,6 +7,9 @@
 /* FLATPICKR */
 @import 'flatpickr/dist/flatpickr.css';
 
+/* GLIGHTBOX */
+@import 'glightbox/dist/css/glightbox.min.css';
+
 /* TAILWIND */
 @tailwind base;
 @tailwind components;

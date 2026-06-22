@@ -53,6 +53,7 @@
                                     firstDayOfWeek: 1
                                 },
                                 minDate: 'today',
+                                maxDate: new Date().fp_incr(365),
                                 disable: booked,
                                 position: 'below center',
                                 onReady: function(selectedDates, dateStr, instance) {

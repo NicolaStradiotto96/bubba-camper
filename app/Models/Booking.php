@@ -109,6 +109,7 @@ class Booking extends Model
 
         return [
             'refund_amount' => $actualRefund,
+            'total_paid' => $totalAmountPaid,
             'penalty_amount' => $totalPenaltyAmount,
             'remaining_penalty' => $remainingPenalty,
             'days' => $daysToTrip,

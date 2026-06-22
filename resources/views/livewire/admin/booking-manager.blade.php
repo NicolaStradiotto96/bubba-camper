@@ -138,13 +138,14 @@
                             $el._flatpickr = flatpickr($el, {
                                 mode: 'range',
                                 minDate: 'today',
+                                maxDate: new Date().fp_incr(365),
                                 dateFormat: 'd-m-Y',
                                 locale: {
                                     rangeSeparator: ' al ',
                                     firstDayOfWeek: 1
                                 },
                                 disable: booked,
-                                position: 'below center',
+                                position: 'top center',
                                 onChange: function(selectedDates, dateStr) {
                                     if (selectedDates.length > 0) {
                                         $wire.set('date_range', dateStr);

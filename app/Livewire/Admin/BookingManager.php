@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Booking;
 use App\Models\Camper;
+use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -44,8 +45,18 @@ class BookingManager extends Component
             'customer_email'     => 'required|string|lowercase|email|max:255',
             'customer_phone'     => 'nullable|min:8|max:20',
             'date_range'    => 'required',
-            'start_date'    => 'required|date',
-            'end_date'      => 'required|date|after_or_equal:start_date',
+            'start_date' => [
+                'required',
+                'date',
+                'after_or_equal:today',
+                'before:' . now()->addMonths(12)->addDay()->format('Y-m-d')
+            ],
+            'end_date' => [
+                'required',
+                'date',
+                'after:start_date',
+                'before:' . now()->addMonths(13)->format('Y-m-d')
+            ],
             'total_price'   => 'required|numeric|min:0',
         ]);
 
@@ -85,16 +96,29 @@ class BookingManager extends Component
 
     public function getBookedDatesProperty()
     {
-        return Booking::whereNotIn('status', Booking::getExcludedStatuses())
+        if (!$this->camper_id) {
+            return [];
+        }
+
+        $limitDate = now()->addMonths(12);
+
+        return Booking::where('camper_id', $this->camper_id)
+            ->whereNotIn('status', Booking::getExcludedStatuses())
+            ->where('start_date', '<=', $limitDate)
             ->get(['start_date', 'end_date'])
             ->flatMap(function ($booking) {
-                $dates = [];
-                $current = \Carbon\Carbon::parse($booking->start_date);
-                $end = \Carbon\Carbon::parse($booking->end_date);
+                $extendedStart = Carbon::parse($booking->start_date)->subDay();
+                $extendedEnd = Carbon::parse($booking->end_date)->addDays(2);
 
-                while ($current <= $end) {
-                    $dates[] = $current->format('d-m-Y');
-                    $current->addDay();
+                $period = new \DatePeriod(
+                    $extendedStart,
+                    new \DateInterval('P1D'),
+                    $extendedEnd
+                );
+
+                $dates = [];
+                foreach ($period as $date) {
+                    $dates[] = $date->format('d-m-Y');
                 }
                 return $dates;
             })
@@ -110,10 +134,10 @@ class BookingManager extends Component
 
         if (str_contains($value, $separator)) {
             $dates = explode($separator, $value);
-            $this->start_date = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->format('Y-m-d');
-            $this->end_date = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->format('Y-m-d');
+            $this->start_date = Carbon::createFromFormat('d-m-Y', trim($dates[0]))->format('Y-m-d');
+            $this->end_date = Carbon::createFromFormat('d-m-Y', trim($dates[1]))->format('Y-m-d');
         } else {
-            $date = \Carbon\Carbon::createFromFormat('d-m-Y', trim($value))->format('Y-m-d');
+            $date = Carbon::createFromFormat('d-m-Y', trim($value))->format('Y-m-d');
             $this->start_date = $date;
             $this->end_date = $date;
         }

@@ -68,22 +68,35 @@ class ContactForm extends Component
 
     public function getBookedDatesProperty()
     {
-        // BOOKED DATES
-        return Booking::whereNotIn('status', Booking::getExcludedStatuses())
+        $limitDate = now()->addMonths(12);
+
+        $allDates = Booking::query()
+            ->whereNotIn('status', Booking::getExcludedStatuses())
+            ->where('start_date', '<=', $limitDate)
+            ->where(function ($query) {
+                $query->where('payment_status', 'paid')
+                    ->orWhere('created_at', '>=', now()->subMinutes(15));
+            })
             ->get(['start_date', 'end_date'])
             ->flatMap(function ($booking) {
-                $dates = [];
-                $current = \Carbon\Carbon::parse($booking->start_date);
-                $end = \Carbon\Carbon::parse($booking->end_date);
+                $extendedStart = Carbon::parse($booking->start_date)->subDay();
+                $extendedEnd = Carbon::parse($booking->end_date)->addDays(2);
 
-                while ($current <= $end) {
-                    $dates[] = $current->format('d-m-Y');
-                    $current->addDay();
+                $period = new \DatePeriod(
+                    $extendedStart,
+                    new \DateInterval('P1D'),
+                    $extendedEnd
+                );
+
+                $dates = [];
+                foreach ($period as $date) {
+                    $dates[] = $date->format('d-m-Y');
                 }
                 return $dates;
             })
-            ->values()
             ->toArray();
+
+        return array_values(array_unique($allDates));
     }
 
     public function sendEmail()
@@ -126,8 +139,18 @@ class ContactForm extends Component
             'name' => 'required|string|min:2|max:60',
             'email' => 'required|email:rfc,dns',
             'date_range' => 'nullable',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'start_date' => [
+                'required',
+                'date',
+                'after_or_equal:today',
+                'before:' . now()->addMonths(12)->addDay()->format('Y-m-d')
+            ],
+            'end_date' => [
+                'required',
+                'date',
+                'after:start_date',
+                'before:' . now()->addMonths(13)->format('Y-m-d')
+            ],
             'message' => 'required|string|min:10|max:2000',
         ]);
 

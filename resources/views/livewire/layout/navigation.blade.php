@@ -18,11 +18,7 @@ new class extends Component {
 ?>
 
 <nav x-data="{ open: false }" x-init="$watch('open', value => {
-    if (value) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = 'auto';
-    }
+    document.body.classList.toggle('no-scroll', value);
 })"
     class="sticky top-0 bg-white/70 dark:bg-gray-800/95 backdrop-blur-md border-b border-gray-300 dark:border-gray-700 shadow z-50">
     <!-- Primary Navigation Menu -->

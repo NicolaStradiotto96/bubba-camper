@@ -14,6 +14,7 @@
                 $el._flatpickr = flatpickr($el, {
                     mode: 'range',
                     minDate: 'today',
+                    maxDate: new Date().fp_incr(365),
                     dateFormat: 'd-m-Y',
                     locale: {
                         rangeSeparator: ' al ',

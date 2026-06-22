@@ -46,6 +46,27 @@
     overflow: hidden !important;
 }
 
+/* GLIGHTBOX */
+.gclose {
+    border-radius: 50% !important;
+    transition: all 0.3s ease !important;
+}
+
+.gclose:hover {
+    background: var(--accent2) !important;
+    transform: rotate(90deg);
+}
+
+.gprev, .gnext {
+    border-radius: 40% !important;
+    transition: all 0.3s ease !important;
+}
+
+.gprev:hover, .gnext:hover {
+    background: var(--accent2) !important;
+    transform: scale(1.1);
+}
+
 /* SWEET ALERT 2 */
 .swal2-validation-message {
     background-color: #f9fafb !important;

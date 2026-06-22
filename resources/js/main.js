@@ -74,15 +74,30 @@ document.addEventListener('livewire:init', () => {
     };
 
     // Refund
-    window.confirmRefundAction = function (id, amount, penalty_percent, penalty_amount, hasStripe) {
+    window.confirmRefundAction = function (id, totalPaid, penaltyPercent, penaltyAmount, hasStripe) {
         const theme = getSwalTheme();
-        const amountToRefund = parseFloat(amount);
+        const totalPaidNum = parseFloat(totalPaid);
+        const penaltyNum = parseFloat(penaltyAmount);
 
         const askRefundMethod = (applyPenalty, byAdmin) => {
-            if (amountToRefund > 0 && hasStripe) {
+            const finalRefund = applyPenalty
+                ? Math.max(0, totalPaidNum - penaltyNum)
+                : totalPaidNum;
+
+            if (finalRefund > 0) {
                 Swal.fire({
                     title: 'METODO DI RIMBORSO',
-                    text: "Scegli come rimborsare il denaro al cliente:",
+                    html: `
+                        <div class="text-center space-y-4 px-2 font-black">
+                            <p class="text-base text-gray-800 dark:text-gray-300 mb-2 px-2 tracking-wide">
+                                Scegli come rimborsare il denaro al cliente
+                            </p>
+                            <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                                <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Rimborso Dovuto</p>
+                                <p class="text-lg text-red-500">${finalRefund}€</p>
+                            </div>
+                        </div>
+                    `,
                     icon: 'question',
                     iconColor: '#ef4444',
                     showDenyButton: true,
@@ -134,12 +149,14 @@ document.addEventListener('livewire:init', () => {
                                             Nessun file selezionato
                                         </span>
                                     </div>
-                                                        
-                                    <div id="refund-preview-container" class="hidden mt-3 flex flex-col items-center justify-center min-h-[96px]">
-                                        <div class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
-                                            <img id="refund-img-preview" src="" class="hidden h-24 w-40 object-cover rounded-lg">
-                                            <div id="refund-pdf-preview" class="hidden flex flex-col items-center justify-center h-24 w-40 text-red-500 rounded-lg">
-                                                <i class="fa-solid fa-file-pdf text-3xl mb-1"></i>
+                                    
+                                    <div class="mt-3 border border-transparent min-h-[100px]">
+                                        <div id="refund-preview-container" class="hidden flex flex-col items-center justify-center min-h-[96px]">
+                                            <div class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                                                <img id="refund-img-preview" src="" class="hidden h-24 w-40 object-cover rounded-lg">
+                                                <div id="refund-pdf-preview" class="hidden flex flex-col items-center justify-center h-24 w-40 text-red-500 rounded-lg">
+                                                    <i class="fa-solid fa-file-pdf text-3xl mb-1"></i>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -157,24 +174,35 @@ document.addEventListener('livewire:init', () => {
                                 popup.style.border = `2px solid ${theme.border}`;
 
                                 const fileInput = document.getElementById('refund-file-input');
-                                fileInput.addEventListener('change', function () {
-                                    const file = this.files[0];
-                                    const previewContainer = document.getElementById('refund-preview-container');
-                                    const imgPreview = document.getElementById('refund-img-preview');
-                                    const pdfPreview = document.getElementById('refund-pdf-preview');
 
-                                    if (file) {
-                                        previewContainer.classList.remove('hidden');
-                                        if (file.type.match('image.*')) {
-                                            imgPreview.src = URL.createObjectURL(file);
-                                            imgPreview.classList.remove('hidden');
-                                            pdfPreview.classList.add('hidden');
-                                        } else if (file.type === 'application/pdf') {
-                                            imgPreview.classList.add('hidden');
-                                            pdfPreview.classList.remove('hidden');
+                                if (fileInput) {
+                                    fileInput.addEventListener('change', function () {
+                                        const file = this.files[0];
+                                        const textEl = document.getElementById('refund-file-chosen-text');
+                                        const previewContainer = document.getElementById('refund-preview-container');
+                                        const imgPreview = document.getElementById('refund-img-preview');
+                                        const pdfPreview = document.getElementById('refund-pdf-preview');
+
+                                        if (previewContainer) previewContainer.classList.add('hidden');
+                                        if (imgPreview) imgPreview.classList.add('hidden');
+                                        if (pdfPreview) pdfPreview.classList.add('hidden');
+                                        if (textEl) textEl.innerText = 'Nessun file selezionato';
+
+                                        if (file) {
+                                            if (textEl) textEl.innerText = file.name;
+                                            if (previewContainer) previewContainer.classList.remove('hidden');
+
+                                            if (file.type.match('image.*')) {
+                                                if (imgPreview) {
+                                                    imgPreview.src = URL.createObjectURL(file);
+                                                    imgPreview.classList.remove('hidden');
+                                                }
+                                            } else if (file.type === 'application/pdf') {
+                                                if (pdfPreview) pdfPreview.classList.remove('hidden');
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             },
                             customClass: {
                                 popup: 'rounded-xl',
@@ -182,11 +210,31 @@ document.addEventListener('livewire:init', () => {
                                 cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
                             },
                             preConfirm: () => {
-                                const file = document.getElementById('refund-file-input').files[0];
+                                const fileInput = document.getElementById('refund-file-input');
+                                const file = fileInput.files[0];
+                                const maxSize = 5 * 1024 * 1024;
+                                const allowedTypes = [
+                                    'application/pdf',
+                                    'image/jpeg',
+                                    'image/jpg',
+                                    'image/png'
+                                ];
+
                                 if (!file) {
-                                    Swal.showValidationMessage('Seleziona il file della contabile!');
+                                    Swal.showValidationMessage('Devi selezionare un file prima di inviare!');
                                     return false;
                                 }
+
+                                if (file.size > maxSize) {
+                                    Swal.showValidationMessage('Il file è troppo grande! Il limite massimo è 5MB.');
+                                    return false;
+                                }
+
+                                if (!allowedTypes.includes(file.type)) {
+                                    Swal.showValidationMessage('File non valido. Carica un file PDF, JPG, JPEG o PNG.');
+                                    return false;
+                                }
+
                                 return file;
                             }
                         }).then((fileResult) => {
@@ -227,12 +275,8 @@ document.addEventListener('livewire:init', () => {
                         L'azione non è reversibile.
                     </p>
                     <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
-                        <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Penale Calcolata (${penalty_percent}%)</p>
-                        <p class="text-lg text-green-500">${penalty_amount}€</p>
-                    </div>
-                    <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
-                        <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Rimborso Dovuto</p>
-                        <p class="text-lg text-red-500">${amount}€</p>
+                        <p class="text-base uppercase text-gray-400 tracking-widest mb-1">Penale Calcolata (${penaltyPercent}%)</p>
+                        <p class="text-lg text-green-500">${penaltyAmount}€</p>
                     </div>
                 </div>
             `,
@@ -241,7 +285,7 @@ document.addEventListener('livewire:init', () => {
             showCancelButton: true,
             showDenyButton: true,
             confirmButtonText: 'CON PENALE',
-            confirmButtonColor: '#ef4444',
+            confirmButtonColor: '#1fae53',
             denyButtonText: 'SENZA PENALE',
             denyButtonColor: '#ef4444',
             cancelButtonText: 'CHIUDI',
@@ -501,6 +545,11 @@ document.addEventListener('livewire:init', () => {
                                         const imgPreview = document.getElementById('penalty-img-preview');
                                         const pdfPreview = document.getElementById('penalty-pdf-preview');
 
+                                        previewContainer.classList.add('hidden');
+                                        imgPreview.classList.add('hidden');
+                                        pdfPreview.classList.add('hidden');
+                                        textEl.innerText = 'Nessun file selezionato';
+
                                         if (file) {
                                             textEl.innerText = file.name;
                                             previewContainer.classList.remove('hidden');
@@ -527,19 +576,31 @@ document.addEventListener('livewire:init', () => {
                             },
                             preConfirm: () => {
                                 const fileInput = document.getElementById('penalty-file-input');
+                                const file = fileInput.files[0];
                                 const maxSize = 5 * 1024 * 1024;
+                                const allowedTypes = [
+                                    'application/pdf',
+                                    'image/jpeg',
+                                    'image/jpg',
+                                    'image/png'
+                                ];
 
-                                if (!fileInput.files || fileInput.files.length === 0) {
+                                if (!file) {
                                     Swal.showValidationMessage('Devi selezionare un file prima di inviare!');
                                     return false;
                                 }
 
-                                if (fileInput.files[0].size > maxSize) {
+                                if (file.size > maxSize) {
                                     Swal.showValidationMessage('Il file è troppo grande! Il limite massimo è 5MB.');
                                     return false;
                                 }
 
-                                return fileInput.files[0];
+                                if (!allowedTypes.includes(file.type)) {
+                                    Swal.showValidationMessage('File non valido. Carica un file PDF, JPG, JPEG o PNG.');
+                                    return false;
+                                }
+
+                                return file;
                             }
                         }).then((fileResult) => {
                             if (fileResult.isConfirmed && fileResult.value) {

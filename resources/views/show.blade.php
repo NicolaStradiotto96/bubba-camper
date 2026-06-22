@@ -37,19 +37,11 @@
                     <div x-data="{
                         activeSlide: 0,
                         touchStart: 0,
-                        showModal: false,
-                        imgModalSrc: '',
                         slides: {{ json_encode($camper->images ?? [$camper->image_path]) }},
                         next() { this.activeSlide = (this.activeSlide + 1) % this.slides.length },
                         prev() { this.activeSlide = (this.activeSlide - 1 + this.slides.length) % this.slides.length },
-                        openModal(src) {
-                            this.imgModalSrc = src;
-                            this.showModal = true;
-                            document.body.style.overflow = 'hidden';
-                        },
-                        closeModal() {
-                            this.showModal = false;
-                            document.body.style.overflow = 'auto';
+                        init() {
+                            GLightbox({ selector: '.glightbox' });
                         }
                     }" @touchstart="touchStart = $event.touches[0].clientX"
                         @touchend="
@@ -57,7 +49,6 @@
                         if (touchStart - touchEnd > 50) next();
                         if (touchStart - touchEnd < -50) prev();
                     "
-                        style="touch-action: pan-y;"
                         class="relative overflow-hidden bg-white dark:bg-gray-900 shadow-xl rounded-xl group border border-gray-300 dark:border-gray-700">
 
                         <div class="relative h-64 sm:h-80 md:h-[500px] w-full">
@@ -68,8 +59,11 @@
                                     x-transition:leave="transition ease-in duration-500"
                                     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                                     class="absolute inset-0">
-                                    <img :src="'/storage/' + slide" @click="openModal('/storage/' + slide)"
-                                        class="w-full h-full object-cover cursor-zoom-in" alt="Dettaglio Camper">
+
+                                    <a :href="'/storage/' + slide" class="glightbox w-full h-full block">
+                                        <img :src="'/storage/' + slide"
+                                            class="w-full h-full object-cover cursor-zoom-in" alt="Dettaglio Camper">
+                                    </a>
                                 </div>
                             </template>
                         </div>
@@ -94,22 +88,7 @@
                                     class="border border-gray-300 dark:border-gray-700 h-2 rounded-full transition-all duration-300"></button>
                             </template>
                         </div>
-
-                        {{-- MODAL ZOOM --}}
-                        <div x-show="showModal" x-transition.opacity
-                            class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
-                            @keydown.escape.window="closeModal()">
-
-                            <button @click="closeModal()"
-                                class="absolute top-6 right-6 text-white hover:text-amber-500 transition">
-                                <i class="fa-solid fa-xmark text-3xl"></i>
-                            </button>
-
-                            <img :src="imgModalSrc" @click.away="closeModal()"
-                                class="max-w-full max-h-full border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-2xl object-contain">
-                        </div>
                     </div>
-
                 </div>
 
                 {{-- DETAILS --}}
@@ -278,7 +257,7 @@
         </div>
 
         {{-- SPECS MODAL --}}
-        <div x-show="openSpecs" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80"
+        <div x-show="openSpecs" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -349,7 +328,7 @@
 
         {{-- EQUIPMENT MODAL --}}
         <div x-show="openEquipment" x-cloak
-            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80"
+            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -420,7 +399,7 @@
 
         {{-- POLICIES MODAL --}}
         <div x-show="openPolicies" x-cloak
-            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80"
+            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">

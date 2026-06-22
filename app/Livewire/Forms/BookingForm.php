@@ -69,8 +69,11 @@ class BookingForm extends Component
     }
     public function getBookedDatesProperty()
     {
+        $limitDate = now()->addMonths(12);
+
         $allDates = Booking::where('camper_id', $this->camper->id)
             ->whereNotIn('status', Booking::getExcludedStatuses())
+            ->where('start_date', '<=', $limitDate)
             ->where(function ($query) {
                 $query->where('payment_status', 'paid')
                     ->orWhere('created_at', '>=', now()->subMinutes(15));
@@ -78,7 +81,6 @@ class BookingForm extends Component
             ->get(['start_date', 'end_date'])
             ->flatMap(function ($booking) {
                 $extendedStart = Carbon::parse($booking->start_date)->subDay();
-
                 $extendedEnd = Carbon::parse($booking->end_date)->addDays(2);
 
                 $period = new \DatePeriod(
@@ -148,8 +150,18 @@ class BookingForm extends Component
 
         $this->validate([
             'date_range' => 'required',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
+            'start_date' => [
+                'required',
+                'date',
+                'after_or_equal:today',
+                'before:' . now()->addMonths(12)->addDay()->format('Y-m-d')
+            ],
+            'end_date' => [
+                'required',
+                'date',
+                'after:start_date',
+                'before:' . now()->addMonths(13)->format('Y-m-d')
+            ],
             'days_count' => 'required|integer|min:2',
             'total_price' => 'required|numeric|min:1',
             'terms_accepted' => 'required|accepted',
@@ -158,7 +170,9 @@ class BookingForm extends Component
             'days_count.min' => 'Il noleggio minimo è di 2 giorni.',
             'total_price.min' => 'Errore nel calcolo del prezzo.',
             'start_date.after_or_equal' => 'La data di inizio non può essere nel passato.',
+            'start_date.before' => 'Puoi prenotare al massimo entro i prossimi 12 mesi.',
             'end_date.after' => 'La data di fine deve essere successiva a quella di inizio.',
+            'end_date.before' => 'La data di fine eccede il limite massimo di prenotazione consentito.',
             'terms_accepted.accepted' => 'È obbligatorio accettare il contratto di noleggio per procedere.',
             'privacy_accepted.accepted' => 'È obbligatorio accettare l\'informativa sulla privacy per procedere.',
         ]);

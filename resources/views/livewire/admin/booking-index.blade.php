@@ -382,7 +382,7 @@
                                     $booking->status !== 'cancelled' &&
                                         ($booking->payment_status === 'paid' || $booking->payment_status === 'fully_paid'))
                                     <button type="button"
-                                        onclick="confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['refund_amount'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->calculateExpectedRefund()['penalty_amount'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
+                                        onclick="confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['total_paid'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->calculateExpectedRefund()['penalty_amount'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
                                         class="bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-2 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
                                         Annulla
                                     </button>
@@ -699,7 +699,7 @@
                     {{-- Cancel --}}
                     @if ($booking->status !== 'cancelled' && $booking->payment_status === 'paid')
                         <button type="button"
-                            onclick="confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['refund_amount'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
+                            onclick="confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['total_paid'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->calculateExpectedRefund()['penalty_amount'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
                             class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
                             Annulla
                         </button>
@@ -716,10 +716,28 @@
     </div>
 
     {{-- BOOKING MODAL --}}
-    <div x-data="{ open: false, b: {}, viewingDocs: null }" x-init="$watch('open', value => { document.body.classList.toggle('no-scroll', value) })"
+    <div x-data="{
+        open: false,
+        b: {},
+        viewingDocs: null,
+        lightbox: null,
+        initLightbox() {
+            if (this.lightbox) this.lightbox.destroy();
+            this.lightbox = GLightbox({
+                selector: '.glightbox',
+                touchNavigation: true,
+                loop: true,
+                zoomable: true,
+                draggable: true
+            });
+        }
+    }" x-init="$watch('viewingDocs', value => {
+        if (value) { $nextTick(() => initLightbox()) }
+        document.body.classList.toggle('no-scroll', open)
+    })"
         @open-booking-modal.window="open = true; b = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.detail ? $event.detail.detail : $event.detail)"
-        @keydown.escape.window="open = false" x-show="open" class="fixed inset-0 z-50 overflow-y-auto"
-        style="display: none;">
+        @keydown.escape.window="if (!document.querySelector('.glightbox-container') && !viewingDocs?.status) { open = false; }"
+        x-show="open" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
 
         <div x-show="open" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
@@ -1067,7 +1085,7 @@
 
                         </div>
 
-                        {{-- Receipt --}}
+                        {{-- Documents Viewver --}}
                         <div class="space-y-2">
                             {{-- Penalty --}}
                             <template x-if="b.penalty_receipt">
@@ -1075,7 +1093,7 @@
                                     <a :href="b.penalty_receipt" target="_blank"
                                         class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40">
                                         <i class="fa-solid fa-file-lines text-base"></i>
-                                        Visualizza Contabile Penale
+                                        Contabile Penale
                                     </a>
                                 </div>
                             </template>
@@ -1086,46 +1104,82 @@
                                     <a :href="b.refund_receipt" target="_blank"
                                         class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40">
                                         <i class="fa-solid fa-file-lines text-base"></i>
-                                        Visualizza Contabile Rimborso
+                                        Contabile Rimborso
                                     </a>
                                 </div>
                             </template>
 
                             <div class="grid grid-cols-2 gap-2 pt-2">
-    <template x-if="b.dl_front || b.dl_back">
-        <button @click="viewingDocs = [b.dl_front, b.dl_back]" 
-            class="bg-amber-600 text-white text-[10px] font-black py-2 px-2 rounded-lg uppercase hover:bg-amber-700">
-            Visualizza Patente
-        </button>
-    </template>
 
-    <template x-if="b.id_front || b.id_back">
-        <button @click="viewingDocs = [b.id_front, b.id_back]" 
-            class="bg-blue-600 text-white text-[10px] font-black py-2 px-2 rounded-lg uppercase hover:bg-blue-700">
-            Visualizza ID
-        </button>
-    </template>
-</div>
-<template x-if="viewingDocs">
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" @click="viewingDocs = null">
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" @click.stop>
-            <div class="flex justify-between mb-4">
-                <h4 class="text-lg font-bold text-gray-900 dark:text-white">Documenti</h4>
-                <button @click="viewingDocs = null" class="text-gray-500 hover:text-gray-800">Chiudi</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <template x-for="doc in viewingDocs">
-                    <template x-if="doc">
-                        {{-- Aggiunta classe min-h per dare spazio allo spinner o al caricamento --}}
-                        <div class="min-h-[300px] flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-lg">
-                            <img :src="doc" class="w-full rounded-lg shadow-lg" loading="lazy">
+                                {{-- Driver License --}}
+                                <template x-if="b.dl_front || b.dl_back">
+                                    <button
+                                        @click="viewingDocs = { status: `open`, title: `Patente di Guida`, docs: [b.dl_front, b.dl_back] }"
+                                        class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
+                                        <i class="fa-solid fa-id-card text-base"></i>
+                                        Patente di Guida
+                                    </button>
+                                </template>
+
+                                {{-- ID Card --}}
+                                <template x-if="b.id_front || b.id_back">
+                                    <button
+                                        @click="viewingDocs = { status: `open`, title: `Carta d'Identità`, docs: [b.id_front, b.id_back] }"
+                                        class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
+                                        <i class="fa-solid fa-id-card text-base"></i>
+                                        Carta d'Identità
+                                    </button>
+                                </template>
+                            </div>
+
                         </div>
-                    </template>
-                </template>
-            </div>
-        </div>
-    </div>
-</template>
+
+                        {{-- DL & ID MODAL --}}
+                        <div x-show="viewingDocs?.status === 'open'"
+                            @keydown.escape.window.stop="if (!document.querySelector('.glightbox-container') && viewingDocs?.status === 'open') viewingDocs.status = null"
+                            class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
+
+                            <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="viewingDocs.status = null"
+                                x-show="viewingDocs?.status === 'open'"
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                                x-transition:leave="transition ease-in duration-200"
+                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                            </div>
+
+                            <div class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 p-4 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative z-10"
+                                @click.stop x-show="viewingDocs?.status === 'open'"
+                                x-transition:enter="transition ease-out duration-300 transform"
+                                x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave="transition ease-in duration-200 transform"
+                                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave-end="opacity-0 translate-y-4 scale-95">
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <h4 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider"
+                                        x-text="viewingDocs ? viewingDocs.title : ''"></h4>
+                                    <button @click="viewingDocs.status = null"
+                                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none">
+                                        <i class="fa-solid fa-xmark text-xl"></i>
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <template x-for="doc in (viewingDocs ? viewingDocs.docs : [])">
+                                        <template x-if="doc">
+                                            <div
+                                                class="min-h-[300px] flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                                                <a :href="doc" class="glightbox w-full h-full">
+                                                    <img :src="doc"
+                                                        class="w-full h-full object-cover cursor-zoom-in hover:opacity-90 transition-opacity text-white"
+                                                        loading="lazy" :alt="viewingDocs?.title ?? 'Documento'">
+                                                </a>
+                                            </div>
+                                        </template>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
