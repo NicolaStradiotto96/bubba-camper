@@ -36,11 +36,11 @@
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Ciao,
                         {{ auth()->user()->first_name }}!
                     </h3>
-                    <p class="text-gray-600 dark:text-gray-400">Pronto per la tua prossima avventura con
-                        <strong class="text-amber-500">{{ config('app.name', 'Bubba Camper') }}</strong>?
-                    </p>
 
                     @if (!auth()->user()->isPayingRightNow())
+                        <p class="text-gray-600 dark:text-gray-400">Pronto per la tua prossima avventura con
+                            <strong class="text-amber-500">{{ config('app.name', 'Bubba Camper') }}</strong>?
+                        </p>
                         <div class="mt-6 flex justify-center">
                             <div class="w-full md:w-1/2">
                                 <p class="text-black dark:text-white font-black uppercase">Scegli le
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                     @else
-                        <div class="mt-8 flex flex-col items-center">
+                        <div class="mt-6 flex flex-col justify-center items-center">
                             <livewire:user.payment-reminder />
                             <p class="text-xs text-gray-400 max-w-md italic">
                                 *Ricorda: se il tempo scade, la prenotazione verrà annullata automaticamente.

@@ -17,6 +17,15 @@ class BookingHistory extends Component
 
     public $receiptUpload;
 
+    public function checkBookingAccess($id)
+    {
+        $exists = Booking::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->exists();
+
+        return $exists;
+    }
+
     public function openBookingDetails($bookingId)
     {
         try {

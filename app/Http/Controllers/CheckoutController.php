@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingPaid;
+use App\Mail\PaymentReminder;
 use App\Models\Booking;
 use Illuminate\Http\Request;
-use Stripe\Stripe;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Checkout\Session;
+use Stripe\Stripe;
 
 class CheckoutController extends Controller
 {
@@ -65,11 +68,20 @@ class CheckoutController extends Controller
             abort(403, 'Azione non autorizzata.');
         }
 
+        Mail::to($booking->customer_email)->send(new BookingPaid($booking));
+
         return view('checkout.success', compact('booking'));
     }
 
-    public function cancel(Booking $booking)
+    public function cancel(Request $request, Booking $booking)
     {
+        if (!$request->session()->has('reminder_sent_' . $booking->id)) {
+
+            Mail::to($booking->customer_email)->send(new PaymentReminder($booking));
+
+            $request->session()->put('reminder_sent_' . $booking->id, true);
+        }
+
         return view('checkout.cancel', compact('booking'));
     }
 }

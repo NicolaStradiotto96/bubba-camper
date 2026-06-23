@@ -1038,7 +1038,22 @@
         </div>
 
         {{-- DOCUMENTS MODAL --}}
-        <div x-data="{ showDocModal: false, selectedBookingId: null }" x-init="$watch('showDocModal', value => { document.body.classList.toggle('no-scroll', value) })"
+        <div x-data="{ showDocModal: false, selectedBookingId: null }" x-init="const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('open_modal')) {
+            let id = urlParams.get('open_modal');
+        
+            $wire.checkBookingAccess(id).then(isAuthorized => {
+                if (isAuthorized) {
+                    selectedBookingId = id;
+                    showDocModal = true;
+                    $dispatch('setBookingId', { id: id });
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                } else {
+                    alert('Prenotazione non trovata o non autorizzata.');
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            });
+        }"
             @open-doc-modal.window="showDocModal = true; selectedBookingId = $event.detail.id"
             @close-doc-modal.window="showDocModal = false" @keydown.escape.window="showDocModal = false"
             class="fixed inset-0 z-50 flex justify-center p-3 overflow-y-auto items-start sm:items-center" x-cloak

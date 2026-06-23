@@ -18,14 +18,15 @@
     .booking { background: #111827; padding: 2px 5px; color: #f59e0b; }
 </style>
 
-<div style="background-color: #1f2937; padding: 20px; border-radius: 8px;">
+<div style="background-color: #1f2937; padding: 20px; border-radius: 8px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-# <span>🚐 Viaggio Confermato!</span>
+# 🚐 Prenotazione Confermata
 
 Ciao **{{ $booking->customer_first_name }}**,
 
 Bubba Camper ha appena **confermato** la tua prenotazione.<br>
 Il camper è pronto per la tua prossima avventura.
+
 
 <div class="divider"></div>
 
@@ -37,18 +38,25 @@ Il camper è pronto per la tua prossima avventura.
 
 <div class="divider"></div>
 
+## 💳 Riepilogo Pagamenti
+- **Totale Prenotazione:** <span class="highlight">{{ number_format($booking->total_price, 2, ',', '.') }}€</span>
+- **Acconto versato (30%):** <span class="highlight">{{ number_format($booking->down_payment, 2, ',', '.') }}€</span>
+- **Saldo rimanente al ritiro (70%):** <span class="highlight">{{ number_format($booking->balance_payment, 2, ',', '.') }}€</span>
+
+<div class="divider"></div>
+
 ## 📍 Cosa succede ora?
-Prepara le valigie! Ti invieremo a breve i dettagli per il ritiro del mezzo e il manuale di bordo in formato PDF.
+Prepara le valigie! Il tuo camper ti aspetta.
 
 Se hai domande, puoi rispondere direttamente a questa email.
 
 <x-mail::button :url="config('app.url') . '/dashboard'" color="amber">
-Vai alla tua Dashboard
+VAI ALLA TUA DASHBOARD
 </x-mail::button>
 
 <div style="margin-top: 30px; border-top: 1px solid #374151; padding-top: 20px; font-size: 0.9em; color: #9ca3af;">
 Grazie per aver scelto {{ config('app.name', 'Bubba Camper') }}!<br>
-Buon viaggio
+Buon viaggio 🐶
 </div>
 
 </div>

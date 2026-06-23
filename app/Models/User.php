@@ -32,6 +32,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
+    }
+
     /**
      * Get the attributes that should be cast.
      *

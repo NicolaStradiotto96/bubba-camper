@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class BookingConfirmed extends Mailable
+class PaymentReminder extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,7 +20,6 @@ class BookingConfirmed extends Mailable
      */
     public function __construct(public Booking $booking)
     {
-        //
     }
 
     /**
@@ -29,7 +28,7 @@ class BookingConfirmed extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Prenotazione Confermata 🚐",
+            subject: 'Completa il pagamento per il tuo camper',
         );
     }
 
@@ -39,7 +38,7 @@ class BookingConfirmed extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.booking-confirmed',
+            markdown: 'emails.payment-reminder',
         );
     }
 

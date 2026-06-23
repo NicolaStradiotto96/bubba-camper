@@ -29,6 +29,20 @@ class DocumentUploader extends Component
 
     public function setBooking($id)
     {
+        $query = Booking::query();
+
+        if (!auth()->user()->isAdmin()) {
+            $query->where('user_id', auth()->id());
+        }
+
+        $booking = $query->find($id);
+
+        if (!$booking) {
+            $this->dispatch('notify', message: 'Prenotazione non trovata.');
+            $this->dispatch('close-doc-modal');
+            return;
+        }
+
         $this->bookingId = $id;
         $this->resetForm();
     }
@@ -52,6 +66,16 @@ class DocumentUploader extends Component
     {
         if (!$this->bookingId) return;
 
+        $booking = Booking::where('id', $this->bookingId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        if (!$booking) {
+            $this->dispatch('notify', message: 'Errore: Prenotazione non trovata o non autorizzata.');
+            $this->dispatch('close-doc-modal');
+            return;
+        }
+
         $this->validate([
             'driver_license_front' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'driver_license_back'  => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
@@ -60,8 +84,6 @@ class DocumentUploader extends Component
         ]);
 
         \DB::transaction(function () {
-            $booking = Booking::findOrFail($this->bookingId);
-
             $folder = 'documents/' . $this->bookingId;
             $paths = [
                 'driver_license_front_path' => $this->driver_license_front->store($folder, 'local'),

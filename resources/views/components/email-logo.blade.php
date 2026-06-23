@@ -11,5 +11,6 @@
 @endphp
 
 <div>
-    <img src="{{ url('/logo.png') }}" alt="Logo {{ config('app.name', 'Bubba Camper') }}" style="{{ $style }}">
+    <img src="https://images.seeklogo.com/logo-png/38/1/bubba-logo-png_seeklogo-386759.png" alt="Logo {{ config('app.name', 'Bubba Camper') }}" style="{{ $style }}" loading="lazy">
+    {{-- {{ config('app.url') }}/logo.png --}}
 </div>

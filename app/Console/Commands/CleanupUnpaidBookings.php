@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Mail\BookingExpired;
+use App\Models\Booking;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -19,7 +20,7 @@ class CleanupUnpaidBookings extends Command
     {
         $expiryTime = now()->subMinutes(15);
 
-        $expiredBookings = \App\Models\Booking::where('payment_status', 'unpaid')
+        $expiredBookings = Booking::where('payment_status', 'unpaid')
             ->where('status', 'pending')
             ->where('created_at', '<', $expiryTime)
             ->get();

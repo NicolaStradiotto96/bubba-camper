@@ -14,25 +14,35 @@
     
     h1, h2, p, li, strong { color: #f3f4f6 !important; }
     .divider { border-bottom: 1px solid #374151 !important; margin: 20px 0; }
+    .highlight { color: #f59e0b !important; }
+    .booking { background: #111827; padding: 2px 5px; color: #f59e0b; }
 </style>
 
 <div style="background-color: #1f2937; padding: 20px; border-radius: 8px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-# ⏳ Prenotazione Scaduta
+# 🚐 Pagamento Ricevuto
 
 Ciao **{{ $booking->customer_first_name }}**,
 
-ti avvisiamo che la tua sessione per la prenotazione del camper **{{ $booking->camper->name }}** è scaduta perché non è stato completato il pagamento entro i 15 minuti previsti.
+abbiamo ricevuto correttamente l'acconto di {{ number_format($booking->down_payment, 2, ',', '.') }}€ per la tua prenotazione <code class="booking">#{{ $booking->id }}</code>.
 
-Le date che avevi selezionato ({{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}) sono ora tornate **disponibili per altri utenti**.
 
 <div class="divider"></div>
 
-Se hai avuto un problema tecnico o vuoi semplicemente riprovare, puoi farlo subito cliccando il tasto qui sotto.
+## 📄 Il prossimo passo: Documenti
+Per procedere con la prenotazione, abbiamo bisogno di verificare la tua identità. Ti chiediamo cortesemente di caricare nella tua area personale:
 
-<x-mail::button :url="config('app.url') . '/dashboard'" color="amber">
-VEDI I NOSTRI CAMPER
+- **Patente di guida** (fronte e retro)
+- **Carta d'identità** (fronte e retro)
+
+Una volta caricati, il nostro team verificherà tutto nel minor tempo possibile e ti invierà la **conferma ufficiale** della prenotazione.
+
+*Nota: La tua prenotazione sarà ufficialmente confermata solo dopo il controllo dei documenti da parte del nostro staff.*
+
+<x-mail::button :url="config('app.url') . '/dashboard?open_modal=' . $booking->id" color="amber">
+CARICA I DOCUMENTI
 </x-mail::button>
+
 
 <div style="margin-top: 30px; border-top: 1px solid #374151; padding-top: 20px; font-size: 0.9em; color: #9ca3af;">
 Il team di {{ config('app.name', 'Bubba Camper') }} 🐶
