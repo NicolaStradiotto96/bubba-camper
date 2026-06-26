@@ -57,12 +57,14 @@
     transform: rotate(90deg);
 }
 
-.gprev, .gnext {
+.gprev,
+.gnext {
     border-radius: 40% !important;
     transition: all 0.3s ease !important;
 }
 
-.gprev:hover, .gnext:hover {
+.gprev:hover,
+.gnext:hover {
     background: var(--accent2) !important;
     transform: scale(1.1);
 }
@@ -83,6 +85,21 @@
 
 .swal2-validation-message::before {
     background-color: #ef4444 !important;
+}
+
+.swal2-checkbox input:checked {
+    background-color: var(--accent2) !important;
+}
+
+.swal2-checkbox input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.swal2-checkbox {
+    color: var(--iti-search-text) !important;
+    background-color: var(--fp-bg) !important;
+    font-size: 0.875rem;
 }
 
 /* PAGINATION */

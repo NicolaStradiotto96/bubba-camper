@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'first_name' => 'Stefano',
             'last_name' => 'Test',
-            'email' => 'info@bubbacamper.com',
+            'email' => config('app.admin_email'),
             'phone' => '+393331234567',
             'is_admin' => true,
         ]);

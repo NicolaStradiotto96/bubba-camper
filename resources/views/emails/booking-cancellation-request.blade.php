@@ -14,39 +14,33 @@
     
     h1, h2, p, li, strong { color: #f3f4f6 !important; }
     .divider { border-bottom: 1px solid #374151 !important; margin: 20px 0; }
-    .highlight { color: #f59e0b !important; }
+    .booking { background: #111827; padding: 2px 5px; color: #f59e0b; }
 </style>
 
 <div style="background-color: #1f2937; padding: 20px; border-radius: 8px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-# 🚐 Nuova Richiesta
+# 📩 Richiesta di Annullamento ricevuta
 
-Hai ricevuto una nuova richiesta dal sito **{{ config('app.name', 'Bubba Camper') }}**.
+Ciao **{{ $booking->customer_first_name }}**,
 
-<div class="divider"></div>
+abbiamo ricevuto la tua richiesta di annullamento per la prenotazione <code class="booking">#{{ $booking->id }}</code>.
 
-## 👤 Dati Cliente
-- **Nome:** <span class="highlight">{{ $data['name'] }}</span>
-- **Email:** <a href="'mailto:' . $data['email']" class="highlight">{{ $data['email'] }}</a>
+Il nostro team prenderà in carico la pratica il prima possibile e verificherà lo stato della tua prenotazione in base ai nostri termini di servizio.
 
 <div class="divider"></div>
 
-## 📅 Periodo richiesto
-- **Data inizio:** <span class="highlight">{{ $data['start_date'] ?? 'Non specificata' }}</span>
-- **Data fine:** <span class="highlight">{{ $data['end_date'] ?? 'Non specificata' }}</span>
+## ℹ️ Cosa succederà ora?
+- Il nostro staff verificherà eventuali rimborsi o penali applicabili.
+- Riceverai un'ulteriore comunicazione via email con la conferma dell'annullamento e i dettagli finanziari.
 
-<div class="divider"></div>
+Se hai urgenza o necessità di comunicare ulteriori dettagli, puoi rispondere direttamente a questa email.
 
-## 📝 Messaggio
-{{ $data['message'] }}
-
-<x-mail::button :url="'mailto:' . $data['email']" color="amber">
-RISPONDI AL CLIENTE
+<x-mail::button :url="config('app.url') . '/dashboard'" color="amber">
+VAI ALLA TUA DASHBOARD
 </x-mail::button>
 
 <div style="margin-top: 30px; border-top: 1px solid #374151; padding-top: 20px; font-size: 0.9em; color: #9ca3af;">
-Email generata automaticamente dal sistema di {{ config('app.name', 'Bubba Camper') }} 🐶
+Il team di {{ config('app.name', 'Bubba Camper') }} 🐶
 </div>
-
 </div>
 </x-mail::message>

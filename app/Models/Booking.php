@@ -33,8 +33,10 @@ class Booking extends Model
         'id_card_back_path',
         'documents_status',
         'documents_status',
-        'penalty_receipt_path',
         'refund_receipt_path',
+        'refund_paid_at'  => 'datetime',
+        'penalty_receipt_path',
+        'penalty_paid_at' => 'datetime',
     ];
 
     protected $casts = [

@@ -26,6 +26,14 @@
                             Crea Nuova Prenotazione
                         </x-primary-anchor>
                     </div>
+
+                    <div>
+                        <x-primary-anchor href="{{ route('maintenance.add') }}" wire:navigate
+                            class="inline-flex items-center gap-2 !p-5 text-xs sm:text-base">
+                            <i class="fa-solid fa-screwdriver-wrench transition-transform group-hover:scale-110"></i>
+                            Aggiungi Indisponibilità
+                        </x-primary-anchor>
+                    </div>
                 </div>
 
                 <livewire:admin.booking-index />

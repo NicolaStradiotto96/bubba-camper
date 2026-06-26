@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Mail\ContactRequest;
 use App\Models\Booking;
+use App\Models\Maintenance;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
@@ -70,17 +71,27 @@ class ContactForm extends Component
     {
         $limitDate = now()->addMonths(12);
 
-        $allDates = Booking::query()
+        $bookings = Booking::query()
             ->whereNotIn('status', Booking::getExcludedStatuses())
             ->where('start_date', '<=', $limitDate)
             ->where(function ($query) {
                 $query->where('payment_status', 'paid')
                     ->orWhere('created_at', '>=', now()->subMinutes(15));
             })
-            ->get(['start_date', 'end_date'])
-            ->flatMap(function ($booking) {
-                $extendedStart = Carbon::parse($booking->start_date)->subDay();
-                $extendedEnd = Carbon::parse($booking->end_date)->addDays(2);
+            ->get(['start_date', 'end_date']);
+
+        $maintenances = Maintenance::where('start_date', '<=', $limitDate)
+            ->get(['start_date', 'end_date']);
+
+        $allDates = $bookings->concat($maintenances)
+            ->flatMap(function ($item) {
+                $isBooking = $item instanceof Booking;
+
+                $start = Carbon::parse($item->start_date);
+                $end = Carbon::parse($item->end_date);
+
+                $extendedStart = $isBooking ? $start->subDay() : $start;
+                $extendedEnd = $isBooking ? $end->addDays(2) : $end->addDay();
 
                 $period = new \DatePeriod(
                     $extendedStart,
@@ -165,7 +176,7 @@ class ContactForm extends Component
                 $dataForEmail['end_date'] = Carbon::parse($this->end_date)->format('d-m-Y');
             }
 
-            Mail::to('info@bubbacamper.com')->send(new ContactRequest($dataForEmail));
+            Mail::to(config('app.admin_email'))->send(new ContactRequest($dataForEmail));
 
             $this->reset(['name', 'email', 'date_range', 'message']);
 

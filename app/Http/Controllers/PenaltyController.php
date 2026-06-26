@@ -39,6 +39,20 @@ class PenaltyController extends Controller
         return response()->json(['success' => false, 'message' => 'File non ricevuto.']);
     }
 
+    public function getPenaltyAmount($bookingId)
+    {
+        $booking = Booking::findOrFail($bookingId);
+
+        if ($booking->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        return response()->json([
+            'amount' => max(0, ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0)),
+            'status' => $booking->payment_status
+        ]);
+    }
+
     public function success(Booking $booking)
     {
         if ($booking->user_id !== auth()->id()) {

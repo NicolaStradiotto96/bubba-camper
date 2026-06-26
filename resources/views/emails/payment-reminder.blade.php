@@ -25,7 +25,6 @@ abbiamo visto che hai iniziato la prenotazione per il camper **{{ $booking->camp
 
 Le date selezionate sono ancora riservate per te, ma solo per poco tempo! Completa il pagamento ora per assicurarti il camper ed evitare che la prenotazione scada.
 
-
 <x-mail::button :url="config('app.url') . '/dashboard'" color="amber">
 COMPLETA IL PAGAMENTO
 </x-mail::button>

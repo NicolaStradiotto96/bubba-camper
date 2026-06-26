@@ -2,9 +2,13 @@
 
 namespace App\Livewire\Admin;
 
+use App\Mail\BookingPaid;
+use App\Mail\BookingPaidNotification;
 use App\Models\Booking;
 use App\Models\Camper;
+use App\Models\Maintenance;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -54,11 +58,26 @@ class BookingManager extends Component
             'end_date' => [
                 'required',
                 'date',
-                'after:start_date',
+                'after_or_equal:start_date',
                 'before:' . now()->addMonths(13)->format('Y-m-d')
             ],
             'total_price'   => 'required|numeric|min:0',
         ]);
+
+        $isUnderMaintenance = Maintenance::where('camper_id', $this->camper_id)
+            ->where(function ($query) {
+                $query->whereBetween('start_date', [$this->start_date, $this->end_date])
+                    ->orWhereBetween('end_date', [$this->start_date, $this->end_date])
+                    ->orWhere(function ($q) {
+                        $q->where('start_date', '<=', $this->start_date)
+                            ->where('end_date', '>=', $this->end_date);
+                    });
+            })->exists();
+
+        if ($isUnderMaintenance) {
+            $this->addError('date_range', 'Il camper selezionato non è disponibile nel periodo scelto a causa di manutenzione.');
+            return;
+        }
 
         $this->calculatePayments();
 
@@ -83,9 +102,17 @@ class BookingManager extends Component
         $booking->terms_accepted = true;
         $booking->privacy_accepted = true;
         $booking->terms_and_privacy_accepted_at = now();
+        $booking->terms_and_privacy_accepted_ip = request()->ip();
         $booking->contract_version = config('contracts.active_version');
 
         $booking->save();
+
+        try {
+            Mail::to($booking->customer_email)->send(new BookingPaid($booking));
+            Mail::to(config('app.admin_email'))->send(new BookingPaidNotification($booking));
+        } catch (\Exception $e) {
+            \Log::error("Errore invio mail prenotazione manuale #{$booking->id}: " . $e->getMessage());
+        }
 
         $this->reset(['camper_id', 'customer_first_name', 'customer_last_name', 'customer_email', 'customer_phone', 'start_date', 'end_date', 'total_price']);
 
@@ -102,13 +129,24 @@ class BookingManager extends Component
 
         $limitDate = now()->addMonths(12);
 
-        return Booking::where('camper_id', $this->camper_id)
+        $bookings = Booking::where('camper_id', $this->camper_id)
             ->whereNotIn('status', Booking::getExcludedStatuses())
             ->where('start_date', '<=', $limitDate)
-            ->get(['start_date', 'end_date'])
-            ->flatMap(function ($booking) {
-                $extendedStart = Carbon::parse($booking->start_date)->subDay();
-                $extendedEnd = Carbon::parse($booking->end_date)->addDays(2);
+            ->get(['start_date', 'end_date']);
+
+        $maintenances = Maintenance::where('camper_id', $this->camper_id)
+            ->where('start_date', '<=', $limitDate)
+            ->get(['start_date', 'end_date']);
+
+        return $bookings->concat($maintenances)
+            ->flatMap(function ($item) {
+                $isBooking = $item instanceof Booking;
+
+                $start = Carbon::parse($item->start_date);
+                $end = Carbon::parse($item->end_date);
+
+                $extendedStart = $isBooking ? $start->subDay() : $start;
+                $extendedEnd = $isBooking ? $end->addDays(2) : $end->addDay();
 
                 $period = new \DatePeriod(
                     $extendedStart,
@@ -122,6 +160,7 @@ class BookingManager extends Component
                 }
                 return $dates;
             })
+            ->unique()
             ->values()
             ->toArray();
     }

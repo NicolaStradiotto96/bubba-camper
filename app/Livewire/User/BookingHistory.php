@@ -2,7 +2,12 @@
 
 namespace App\Livewire\User;
 
+use App\Mail\BookingCancellationNotification;
+use App\Mail\BookingCancellationRequest;
+use App\Mail\PenaltyRecieptNotification;
+use App\Mail\PenaltyRecieptRecieved;
 use App\Models\Booking;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -19,11 +24,22 @@ class BookingHistory extends Component
 
     public function checkBookingAccess($id)
     {
-        $exists = Booking::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->exists();
+        $booking = Booking::where('id', $id)
+            ->where(function ($q) {
+                if (!auth()->user()->isAdmin()) $q->where('user_id', auth()->id());
+            })->first();
 
-        return $exists;
+        if (!$booking) return ['authorized' => false];
+
+        $hasMissingDocs = !$booking->driver_license_front_path ||
+            !$booking->driver_license_back_path ||
+            !$booking->id_card_front_path ||
+            !$booking->id_card_back_path;
+
+        return [
+            'authorized' => true,
+            'needsDocs' => ($booking->payment_status === 'paid' && $hasMissingDocs)
+        ];
     }
 
     public function openBookingDetails($bookingId)
@@ -72,12 +88,18 @@ class BookingHistory extends Component
         if ($booking->status === 'pending' || $booking->status === 'confirmed') {
 
             $booking->status = 'cancellation_pending';
+            $booking->documents_status = 'not_required';
             $booking->cancellation_requested_at = now();
             $booking->save();
 
-            //  Mail::to('info@bubbacamper.com')->send(new CancellationRequest($dataForEmail));
+            try {
+                Mail::to($booking->customer_email)->send(new BookingCancellationRequest($booking));
+                Mail::to(config('app.admin_email'))->send(new BookingCancellationNotification($booking));
 
-            session()->flash('success', "La richiesta di annullamento per la prenotazione #{$booking->id} è in fase di elaborazione.");
+                session()->flash('success', "La richiesta di annullamento per la prenotazione #{$booking->id} è in fase di elaborazione.");
+            } catch (\Exception $e) {
+                session()->flash('error', "La richiesta è stata registrata, ma c'è stato un problema nell'invio delle notifiche. Ti preghiamo di contattarci.");
+            }
         }
     }
 
@@ -139,17 +161,20 @@ class BookingHistory extends Component
         $sessionKey = 'uploaded_penalty_receipt_' . $booking->id;
         $path = session($sessionKey);
 
-        if ($path) {
-            $booking->penalty_receipt_path = $path;
-
+        if ($booking->penalty_receipt_path) {
             $booking->payment_status = 'penalty_verification';
             $booking->save();
+
+            Mail::to($booking->customer_email)->send(new PenaltyRecieptRecieved($booking));
+            Mail::to(config('app.admin_email'))->send(new PenaltyRecieptNotification($booking));
 
             session()->forget($sessionKey);
 
             session()->flash('success', "La contabile è stata inoltrata con successo. L'amministratore verificherà l'accredito del bonifico.");
 
             return $this->redirect(route('dashboard'), navigate: true);
+        } else {
+            session()->flash('cancelled', "Errore: contabile non trovata nel sistema.");
         }
     }
 

@@ -11,20 +11,123 @@ updateTheme();
 
 document.addEventListener('livewire:navigated', updateTheme);
 
+// Theme Toggler
+function getSwalTheme() {
+    const isDark = document.documentElement.classList.contains('dark');
+    return {
+        isDark: isDark,
+        background: isDark ? '#1f2937' : '#ffffff',
+        color: isDark ? '#ffffff' : '#111827',
+        border: isDark ? '#374151' : '#e5e7eb',
+        backdrop: '#000000e6'
+    };
+}
+
+// Pay Penalty
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get('pay_penalty');
+
+    if (bookingId) {
+        fetch(`/prenotazione/${bookingId}/pagamento-penale`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'penalty_pending') {
+                    window.payPenaltyAction(bookingId, data.amount);
+                } else {
+                    const theme = getSwalTheme();
+
+                    Swal.fire({
+                        icon: 'error',
+                        iconColor: '#ef4444',
+                        title: 'ERRORE',
+                        text: 'Nessuna penale trovata per la prenotazione selezionata.',
+                        confirmButtonText: 'CHIUDI',
+                        confirmButtonColor: '#d97706',
+                        background: theme.background,
+                        color: theme.color,
+                        didOpen: (popup) => {
+                            popup.style.border = `2px solid ${theme.border}`;
+                        },
+                        customClass: {
+                            popup: 'rounded-xl',
+                            confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
+                        }
+                    });
+                }
+                window.history.replaceState({}, document.title, window.location.pathname);
+            })
+            .catch(error => console.error('Errore:', error));
+    }
+});
+
 // SWEETALERT 2
 document.addEventListener('livewire:init', () => {
 
-    // Theme Toggler
-    function getSwalTheme() {
-        const isDark = document.documentElement.classList.contains('dark');
-        return {
-            isDark: isDark,
-            background: isDark ? '#1f2937' : '#ffffff',
-            color: isDark ? '#ffffff' : '#111827',
-            border: isDark ? '#374151' : '#e5e7eb',
-            backdrop: '#000000e6'
-        };
-    }
+    // Booking Not Found
+    window.addEventListener('swal-error', event => {
+        const data = event.detail[0];
+        window.showErrorSwal();
+    });
+
+    window.openBookingModal = function (id, $wire, $dispatch) {
+        $wire.checkBookingAccess(id).then(response => {
+            if (response.authorized) {
+                if (response.needsDocs) {
+                    $dispatch('open-doc-modal', { id: id });
+                } else {
+                    window.docsErrorSwal();
+                }
+            } else {
+                window.showErrorSwal();
+            }
+            window.history.replaceState({}, document.title, window.location.pathname);
+        });
+    };
+
+    window.showErrorSwal = function (text, title = '') {
+        const theme = getSwalTheme();
+
+        Swal.fire({
+            icon: 'error',
+            iconColor: '#ef4444',
+            title: 'ERRORE',
+            text: 'Prenotazione non trovata.',
+            confirmButtonText: 'CHIUDI',
+            confirmButtonColor: '#d97706',
+            background: theme.background,
+            color: theme.color,
+            didOpen: (popup) => {
+                popup.style.border = `2px solid ${theme.border}`;
+            },
+            customClass: {
+                popup: 'rounded-xl',
+                confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
+            }
+        });
+    };
+
+    window.docsErrorSwal = function (text, title = '') {
+        const theme = getSwalTheme();
+
+        Swal.fire({
+            icon: 'error',
+            iconColor: '#ef4444',
+            title: 'ERRORE',
+            text: 'Documenti già caricati.',
+            confirmButtonText: 'CHIUDI',
+            confirmButtonColor: '#d97706',
+            background: theme.background,
+            color: theme.color,
+            didOpen: (popup) => {
+                popup.style.border = `2px solid ${theme.border}`;
+            },
+            customClass: {
+                popup: 'rounded-xl',
+                confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
+            }
+        });
+    };
 
     // Confirm Booking
     window.confirmHostAction = function (id, firstName, lastName, startDate, endDate) {
@@ -382,6 +485,8 @@ document.addEventListener('livewire:init', () => {
             message += `<br><br>La tua richiesta sarà presa in carico. Il nostro staff la valuterà e ti darà una risposta il prima possibile.`;
         }
 
+        message += `<br><br><div class="text-sm italic text-gray-500">Questa operazione non potrà essere annullata.</div>`;
+
         Swal.fire({
             title: 'ANNULLARE IL VIAGGIO?',
             html: message,
@@ -393,6 +498,12 @@ document.addEventListener('livewire:init', () => {
             cancelButtonText: 'CHIUDI',
             background: theme.background,
             color: theme.color,
+            input: 'checkbox',
+            inputValue: 0,
+            inputPlaceholder: 'Confermo di voler annullare la mia prenotazione.',
+            inputValidator: (result) => {
+                return !result && 'Devi accettare per poter procedere';
+            },
             didOpen: (popup) => {
                 popup.style.border = `2px solid ${theme.border}`;
             },

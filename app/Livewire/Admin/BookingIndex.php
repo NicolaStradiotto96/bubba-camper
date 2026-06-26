@@ -3,8 +3,14 @@
 namespace App\Livewire\Admin;
 
 use App\Mail\BookingCancelled;
+use App\Mail\BookingCancelledNotification;
 use App\Mail\BookingConfirmed;
+use App\Mail\BookingConfirmedNotification;
+use App\Mail\DocumentRejected;
+use App\Mail\PenaltyPaid;
+use App\Mail\PenaltyPaidNotification;
 use App\Models\Booking;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -13,6 +19,8 @@ use Livewire\WithPagination;
 class BookingIndex extends Component
 {
     use WithPagination;
+
+    public $bookingId;
 
     protected $listeners = ['refresh-page' => '$refresh'];
 
@@ -32,6 +40,7 @@ class BookingIndex extends Component
             $this->dispatch('booking-updated');
 
             Mail::to($booking->customer_email)->send(new BookingConfirmed($booking));
+            Mail::to(config('app.admin_email'))->send(new BookingConfirmedNotification($booking));
 
             session()->flash('success', "Prenotazione #{$booking->id} confermata.");
         }
@@ -72,18 +81,21 @@ class BookingIndex extends Component
                         'amount' => (int)($refundAmount * 100),
                     ]);
                     $booking->payment_status = 'refunded_stripe';
+                    $booking->refund_paid_at = now();
                 } catch (\Exception $e) {
                     session()->flash('error', "Errore Stripe: " . $e->getMessage());
                     return;
                 }
             } else {
                 $booking->payment_status = 'refunded_manual';
+                $booking->refund_paid_at = now();
             }
         } else {
             if ($totalPaid >= $booking->calculateExpectedRefund()['penalty_amount']) {
                 $booking->payment_status = 'penalty_paid';
                 $booking->balance_paid = true;
                 $booking->balance_paid_at = now();
+                $booking->penalty_paid_at = now();
             } else {
                 $booking->payment_status = 'penalty_pending';
             }
@@ -94,8 +106,8 @@ class BookingIndex extends Component
 
         $this->dispatch('booking-updated');
 
-
         Mail::to($booking->customer_email)->send(new BookingCancelled($booking));
+        Mail::to(config('app.admin_email'))->send(new BookingCancelledNotification($booking));
 
         $msg = $refundAmount > 0
             ? "Prenotazione annullata. Rimborso di " . number_format($refundAmount, 2, ',', '.') . "€ registrato."
@@ -119,7 +131,11 @@ class BookingIndex extends Component
             $booking->payment_status = 'penalty_paid';
             $booking->balance_paid = true;
             $booking->balance_paid_at = now();
+            $booking->penalty_paid_at = now();
             $booking->save();
+
+            Mail::to($booking->customer_email)->send(new PenaltyPaid($booking));
+            Mail::to(config('app.admin_email'))->send(new PenaltyPaidNotification($booking));
 
             session()->flash('success', "Penale residua registrata con successo per la prenotazione #{$booking->id}.");
         } else {
@@ -242,6 +258,39 @@ class BookingIndex extends Component
                 ])
                 : null,
         ]);
+    }
+
+
+
+    public function rejectDocuments($bookingId, array $fields)
+    {
+        if (!auth()->user()->isAdmin()) abort(403);
+
+        $this->bookingId = $bookingId;
+
+        $booking = Booking::findOrFail($this->bookingId);
+
+        $rejectedFields = [];
+
+        DB::transaction(function () use ($booking, $fields, &$rejectedFields) {
+            foreach ($fields as $field) {
+                $pathColumn = $field . '_path';
+
+                if ($booking->$pathColumn) {
+                    \Storage::disk('local')->delete($booking->$pathColumn);
+                    $booking->$pathColumn = null;
+                    $rejectedFields[] = $field;
+                }
+            }
+
+            $booking->documents_status = 'pending';
+            $booking->save();
+        });
+
+        Mail::to($booking->customer_email)->send(new DocumentRejected($booking, $rejectedFields));
+
+        $this->dispatch('notify', message: 'Documenti cancellati e cliente avvisato.');
+        $this->dispatch('refresh-page');
     }
 
     public function render()

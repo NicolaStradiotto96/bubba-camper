@@ -730,11 +730,30 @@
                 zoomable: true,
                 draggable: true
             });
+        },
+        closeAll() {
+            this.viewingDocs = null;
+            this.open = false;
+            this.toReject = [];
+            document.body.classList.remove('no-scroll');
+        },
+        toReject: [],
+        toggleReject(docPath) {
+            if (this.toReject.includes(docPath)) {
+                this.toReject = this.toReject.filter(item => item !== docPath);
+            } else {
+                this.toReject.push(docPath);
+            }
+        },
+    }" x-init="$watch('open', value => {
+        document.body.classList.toggle('no-scroll', value || viewingDocs?.status === 'open');
+    });
+    $watch('viewingDocs', value => {
+        if (value?.status === 'open') {
+            $nextTick(() => initLightbox());
         }
-    }" x-init="$watch('viewingDocs', value => {
-        if (value) { $nextTick(() => initLightbox()) }
-        document.body.classList.toggle('no-scroll', open)
-    })"
+        document.body.classList.toggle('no-scroll', open || value?.status === 'open');
+    });"
         @open-booking-modal.window="open = true; b = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.detail ? $event.detail.detail : $event.detail)"
         @keydown.escape.window="if (!document.querySelector('.glightbox-container') && !viewingDocs?.status) { open = false; }"
         x-show="open" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
@@ -743,7 +762,7 @@
             x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 backdrop-blur-sm"
-            @click="open = false"></div>
+            @click="closeAll()"></div>
 
         <div class="flex min-h-full items-center justify-center p-3 text-center">
             <div x-show="open" x-transition:enter="transition ease-out duration-300 transform"
@@ -765,7 +784,7 @@
                             <span class="bg-gray-200 dark:bg-gray-900 py-1 px-1">#<span x-text="b.id"></span></span>
                         </h3>
 
-                        <button @click="open = false" type="button"
+                        <button @click="closeAll()" type="button"
                             class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none"
                             aria-label="Chiudi modale">
                             <i class="fa-solid fa-xmark text-xl"></i>
@@ -1114,7 +1133,7 @@
                                 {{-- Driver License --}}
                                 <template x-if="b.dl_front || b.dl_back">
                                     <button
-                                        @click="viewingDocs = { status: `open`, title: `Patente di Guida`, docs: [b.dl_front, b.dl_back] }"
+                                        @click="viewingDocs = { status: `open`, title: `Patente di Guida`, docs: [b.dl_front, b.dl_back], fields: ['driver_license_front', 'driver_license_back'] }"
                                         class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
                                         <i class="fa-solid fa-id-card text-base"></i>
                                         Patente di Guida
@@ -1124,12 +1143,25 @@
                                 {{-- ID Card --}}
                                 <template x-if="b.id_front || b.id_back">
                                     <button
-                                        @click="viewingDocs = { status: `open`, title: `Carta d'Identità`, docs: [b.id_front, b.id_back] }"
+                                        @click="viewingDocs = { status: `open`, title: `Carta d'Identità`, docs: [b.id_front, b.id_back], fields: ['id_card_front', 'id_card_back'] }"
                                         class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
                                         <i class="fa-solid fa-id-card text-base"></i>
                                         Carta d'Identità
                                     </button>
                                 </template>
+
+                            </div>
+
+
+
+                            <div class="pt-2">
+                                <x-danger-button x-show="toReject.length > 0"
+                                    @click="$wire.rejectDocuments(b.id, toReject); toReject = []; closeAll();"
+                                    class="w-full py-3 flex justify-center items-center">
+                                    <p
+                                        x-text="`Rifiuta ${toReject.length} ${toReject.length > 1 ? 'documenti' : 'documento'}`">
+                                    </p>
+                                </x-danger-button>
                             </div>
 
                         </div>
@@ -1165,20 +1197,29 @@
                                     </button>
                                 </div>
 
+
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <template x-for="doc in (viewingDocs ? viewingDocs.docs : [])">
+                                    <template x-for="(doc, index) in (viewingDocs ? viewingDocs.docs : [])">
                                         <template x-if="doc">
-                                            <div
-                                                class="min-h-[300px] flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                                            <div class="relative min-h-[300px] flex items-center justify-center border-2 rounded-lg overflow-hidden"
+                                                :class="toReject.includes(viewingDocs.fields[index]) ? 'border-red-500' :
+                                                    'border-gray-200 dark:border-gray-700'">
+
+                                                <button @click="toggleReject(viewingDocs.fields[index])"
+                                                    class="absolute top-2 right-2 z-20 p-1 rounded-full shadow-md transition"
+                                                    :class="toReject.includes(viewingDocs.fields[index]) ? 'bg-red-600 text-white' : 'bg-white/80 text-gray-500 hover:bg-red-100'">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+
                                                 <a :href="doc" class="glightbox w-full h-full">
                                                     <img :src="doc"
-                                                        class="w-full h-full object-cover cursor-zoom-in hover:opacity-90 transition-opacity text-white"
-                                                        loading="lazy" :alt="viewingDocs?.title ?? 'Documento'">
+                                                        class="w-full h-full object-cover cursor-zoom-in hover:opacity-90 transition-opacity">
                                                 </a>
                                             </div>
                                         </template>
                                     </template>
                                 </div>
+
                             </div>
                         </div>
 
@@ -1192,11 +1233,16 @@
 
     {{-- DOCUMENTS MODAL --}}
     <div x-data="{ showDocModal: false, selectedBookingId: null }" x-init="const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('open_modal')) {
-        let id = urlParams.get('open_modal');
+    if (urlParams.has('open_doc_modal')) {
+        let id = urlParams.get('open_doc_modal');
+    
         selectedBookingId = id;
         showDocModal = true;
-        $dispatch('setBookingId', { id: id });
+    
+        $nextTick(() => {
+            $dispatch('setBookingId', { id: id });
+        });
+    
         window.history.replaceState({}, document.title, window.location.pathname);
     }"
         @open-doc-modal.window="showDocModal = true; selectedBookingId = $event.detail.id"

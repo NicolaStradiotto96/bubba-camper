@@ -4,6 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Models\Booking;
 use App\Models\Camper;
+use App\Models\Maintenance;
 use Carbon\Carbon;
 use Livewire\Component;
 
@@ -67,21 +68,33 @@ class BookingForm extends Component
             }
         }
     }
+
     public function getBookedDatesProperty()
     {
         $limitDate = now()->addMonths(12);
 
-        $allDates = Booking::where('camper_id', $this->camper->id)
+        $bookings = Booking::where('camper_id', $this->camper->id)
             ->whereNotIn('status', Booking::getExcludedStatuses())
             ->where('start_date', '<=', $limitDate)
             ->where(function ($query) {
                 $query->where('payment_status', 'paid')
                     ->orWhere('created_at', '>=', now()->subMinutes(15));
             })
-            ->get(['start_date', 'end_date'])
-            ->flatMap(function ($booking) {
-                $extendedStart = Carbon::parse($booking->start_date)->subDay();
-                $extendedEnd = Carbon::parse($booking->end_date)->addDays(2);
+            ->get(['start_date', 'end_date']);
+
+        $maintenances = Maintenance::where('camper_id', $this->camper->id)
+            ->where('start_date', '<=', $limitDate)
+            ->get(['start_date', 'end_date']);
+
+        $allDates = $bookings->concat($maintenances)
+            ->flatMap(function ($item) {
+                $isBooking = $item instanceof Booking;
+
+                $start = Carbon::parse($item->start_date);
+                $end = Carbon::parse($item->end_date);
+
+                $extendedStart = $isBooking ? $start->subDay() : $start;
+                $extendedEnd = $isBooking ? $end->addDays(2) : $end->addDay();
 
                 $period = new \DatePeriod(
                     $extendedStart,
@@ -194,8 +207,20 @@ class BookingForm extends Component
             })
             ->exists();
 
-        if ($alreadyBooked) {
+        $isUnderMaintenance = Maintenance::where('camper_id', $this->camper->id)
+            ->where(function ($query) {
+                $query->whereBetween('start_date', [$this->start_date, $this->end_date])
+                    ->orWhereBetween('end_date', [$this->start_date, $this->end_date])
+                    ->orWhere(function ($q) {
+                        $q->where('start_date', '<=', $this->start_date)
+                            ->where('end_date', '>=', $this->end_date);
+                    });
+            })
+            ->exists();
+
+        if ($alreadyBooked || $isUnderMaintenance) {
             $this->addError('date_range', 'Il camper non è disponibile nelle date selezionate.');
+            $this->dispatch('clear-calendar');
             return;
         }
 

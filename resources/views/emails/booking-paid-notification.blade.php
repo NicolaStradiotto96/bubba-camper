@@ -20,42 +20,41 @@
 
 <div style="background-color: #1f2937; padding: 20px; border-radius: 8px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-# 🚐 Prenotazione Confermata
+# 🚐 Pagamento Ricevuto
 
-Ciao **{{ $booking->customer_first_name }}**,
-
-{{ config('app.name', 'Bubba Camper') }} ha appena **confermato** la tua prenotazione.<br>
-Il camper è pronto per la tua prossima avventura.
+È stato appena compltetato il pagamento della prenotazione <code class="booking">#{{ $booking->id }}</code>.
 
 <div class="divider"></div>
 
-## 📅 Dettagli del Noleggio
+## 👤 Dati Cliente
+- **Nome:** <span class="highlight">{{ $booking->customer_first_name }} {{ $booking->customer_last_name }}</span>
+- **Email:** <a href="'mailto:' . {{ $booking->customer_email }}" class="highlight">{{ $booking->customer_email }}</a>
+- **Telefono:** <span class="highlight">{{ $booking->customer_phone }}</span>
+
+<div class="divider"></div>
+
+## 📅 Dettagli Prenotazione
 - **Camper:** <span class="highlight">{{ $booking->camper->name }}</span>
-- **Dal:** <span class="highlight">{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}</span>
-- **Al:** <span class="highlight">{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</span>
-- **ID prenotazione:** <code class="booking">#{{ $booking->id }}</code>
+- **Periodo:** <span class="highlight">{{ $booking->start_date->format('d/m/Y') }} - {{ $booking->end_date->format('d/m/Y') }}</span>
 
 <div class="divider"></div>
 
-## 💳 Riepilogo Pagamenti
-- **Totale Prenotazione:** <span class="highlight">{{ number_format($booking->total_price, 2, ',', '.') }}€</span>
-- **Acconto versato (30%):** <span class="highlight">{{ number_format($booking->down_payment, 2, ',', '.') }}€</span>
-- **Saldo rimanente al ritiro (70%):** <span class="highlight">{{ number_format($booking->balance_payment, 2, ',', '.') }}€</span>
+## 💶 Dettagli Pagamento
+- **Totale:** <span class="highlight">{{ number_format($booking->total_price, 2, ',', '.') }}€</span>
+- **Acconto versato:** <span class="highlight">{{ number_format($booking->down_payment, 2, ',', '.') }}€</span>
 
 <div class="divider"></div>
 
-## ℹ️ Cosa succederà ora?
-Prepara le valigie! Il tuo camper ti aspetta.
-
-Se hai domande, puoi rispondere direttamente a questa email.
+## 📝 Prossimi Step
+1. Controlla che i documenti siano stati caricati dal cliente.
+2. Monitora lo stato della pratica nella tua dashboard.
 
 <x-mail::button :url="config('app.url') . '/dashboard'" color="amber">
-VAI ALLA TUA DASHBOARD
+VAI ALLA DASHBOARD
 </x-mail::button>
 
 <div style="margin-top: 30px; border-top: 1px solid #374151; padding-top: 20px; font-size: 0.9em; color: #9ca3af;">
-Grazie per aver scelto {{ config('app.name', 'Bubba Camper') }}!<br>
-Buon viaggio 🐶
+Email generata automaticamente dal sistema di {{ config('app.name', 'Bubba Camper') }} 🐶
 </div>
 
 </div>

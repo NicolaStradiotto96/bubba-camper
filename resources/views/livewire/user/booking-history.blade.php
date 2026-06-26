@@ -1012,7 +1012,7 @@
                                         <a :href="b.penalty_receipt" target="_blank"
                                             class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40">
                                             <i class="fa-solid fa-file-lines text-base"></i>
-                                            Visualizza Contabile Penale
+                                            Contabile Penale
                                         </a>
                                     </div>
                                 </template>
@@ -1023,7 +1023,7 @@
                                         <a :href="b.refund_receipt" target="_blank"
                                             class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40">
                                             <i class="fa-solid fa-file-lines text-base"></i>
-                                            Visualizza Contabile Rimborso
+                                            Contabile Rimborso
                                         </a>
                                     </div>
                                 </template>
@@ -1039,20 +1039,8 @@
 
         {{-- DOCUMENTS MODAL --}}
         <div x-data="{ showDocModal: false, selectedBookingId: null }" x-init="const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('open_modal')) {
-            let id = urlParams.get('open_modal');
-        
-            $wire.checkBookingAccess(id).then(isAuthorized => {
-                if (isAuthorized) {
-                    selectedBookingId = id;
-                    showDocModal = true;
-                    $dispatch('setBookingId', { id: id });
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                } else {
-                    alert('Prenotazione non trovata o non autorizzata.');
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-            });
+        if (urlParams.has('open_doc_modal')) {
+            window.openBookingModal(urlParams.get('open_doc_modal'), $wire, $dispatch);
         }"
             @open-doc-modal.window="showDocModal = true; selectedBookingId = $event.detail.id"
             @close-doc-modal.window="showDocModal = false" @keydown.escape.window="showDocModal = false"

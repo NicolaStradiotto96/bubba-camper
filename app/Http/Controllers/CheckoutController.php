@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\BookingPaid;
 use App\Mail\PaymentReminder;
 use App\Models\Booking;
 use Illuminate\Http\Request;
@@ -67,8 +66,6 @@ class CheckoutController extends Controller
         if ($booking->user_id !== auth()->id()) {
             abort(403, 'Azione non autorizzata.');
         }
-
-        Mail::to($booking->customer_email)->send(new BookingPaid($booking));
 
         return view('checkout.success', compact('booking'));
     }

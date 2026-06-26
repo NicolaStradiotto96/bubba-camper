@@ -4,7 +4,7 @@
     class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-300 dark:border-gray-700 flex flex-col h-full">
     <div class="relative h-64 w-full flex-shrink-0 bg-gray-100 dark:bg-gray-900">
         <img src="{{ asset('storage/' . $camper->image_path) }}" alt="{{ $camper->name }}"
-            class="w-full h-full object-cover object-center">
+            class="w-full h-full object-cover object-center text-white">
 
         @auth
             @if (auth()->user()->is_admin)

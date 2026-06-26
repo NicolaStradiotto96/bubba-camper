@@ -57,7 +57,10 @@ return new class extends Migration
             $table->string('stripe_payment_id')->nullable();
 
             $table->string('refund_receipt_path')->nullable();
+            $table->timestamp('refund_paid_at')->nullable();
+
             $table->string('penalty_receipt_path')->nullable();
+            $table->timestamp('penalty_paid_at')->nullable();
 
             $table->index(['start_date', 'end_date']);
             $table->index(['status', 'payment_status', 'created_at'], 'bookings_cleanup_index');

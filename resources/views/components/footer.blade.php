@@ -75,10 +75,11 @@
                                 +39 334 753 8083</a>
                         </li>
                         <li>
-                            <a href="mailto:info@bubbacamper.com" target="_blank"
+                            <a href="mailto:{{ config('app.admin_email') }}" target="_blank"
                                 class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <i class="fa-solid fa-envelope text-amber-500"></i>
-                                info@bubbacamper.com</a>
+                                {{ config('app.admin_email') }}
+                            </a>
                         </li>
                     </ul>
                 </div>

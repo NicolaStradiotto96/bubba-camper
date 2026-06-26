@@ -10,6 +10,7 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Livewire\Admin\BookingManager;
 use App\Livewire\Admin\CamperManager;
+use App\Livewire\Admin\MaintenanceManager;
 use Illuminate\Support\Facades\Route;
 
 // HOME
@@ -58,6 +59,9 @@ Route::get('/prenotazione/{booking}/pagamento-penale-non-confermato', [PenaltyCo
     ->middleware(['auth', 'verified'])
     ->name('penalty.cancel');
 
+Route::get('/prenotazione/{bookingId}/pagamento-penale', [PenaltyController::class, 'getPenaltyAmount'])
+    ->middleware(['auth', 'verified']);
+
 // PRICES
 Route::get('/prezzi', [CamperController::class, "prices"])->name("prices");
 
@@ -83,6 +87,11 @@ Route::get('/admin/camper/{camper}/modifica', CamperManager::class)
 Route::get('/admin/prenotazione/crea', BookingManager::class)
     ->middleware(['auth', 'admin'])
     ->name('booking.create');
+
+// MAINTENANCE
+Route::get('/admin/manutenzione', MaintenanceManager::class)
+    ->middleware(['auth', 'admin'])
+    ->name('maintenance.add');
 
 // VIEW DOCUMENTS
 Route::get('/documento/view/{bookingId}/{filename}', [DocumentController::class, 'view'])

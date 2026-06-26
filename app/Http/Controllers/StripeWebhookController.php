@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingPaid;
+use App\Mail\BookingPaidNotification;
+use App\Mail\PenaltyPaid;
+use App\Mail\PenaltyPaidNotification;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Webhook;
 
@@ -41,6 +46,9 @@ class StripeWebhookController extends Controller
                             $booking->balance_paid_at = now();
                             $booking->save();
 
+                            Mail::to($booking->customer_email)->send(new PenaltyPaid($booking));
+                            Mail::to(config('app.admin_email'))->send(new PenaltyPaidNotification($booking));
+
                             Log::info("Stripe Webhook: Pagamento penale ricevuto", [
                                 'booking_id' => $bookingId,
                                 'stripe_session_id' => $session->id,
@@ -52,6 +60,9 @@ class StripeWebhookController extends Controller
                                 $booking->down_paid = true;
                                 $booking->down_paid_at = now();
                                 $booking->save();
+
+                                Mail::to($booking->customer_email)->send(new BookingPaid($booking));
+                                Mail::to(config('app.admin_email'))->send(new BookingPaidNotification($booking));
 
                                 Log::info("Stripe Webhook: Pagamento acconto (30%) ricevuto", [
                                     'booking_id' => $bookingId,

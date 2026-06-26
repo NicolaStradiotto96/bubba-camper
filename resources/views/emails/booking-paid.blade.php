@@ -14,7 +14,6 @@
     
     h1, h2, p, li, strong { color: #f3f4f6 !important; }
     .divider { border-bottom: 1px solid #374151 !important; margin: 20px 0; }
-    .highlight { color: #f59e0b !important; }
     .booking { background: #111827; padding: 2px 5px; color: #f59e0b; }
 </style>
 
@@ -25,7 +24,6 @@
 Ciao **{{ $booking->customer_first_name }}**,
 
 abbiamo ricevuto correttamente l'acconto di {{ number_format($booking->down_payment, 2, ',', '.') }}€ per la tua prenotazione <code class="booking">#{{ $booking->id }}</code>.
-
 
 <div class="divider"></div>
 
@@ -39,10 +37,9 @@ Una volta caricati, il nostro team verificherà tutto nel minor tempo possibile 
 
 *Nota: La tua prenotazione sarà ufficialmente confermata solo dopo il controllo dei documenti da parte del nostro staff.*
 
-<x-mail::button :url="config('app.url') . '/dashboard?open_modal=' . $booking->id" color="amber">
+<x-mail::button :url="config('app.url') . '/dashboard?open_doc_modal=' . $booking->id" color="amber">
 CARICA I DOCUMENTI
 </x-mail::button>
-
 
 <div style="margin-top: 30px; border-top: 1px solid #374151; padding-top: 20px; font-size: 0.9em; color: #9ca3af;">
 Il team di {{ config('app.name', 'Bubba Camper') }} 🐶
