@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
 
-            <div class="space-y-4 xl:col-span-1 flex flex-col items-center text-center">
+            <div class="space-y-4 xl:col-span-1 flex flex-col justify-center items-center text-center">
                 <div class="space-y-1">
                     <div class="flex items-center justify-center space-x-2">
                         <x-application-logo size="small" />
@@ -10,18 +10,18 @@
                             <p class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">
                                 {{ config('app.name', 'Bubba Camper') }}
                             </p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tighter">
+                                di Stradiotto Stefano
+                            </p>
                             <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-                                P.IVA 02403740240
+                                Via Chemin Palma 2/C, <br> 36065 Mussolente (VI)
+                            </p>
+                            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                                P.IVA <span class="select-all">02403740240</span>
                             </p>
                         </div>
                     </div>
                 </div>
-
-                {{-- Descrizione --}}
-                <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-xs">
-                    Rendi le tue vacanze indimenticabili con il nostro camper di famiglia.
-                    Comfort, libertà e avventura a portata di click.
-                </p>
             </div>
 
             <div class="md:grid md:grid-cols-3 gap-8 mt-7 xl:mt-0 xl:col-span-2">

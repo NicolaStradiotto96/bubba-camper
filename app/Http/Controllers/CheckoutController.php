@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\PaymentReminder;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -61,10 +62,30 @@ class CheckoutController extends Controller
         return redirect($session->url);
     }
 
-    public function success(Booking $booking)
+    public function success(Request $request, Booking $booking)
     {
         if ($booking->user_id !== auth()->id()) {
             abort(403, 'Azione non autorizzata.');
+        }
+
+        $sessionId = $request->query('session_id');
+
+        if ($sessionId) {
+            try {
+                Stripe::setApiKey(config('services.stripe.secret'));
+                $session = Session::retrieve($sessionId);
+
+                if ($session->payment_status === 'paid' && !$booking->down_paid) {
+                    $booking->update([
+                        'down_paid' => true,
+                        'payment_status' => 'paid'
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error("Errore verifica Stripe: " . $e->getMessage());
+            }
+
+            return redirect()->route('checkout.success', $booking);
         }
 
         return view('checkout.success', compact('booking'));
@@ -74,7 +95,11 @@ class CheckoutController extends Controller
     {
         if (!$request->session()->has('reminder_sent_' . $booking->id)) {
 
-            Mail::to($booking->customer_email)->send(new PaymentReminder($booking));
+            try {
+                Mail::to($booking->customer_email)->send(new PaymentReminder($booking));
+            } catch (\Exception $e) {
+                Log::error("Errore invio notifica documenti: " . $e->getMessage());
+            }
 
             $request->session()->put('reminder_sent_' . $booking->id, true);
         }

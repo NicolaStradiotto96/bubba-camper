@@ -111,7 +111,7 @@
                 {{ session('error') }}
             </div> @endif
         <div class="flex justify-center">
-        <x-primary-button class="w-full flex justify-center items-center py-3">
+        <x-primary-button wire:loading.attr="disabled" class="w-full flex justify-center items-center py-3">
             <span wire:loading.remove wire:target="sendEmail">{{ __('Invia richiesta') }}</span>
             <span wire:loading wire:target="sendEmail">{{ __('Invio in corso...') }}</span>
         </x-primary-button>

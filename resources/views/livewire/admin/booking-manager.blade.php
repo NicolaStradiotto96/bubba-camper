@@ -184,7 +184,7 @@
                     </span>
 
                     <span wire:loading wire:target="saveManualBooking">
-                        <i class="fa-solid fa-spinner fa-spin mr-[0.3rem]"></i> Invio in corso...
+                        Invio in corso...
                     </span>
                 </x-primary-button>
             </div>

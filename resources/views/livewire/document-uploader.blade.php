@@ -176,9 +176,17 @@
             </div>
         </div>
 
+        <div class="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center">
+            <p>
+                Il caricamento dei documenti implica l'accettazione del trattamento dei dati ai fini
+                della verifica identità, in conformità con la nostra
+                <a href="#" class="text-amber-500 hover:underline">Privacy Policy</a>.
+            </p>
+        </div>
+
         <x-primary-button type="submit" wire:loading.attr="disabled"
             wire:target="uploadDocuments, driver_license_front, driver_license_back, id_card_front, id_card_back"
-            class="w-full mt-4 flex justify-center items-center py-3 disabled:opacity-50">
+            class="w-full mt-4 flex justify-center items-center disabled:opacity-50">
 
             <span wire:loading.remove
                 wire:target="uploadDocuments, driver_license_front, driver_license_back, id_card_front, id_card_back">

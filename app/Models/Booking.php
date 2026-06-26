@@ -54,7 +54,7 @@ class Booking extends Model
 
     public function getRouteKeyName()
     {
-        return 'ulid';
+        return 'id';
     }
 
     public function uniqueIds(): array

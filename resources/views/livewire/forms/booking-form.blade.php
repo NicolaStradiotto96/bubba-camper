@@ -173,7 +173,7 @@
                     </div>
                 </div>
 
-                <x-primary-button wire:click="saveBooking" class="w-full mt-3 flex justify-center items-center">
+                <x-primary-button wire:click="saveBooking" wire:loading.attr="disabled" class="w-full mt-3 flex justify-center items-center">
                     <span wire:loading.remove wire:target="saveBooking">Vai al pagamento</span>
                     <span wire:loading wire:target="saveBooking" class="flex items-center">Caricamento...</span>
                 </x-primary-button>

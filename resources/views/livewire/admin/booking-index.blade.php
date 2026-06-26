@@ -1207,7 +1207,9 @@
 
                                                 <button @click="toggleReject(viewingDocs.fields[index])"
                                                     class="absolute top-2 right-2 z-20 p-1 rounded-full shadow-md transition"
-                                                    :class="toReject.includes(viewingDocs.fields[index]) ? 'bg-red-600 text-white' : 'bg-white/80 text-gray-500 hover:bg-red-100'">
+                                                    :class="toReject.includes(viewingDocs.fields[index]) ?
+                                                        'bg-red-600 text-white' :
+                                                        'bg-white/80 text-gray-500 hover:bg-red-100'">
                                                     <i class="fa-solid fa-xmark"></i>
                                                 </button>
 
@@ -1244,7 +1246,10 @@
         });
     
         window.history.replaceState({}, document.title, window.location.pathname);
-    }"
+    }
+    $watch('showDocModal', value => {
+        document.body.classList.toggle('no-scroll', value);
+    });"
         @open-doc-modal.window="showDocModal = true; selectedBookingId = $event.detail.id"
         @close-doc-modal.window="showDocModal = false" @keydown.escape.window="showDocModal = false"
         class="fixed inset-0 z-50 flex justify-center p-3 overflow-y-auto items-start sm:items-center" x-cloak

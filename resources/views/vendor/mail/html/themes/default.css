@@ -10,7 +10,7 @@ body *:not(html):not(style):not(br):not(tr):not(code) {
 
 body {
     -webkit-text-size-adjust: none;
-    background-color: #ffffff;
+    background-color: #111827;
     color: #52525b;
     height: 100%;
     line-height: 1.4;
@@ -38,7 +38,7 @@ a img {
 /* Typography */
 
 h1 {
-    color: #18181b;
+    color: #f3f4f6;
     font-size: 18px;
     font-weight: bold;
     margin-top: 0;
@@ -46,6 +46,7 @@ h1 {
 }
 
 h2 {
+    color: #f3f4f6;
     font-size: 16px;
     font-weight: bold;
     margin-top: 0;
@@ -53,6 +54,7 @@ h2 {
 }
 
 h3 {
+    color: #f3f4f6;
     font-size: 14px;
     font-weight: bold;
     margin-top: 0;
@@ -60,6 +62,7 @@ h3 {
 }
 
 p {
+    color: #f3f4f6;
     font-size: 16px;
     line-height: 1.5em;
     margin-top: 0;
@@ -68,6 +71,26 @@ p {
 
 p.sub {
     font-size: 12px;
+}
+
+li,
+strong {
+    color: #f3f4f6;
+}
+
+.divider {
+    border-bottom: 1px solid #374151;
+    margin: 20px 0;
+}
+
+.highlight {
+    color: #f59e0b !important;
+}
+
+.booking {
+    background: #111827;
+    padding: 2px 5px;
+    color: #f59e0b;
 }
 
 img {
@@ -80,7 +103,7 @@ img {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: 100%;
-    background-color: #fafafa;
+    background-color: #111827;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -90,6 +113,7 @@ img {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: 100%;
+    background-color: #111827;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -103,7 +127,7 @@ img {
 }
 
 .header a {
-    color: #18181b;
+    color: #f59e0b;
     font-size: 19px;
     font-weight: bold;
     text-decoration: none;
@@ -125,7 +149,7 @@ img {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: 100%;
-    background-color: #fafafa;
+    background-color: #111827;
     border-bottom: 1px solid #fafafa;
     border-top: 1px solid #fafafa;
     margin: 0;
@@ -137,9 +161,9 @@ img {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: 570px;
-    background-color: #ffffff;
-    border-color: #e4e4e7;
-    border-radius: 4px;
+    background-color: #1f2937;
+    border-color: #374151;
+    border-radius: 8px;
     border-width: 1px;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
@@ -148,6 +172,7 @@ img {
 }
 
 .inner-body a {
+    color: #f59e0b;
     word-break: break-all;
 }
 
@@ -176,13 +201,13 @@ img {
 }
 
 .footer p {
-    color: #a1a1aa;
+    color: #6b7280;
     font-size: 12px;
     text-align: center;
 }
 
 .footer a {
-    color: #a1a1aa;
+    color: #f59e0b;
     text-decoration: underline;
 }
 
@@ -239,15 +264,17 @@ img {
 
 .button-blue,
 .button-primary {
-    background-color: #18181b;
-    border-bottom: 8px solid #18181b;
-    border-left: 18px solid #18181b;
-    border-right: 18px solid #18181b;
-    border-top: 8px solid #18181b;
+    color: #fff !important;
+    background-color: #d97706;
+    border-bottom: 8px solid #d97706;
+    border-left: 18px solid #d97706;
+    border-right: 18px solid #d97706;
+    border-top: 8px solid #d97706;
 }
 
 .button-green,
 .button-success {
+    color: #fff !important;
     background-color: #16a34a;
     border-bottom: 8px solid #16a34a;
     border-left: 18px solid #16a34a;
@@ -257,6 +284,7 @@ img {
 
 .button-red,
 .button-error {
+    color: #fff !important;
     background-color: #dc2626;
     border-bottom: 8px solid #dc2626;
     border-left: 18px solid #dc2626;
@@ -265,12 +293,12 @@ img {
 }
 
 .button-amber {
+    color: #fff !important;
     background-color: #d97706;
     border-bottom: 8px solid #d97706;
     border-left: 18px solid #d97706;
     border-right: 18px solid #d97706;
     border-top: 8px solid #d97706;
-    color: #ffffff;
 }
 
 /* Panels */
