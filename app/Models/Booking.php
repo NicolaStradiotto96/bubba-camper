@@ -16,6 +16,8 @@ class Booking extends Model
         'start_date',
         'end_date',
         'total_price',
+        'down_payment',
+        'balance_payment',
         'customer_first_name',
         'customer_last_name',
         'customer_email',

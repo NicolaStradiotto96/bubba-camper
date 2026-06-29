@@ -5,7 +5,7 @@
 
 Ciao **{{ $booking->customer_first_name }}**,
 
-{{ config('app.name', 'Bubba Camper') }} ha appena **confermato** la tua prenotazione.<br>
+{{ config('app.name', 'Bubba Camper') }} ha appena **confermato** la prenotazione <code class="booking">#{{ $booking->id }}</code>.<br>
 Il camper è pronto per la tua prossima avventura.
 
 <div class="divider"></div>
@@ -14,7 +14,6 @@ Il camper è pronto per la tua prossima avventura.
 - **Camper:** <span class="highlight">{{ $booking->camper->name }}</span>
 - **Dal:** <span class="highlight">{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}</span>
 - **Al:** <span class="highlight">{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</span>
-- **ID prenotazione:** <code class="booking">#{{ $booking->id }}</code>
 
 <div class="divider"></div>
 

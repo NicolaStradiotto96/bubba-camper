@@ -1,15 +1,15 @@
 <div class="mx-4">
 
-    <div class="max-w-5xl flex items-center justify-center lg:justify-start mx-auto">
+    <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
-            {{ __('Torna indietro') }}
+            {{ __('Torna alla dashboard') }}
         </a>
     </div>
 
     <div
-        class="max-w-5xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+        class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase mb-8 text-center">
             {{ $isEditMode ? 'Modifica Camper' : 'Crea Camper' }}
         </h2>
@@ -419,9 +419,9 @@
                 </div>
             </section>
 
-            <div class="flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
+            <div class="flex flex-col-reverse sm:flex-row items-center {{ $isEditMode ? 'justify-between' : 'justify-center' }} gap-3">
 
-                <div class="flex items-center gap-3 w-full sm:w-auto justify-start">
+                <div class="flex items-center gap-3 w-full sm:w-auto">
                     @if ($isEditMode)
                         <x-danger-button type="button" @click="confirmCamperDeletion($wire)"
                             class="w-full sm:w-auto justify-center">
@@ -430,7 +430,7 @@
                     @endif
                 </div>
 
-                <div class="flex flex-col-reverse sm:flex-row items-center gap-3 w-full sm:w-auto justify-end">
+                <div class="flex flex-col-reverse sm:flex-row items-center gap-3 w-full sm:w-auto justify-center">
                     <x-secondary-button href="{{ route('dashboard') }}" wire:navigate
                         class="w-full sm:w-auto justify-center">
                         Annulla

@@ -13,24 +13,24 @@
 
                     <div>
                         <x-primary-anchor href="{{ route('camper.create') }}" wire:navigate
-                            class="inline-flex items-center gap-2 !p-5 text-xs sm:text-base">
-                            <i class="fa-solid fa-van-shuttle transition-transform group-hover:scale-110"></i>
+                            class="inline-flex items-center gap-2 !p-4 text-xs sm:text-base group">
+                            <i class="fa-solid fa-van-shuttle transition-transform group-hover:scale-150"></i>
                             Crea Nuovo Camper
                         </x-primary-anchor>
                     </div>
 
                     <div>
                         <x-primary-anchor href="{{ route('booking.create') }}" wire:navigate
-                            class="inline-flex items-center gap-2 !p-5 text-xs sm:text-base">
-                            <i class="fa-solid fa-calendar-plus transition-transform group-hover:scale-110"></i>
+                            class="inline-flex items-center gap-2 !p-4 text-xs sm:text-base group">
+                            <i class="fa-solid fa-calendar-plus transition-transform group-hover:scale-150"></i>
                             Crea Nuova Prenotazione
                         </x-primary-anchor>
                     </div>
 
                     <div>
                         <x-primary-anchor href="{{ route('maintenance.add') }}" wire:navigate
-                            class="inline-flex items-center gap-2 !p-5 text-xs sm:text-base">
-                            <i class="fa-solid fa-screwdriver-wrench transition-transform group-hover:scale-110"></i>
+                            class="inline-flex items-center gap-2 !p-4 text-xs sm:text-base group">
+                            <i class="fa-solid fa-screwdriver-wrench transition-transform group-hover:scale-150"></i>
                             Aggiungi Indisponibilità
                         </x-primary-anchor>
                     </div>

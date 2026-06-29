@@ -87,7 +87,7 @@ class MaintenanceManager extends Component
             })
             ->get(['start_date', 'end_date']);
 
-        $maintenances = \App\Models\Maintenance::where('camper_id', $this->camper_id)
+        $maintenances = Maintenance::where('camper_id', $this->camper_id)
             ->where('start_date', '<=', $limitDate)
             ->when($this->editingId, function ($query) {
                 $query->where('id', '!=', $this->editingId);

@@ -4,7 +4,7 @@
         <a href="{{ route('dashboard') }}" wire:navigate
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
-            {{ __('Torna indietro') }}
+            {{ __('Torna alla dashboard') }}
         </a>
     </div>
 
@@ -173,7 +173,7 @@
                 </div>
             </section>
 
-            <div class="flex flex-col-reverse sm:flex-row items-center gap-3 w-full sm:w-auto justify-end">
+            <div class="flex flex-col-reverse sm:flex-row items-center gap-3 w-full sm:w-auto justify-center">
                 <x-secondary-button href="{{ route('dashboard') }}" wire:navigate
                     class="w-full sm:w-auto justify-center">
                     Annulla

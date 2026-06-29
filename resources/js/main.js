@@ -394,6 +394,12 @@ document.addEventListener('livewire:init', () => {
             cancelButtonText: 'CHIUDI',
             background: theme.background,
             color: theme.color,
+            input: 'checkbox',
+            inputValue: 0,
+            inputPlaceholder: 'Confermo di voler annullare la prenotazione.',
+            inputValidator: (result) => {
+                return !result && 'Devi accettare per poter procedere';
+            },
             didOpen: (popup) => {
                 popup.style.border = `2px solid ${theme.border}`;
             },

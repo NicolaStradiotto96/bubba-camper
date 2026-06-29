@@ -4,7 +4,7 @@
         <a href="{{ route('dashboard') }}" wire:navigate
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
-            {{ __('Torna indietro') }}
+            {{ __('Torna alla dashboard') }}
         </a>
     </div>
 
@@ -91,7 +91,7 @@
                 {{-- Reason --}}
                 <div>
                     <x-input-label for="reason" value="Motivazione" />
-                    <x-text-input wire:model="reason" id="reason" class="block mt-1 w-full" type="text"
+                    <x-text-input wire:model.live="reason" id="reason" class="block mt-1 w-full" type="text"
                         placeholder="es: Manutenzione periodica" />
                     <x-input-error :messages="$errors->get('reason')" class="mt-1" />
                 </div>
@@ -147,7 +147,7 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-center text-gray-500 italic py-4">Nessun blocco attivo
+                    <p class="text-center text-gray-500 italic py-3">Nessun blocco attivo
                         {{ $camper_id ? 'per questo camper' : '' }}</p>
                 @endforelse
             </div>

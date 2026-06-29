@@ -8,6 +8,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PenaltyController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Livewire\Admin\BookingEdit;
 use App\Livewire\Admin\BookingManager;
 use App\Livewire\Admin\CamperManager;
 use App\Livewire\Admin\MaintenanceManager;
@@ -87,6 +88,11 @@ Route::get('/admin/camper/{camper}/modifica', CamperManager::class)
 Route::get('/admin/prenotazione/crea', BookingManager::class)
     ->middleware(['auth', 'admin'])
     ->name('booking.create');
+
+// EDIT BOOKING
+Route::get('/admin/prenotazione/{booking}/modifica', BookingEdit::class)
+    ->middleware(['auth', 'admin'])
+    ->name('booking.edit');
 
 // MAINTENANCE
 Route::get('/admin/manutenzione', MaintenanceManager::class)
