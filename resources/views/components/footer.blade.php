@@ -5,7 +5,7 @@
             <div class="space-y-4 xl:col-span-1 flex flex-col justify-center items-center text-center">
                 <div class="space-y-1">
                     <div class="flex items-center justify-center space-x-2">
-                        <x-application-logo size="small" />
+                        <x-application-logo size="medium" />
                         <div>
                             <p class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">
                                 {{ config('app.name', 'Bubba Camper') }}

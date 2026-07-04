@@ -16,21 +16,21 @@ ti informiamo che la tua prenotazione <code class="booking">#{{ $booking->id }}<
     if ($booking->balance_paid) { $totalPaid += $booking->balance_payment; }
 @endphp
 ## 💶 Informazioni sul rimborso
-La prenotazione è stata annullata dallo staff. Abbiamo emesso il **rimborso totale di {{ number_format($totalPaid, 2, ',', '.') }}€**, corrispondente all'importo da te versato.
+La prenotazione è stata annullata dallo staff. Abbiamo emesso il **rimborso totale di {{ number_format($totalPaid, 2, ',', '') }}€**, corrispondente all'importo da te versato.
 
 L'accredito avverrà entro 5-10 giorni lavorativi, a seconda del tuo istituto bancario.
 @endif
 
 @if($booking->status === 'cancelled' && ($booking->payment_status === 'refunded_stripe' || $booking->payment_status === 'refunded_manual'))
 ## 💶 Informazioni sul rimborso
-La tua richiesta di annullamento è stata elaborata. Abbiamo emesso un **rimborso di {{ number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '.') }}€**, al netto della penale prevista dai nostri termini di servizio.
+La tua richiesta di annullamento è stata elaborata. Abbiamo emesso un **rimborso di {{ number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '') }}€**, al netto della penale prevista dai nostri termini di servizio.
 
 L'accredito avverrà entro 5-10 giorni lavorativi, a seconda del tuo istituto bancario.
 @endif
 
 @if($booking->payment_status === 'penalty_pending')
 ## ⚠️ Pagamento penale
-A seguito dell'annullamento, è stata applicata una **penale di {{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€**, come previsto dai nostri termini di servizio.
+A seguito dell'annullamento, è stata applicata una **penale di {{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '') }}€**, come previsto dai nostri termini di servizio.
 
 Ti invitiamo ad accedere alla tua **dashboard** il prima possibile per procedere al saldo della penale dovuta.
 @endif

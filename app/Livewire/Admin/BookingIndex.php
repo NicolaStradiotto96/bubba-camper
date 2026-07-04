@@ -4,6 +4,8 @@ namespace App\Livewire\Admin;
 
 use App\Mail\BookingCancelled;
 use App\Mail\BookingCancelledNotification;
+use App\Mail\BookingCompleted;
+use App\Mail\BookingCompletedNotification;
 use App\Mail\BookingConfirmed;
 use App\Mail\BookingConfirmedNotification;
 use App\Mail\DocumentRejected;
@@ -110,9 +112,9 @@ class BookingIndex extends Component
         Mail::to(config('app.admin_email'))->send(new BookingCancelledNotification($booking));
 
         $msg = $refundAmount > 0
-            ? "Prenotazione annullata. Rimborso di " . number_format($refundAmount, 2, ',', '.') . "€ registrato."
+            ? "Prenotazione annullata. Rimborso di " . number_format($refundAmount, 2, ',', '') . "€ registrato."
             : ($remainingPenalty > 0
-                ? "Prenotazione annullata. Penale residua di " . number_format($remainingPenalty, 2, ',', '.') . "€ in sospeso."
+                ? "Prenotazione annullata. Penale residua di " . number_format($remainingPenalty, 2, ',', '') . "€ in sospeso."
                 : "Prenotazione annullata. Nessun rimborso dovuto.");
 
         session()->flash('cancelled', $msg);
@@ -137,12 +139,32 @@ class BookingIndex extends Component
             Mail::to($booking->customer_email)->send(new PenaltyPaid($booking));
             Mail::to(config('app.admin_email'))->send(new PenaltyPaidNotification($booking));
 
+            $booking->logs()->create([
+                'type'    => 'penalty_paid',
+                'message' => 'Penale di annullamento saldata dal cliente.',
+                'context' => [
+                    'amount' => $booking->calculateExpectedRefund()['penalty_amount']
+                ]
+            ]);
+
             session()->flash('success', "Penale residua registrata con successo per la prenotazione #{$booking->id}.");
         } else {
             $booking->payment_status = 'fully_paid';
             $booking->balance_paid = true;
             $booking->balance_paid_at = now();
             $booking->save();
+
+            Mail::to($booking->customer_email)->send(new BookingCompleted($booking));
+            Mail::to(config('app.admin_email'))->send(new BookingCompletedNotification($booking));
+
+            $booking->logs()->create([
+                'type'    => 'booking_completed',
+                'message' => 'Saldo ricevuto e mail di conferma finale inviata al cliente.',
+                'context' => [
+                    'total_price'     => $booking->total_price,
+                    'balance_paid'    => $booking->balance_payment,
+                ]
+            ]);
 
             session()->flash('success', "Saldo registrato per #{$booking->id}.");
         }
@@ -208,26 +230,29 @@ class BookingIndex extends Component
 
         $this->dispatch('open-booking-modal', [
             'id'               => $booking->id,
+            'damage_url'       => route('damage.add', $booking->id),
+            'edit_url'         => route('booking.edit', $booking->id),
             'ulid'             => $booking->ulid,
-            'created_at'       => $booking->created_at->timezone('Europe/Rome')->format('d/m/Y \a\l\l\e H:i'),
+            'created_at'       => $booking->created_at->format('d/m/Y \a\l\l\e H:i'),
             'name'             => "{$booking->customer_first_name} {$booking->customer_last_name}",
             'email'            => $booking->customer_email,
             'phone'            => $booking->customer_phone,
             'camper'           => $booking->camper->name,
             'start'            => $booking->start_date->format('d/m/Y'),
             'end'              => $booking->end_date->format('d/m/Y'),
-            'total'            => number_format($booking->total_price, 2, ',', '.') . '€',
-            'deposit'          => number_format($booking->down_payment, 2, ',', '.') . '€',
+            'total'            => number_format($booking->total_price, 2, ',', '') . '€',
+            'deposit'          => number_format($booking->down_payment, 2, ',', '') . '€',
             'down_payment'     => (float)($booking->down_payment ?? 0),
             'down_paid'        => (bool)$booking->down_paid,
             'balance_paid'     => (bool)$booking->balance_paid,
-            'balance'          => number_format($booking->balance_payment, 2, ',', '.') . '€',
-            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '.') . '€', // AGGIUNTO
-            'originalBalance'  => number_format($booking->total_price - $booking->down_payment, 2, ',', '.') . '€',
-            'refund'           => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '.') . '€',
+            'balance'          => number_format($booking->balance_payment, 2, ',', '') . '€',
+            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '') . '€', // AGGIUNTO
+            'originalBalance'  => number_format($booking->total_price - $booking->down_payment, 2, ',', '') . '€',
+            'refund'           => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '') . '€',
             'refundRaw'        => (float)$booking->calculateExpectedRefund()['refund_amount'],
-            'penalty'          => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '.') . '€',
+            'penalty'          => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '') . '€',
             'penaltyRaw'       => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
+            'damages'          => $booking->damages->toArray(),
             'status'           => $booking->status,
             'documents_status' => $booking->documents_status,
             'payment_status'   => $booking->payment_status,
@@ -259,8 +284,6 @@ class BookingIndex extends Component
                 : null,
         ]);
     }
-
-
 
     public function rejectDocuments($bookingId, array $fields)
     {

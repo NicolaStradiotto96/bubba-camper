@@ -4,7 +4,7 @@
     <div class="relative flex flex-col justify-center items-center min-h-[calc(100vh+80px)] -mt-[160px]">
         {{-- BACKGROUND --}}
         <div class="absolute inset-0 z-0">
-            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat shadow-inner"
+            <div class="absolute inset-0 bg-cover bg-top bg-no-repeat shadow-inner"
                 style="background-image: url('{{ asset('bg.jpg') }}')">
             </div>
             <div class="absolute inset-0 bg-black/40 dark:bg-black/60"></div>
@@ -14,11 +14,11 @@
         <div class="relative z-10 flex flex-col items-center">
             {{-- LOGO --}}
             <div class="flex justify-center">
-                <x-application-logo size="large" class="px-5" />
+                <x-application-logo size="xl" class="px-5" />
             </div>
 
             {{-- DESCRIPTION --}}
-            <header class="text-center mt-8 px-4">
+            <header class="text-center px-4">
                 <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight uppercase">
                     Prenota la tua libertà su quattro ruote
                 </h2>

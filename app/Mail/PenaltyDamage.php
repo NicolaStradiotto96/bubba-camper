@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Booking;
+use App\Models\Damage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -11,16 +11,20 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class BookingPaidNotification extends Mailable
+class PenaltyDamage extends Mailable
 {
     use Queueable, SerializesModels;
+
+    public $damage;
+    public $isUpdate;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public Booking $booking)
+    public function __construct($damage, $isUpdate = false)
     {
-        //
+        $this->damage = $damage;
+        $this->isUpdate = $isUpdate;
     }
 
     /**
@@ -29,7 +33,7 @@ class BookingPaidNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Prenotazione Ricevuta ✅',
+            subject: 'Segnalazione danno e richiesta addebito',
         );
     }
 
@@ -39,7 +43,7 @@ class BookingPaidNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.booking-paid-notification',
+            markdown: 'emails.penalty-damage',
         );
     }
 

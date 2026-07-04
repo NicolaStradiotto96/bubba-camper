@@ -21,7 +21,7 @@
 <div class="divider"></div>
 
 ## 💶 Dettagli Penale
-- **Importo Penale:** {{ number_format(($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0), 2, ',', '.') }}€
+- **Importo Penale:** {{ number_format(($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0), 2, ',', '') }}€
 
 <x-mail::button :url="config('app.url') . '/dashboard'" color="amber">
 VAI ALLA DASHBOARD

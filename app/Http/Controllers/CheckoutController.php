@@ -49,7 +49,7 @@ class CheckoutController extends Controller
                     'currency' => 'eur',
                     'product_data' => [
                         'name' => "Acconto (30%) - Camper: " . $booking->camper->name,
-                        'description' => "Il restante 70% (€" . number_format($booking->balance_payment, 2, ',', '.') . ") verrà pagato al ritiro del mezzo.",
+                        'description' => "Il restante 70% (€" . number_format($booking->balance_payment, 2, ',', '') . ") verrà pagato al ritiro del mezzo.",
                     ],
                     'unit_amount' => (int) round($booking->down_payment * 100),
                 ],
@@ -76,10 +76,9 @@ class CheckoutController extends Controller
                 $session = Session::retrieve($sessionId);
 
                 if ($session->payment_status === 'paid' && !$booking->down_paid) {
-                    $booking->update([
-                        'down_paid' => true,
-                        'payment_status' => 'paid'
-                    ]);
+                    $booking->down_paid = true;
+                    $booking->payment_status = 'paid';
+                    $booking->save();
                 }
             } catch (\Exception $e) {
                 Log::error("Errore verifica Stripe: " . $e->getMessage());

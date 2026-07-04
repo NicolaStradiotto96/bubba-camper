@@ -12,6 +12,8 @@ use App\Livewire\Admin\BookingEdit;
 use App\Livewire\Admin\BookingManager;
 use App\Livewire\Admin\CamperManager;
 use App\Livewire\Admin\MaintenanceManager;
+use App\Livewire\DamageIndex;
+use App\Livewire\DamageManager;
 use Illuminate\Support\Facades\Route;
 
 // HOME
@@ -74,22 +76,20 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-// CREATE CAMPER
+// CAMPER
 Route::get('/admin/camper/crea', CamperManager::class)
     ->middleware(['auth', 'admin'])
     ->name('camper.create');
 
-// EDIT CAMPER
 Route::get('/admin/camper/{camper}/modifica', CamperManager::class)
     ->middleware(['auth', 'admin'])
     ->name('camper.edit');
 
-// CREATE BOOKING
+// BOOKING
 Route::get('/admin/prenotazione/crea', BookingManager::class)
     ->middleware(['auth', 'admin'])
     ->name('booking.create');
 
-// EDIT BOOKING
 Route::get('/admin/prenotazione/{booking}/modifica', BookingEdit::class)
     ->middleware(['auth', 'admin'])
     ->name('booking.edit');
@@ -97,7 +97,20 @@ Route::get('/admin/prenotazione/{booking}/modifica', BookingEdit::class)
 // MAINTENANCE
 Route::get('/admin/manutenzione', MaintenanceManager::class)
     ->middleware(['auth', 'admin'])
-    ->name('maintenance.add');
+    ->name('maintenance');
+
+// DAMAGE
+Route::get('/admin/danni', DamageIndex::class)
+    ->middleware(['auth', 'admin'])
+    ->name('damage.index');
+
+Route::get('/admin/prenotazione/{booking}/danni', DamageManager::class)
+    ->middleware(['auth', 'admin'])
+    ->name('damage.add');
+
+Route::get('/admin/prenotazione/{booking}/danni/{damage_id?}/modifica', DamageManager::class)
+    ->middleware(['auth', 'admin'])
+    ->name('damage.edit');
 
 // VIEW DOCUMENTS
 Route::get('/documento/view/{bookingId}/{filename}', [DocumentController::class, 'view'])

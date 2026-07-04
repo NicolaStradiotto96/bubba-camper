@@ -29,7 +29,7 @@ class BookingPaid extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Prenotazione Ricevuta 🚐',
+            subject: 'Prenotazione Ricevuta ✅',
         );
     }
 

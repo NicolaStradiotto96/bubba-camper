@@ -21,7 +21,7 @@ Un cliente ha caricato la contabile di pagamento per la penale della prenotazion
 <div class="divider"></div>
 
 ## 💶 Dettagli Penale
-- **Importo Penale da verificare:** <span class="highlight">{{ number_format(($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0), 2, ',', '.') }}€</span>
+- **Importo Penale da verificare:** <span class="highlight">{{ number_format(($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0), 2, ',', '') }}€</span>
 
 <div class="divider"></div>
 

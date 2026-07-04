@@ -87,32 +87,21 @@ class BookingEdit extends Component
 
     public function validateRange()
     {
-        if (!$this->start_date || !$this->end_date) return false;
+        $blocked = $this->getBookedDatesProperty();
 
-        $start = Carbon::parse($this->start_date)->format('Y-m-d');
-        $end = Carbon::parse($this->end_date)->format('Y-m-d');
+        $period = new \DatePeriod(
+            Carbon::parse($this->start_date),
+            new \DateInterval('P1D'),
+            Carbon::parse($this->end_date)->addDay()
+        );
 
-        $isBooked = Booking::where('camper_id', $this->camper_id)
-            ->where('id', '!=', $this->booking->id)
-            ->whereNotIn('status', Booking::getExcludedStatuses())
-            ->where(function ($q) use ($start, $end) {
-                $q->whereBetween('start_date', [$start, $end])
-                    ->orWhereBetween('end_date', [$start, $end])
-                    ->orWhere(function ($q2) use ($start, $end) {
-                        $q2->where('start_date', '<=', $start)->where('end_date', '>=', $end);
-                    });
-            })->exists();
+        foreach ($period as $date) {
+            if (in_array($date->format('d-m-Y'), $blocked)) {
+                return false;
+            }
+        }
 
-        $isMaintained = Maintenance::where('camper_id', $this->camper_id)
-            ->where(function ($q) use ($start, $end) {
-                $q->whereBetween('start_date', [$start, $end])
-                    ->orWhereBetween('end_date', [$start, $end])
-                    ->orWhere(function ($q2) use ($start, $end) {
-                        $q2->where('start_date', '<=', $start)->where('end_date', '>=', $end);
-                    });
-            })->exists();
-
-        return !$isBooked && !$isMaintained;
+        return true;
     }
 
     public function updated($propertyName)
@@ -124,20 +113,22 @@ class BookingEdit extends Component
 
     public function calculatePriceForRange($startDate, $endDate)
     {
-        $start = \Carbon\Carbon::parse($startDate);
-        $end = \Carbon\Carbon::parse($endDate);
+        $start = Carbon::parse($startDate);
+        $end = Carbon::parse($endDate);
 
         $total = 0;
         $current = $start->copy();
 
+        $camper = $this->booking->camper;
+
         while ($current <= $end) {
             $month = $current->month;
             if (in_array($month, [7, 8])) {
-                $total += $this->price_high ?? 140;
+                $total += $camper->price_high ?? 140;
             } elseif (in_array($month, [4, 5, 6, 9, 10])) {
-                $total += $this->price_medium ?? 120;
+                $total += $camper->price_medium ?? 120;
             } else {
-                $total += $this->price_low ?? 100;
+                $total += $camper->price_low ?? 100;
             }
             $current->addDay();
         }

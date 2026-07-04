@@ -28,10 +28,18 @@
                     </div>
 
                     <div>
-                        <x-primary-anchor href="{{ route('maintenance.add') }}" wire:navigate
+                        <x-primary-anchor href="{{ route('maintenance') }}" wire:navigate
                             class="inline-flex items-center gap-2 !p-4 text-xs sm:text-base group">
                             <i class="fa-solid fa-screwdriver-wrench transition-transform group-hover:scale-150"></i>
-                            Aggiungi Indisponibilità
+                            Gestione Indisponibilità
+                        </x-primary-anchor>
+                    </div>
+
+                    <div>
+                        <x-primary-anchor href="{{ route('damage.index') }}" wire:navigate
+                            class="inline-flex items-center gap-2 !p-4 text-xs sm:text-base group">
+                            <i class="fa-solid fa-exclamation-triangle transition-transform group-hover:scale-150"></i>
+                            Gestione Danni
                         </x-primary-anchor>
                     </div>
                 </div>

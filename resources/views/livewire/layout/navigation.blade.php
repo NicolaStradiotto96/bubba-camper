@@ -20,7 +20,7 @@ new class extends Component {
 <nav x-data="{ open: false }" x-init="$watch('open', value => {
     document.body.classList.toggle('no-scroll', value);
 })"
-    class="sticky top-0 bg-white/70 dark:bg-gray-800/95 backdrop-blur-md border-b border-gray-300 dark:border-gray-700 shadow z-50">
+    class="sticky top-0 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border-b border-gray-300 dark:border-gray-700 shadow z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20">

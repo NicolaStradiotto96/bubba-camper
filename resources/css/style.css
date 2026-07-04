@@ -61,6 +61,7 @@
 .gnext {
     border-radius: 40% !important;
     transition: all 0.3s ease !important;
+    opacity: 1 !important;
 }
 
 .gprev:hover,

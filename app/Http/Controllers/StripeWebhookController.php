@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Livewire\DamageManager;
 use App\Mail\BookingPaid;
 use App\Mail\BookingPaidNotification;
 use App\Mail\PenaltyPaid;
@@ -44,6 +45,7 @@ class StripeWebhookController extends Controller
                             $booking->payment_status = 'penalty_paid';
                             $booking->balance_paid = true;
                             $booking->balance_paid_at = now();
+                            $booking->penalty_paid_at = now();
                             $booking->save();
 
                             Mail::to($booking->customer_email)->send(new PenaltyPaid($booking));
@@ -54,6 +56,13 @@ class StripeWebhookController extends Controller
                                 'stripe_session_id' => $session->id,
                                 'amount' => $session->amount_total / 100 . '€'
                             ]);
+                        } elseif ($paymentType === 'damages') {
+                            DamageManager::markDamagesAsPaid($bookingId);
+                            $booking->save();
+
+                            Log::info("Stripe Webhook: Pagamento danni ricevuto", ['booking_id' => $bookingId]);
+
+                            // MAIL
                         } else {
                             if ($booking->payment_status !== 'paid') {
                                 $booking->payment_status = 'paid';

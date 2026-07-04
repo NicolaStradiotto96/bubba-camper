@@ -15,6 +15,12 @@
             Gestione Indisponibilità
         </h2>
 
+        <div x-data="{ open: false, message: '' }"
+            @notify.window="message = $event.detail.message; open = true"
+            x-show="open" x-transition class="mb-6 p-4 bg-green-50 text-green-700 rounded-lg text-center font-bold">
+            <span x-text="message"></span>
+        </div>
+
         <form wire:submit.prevent="saveBlock" class="space-y-6">
             <section
                 class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-700 space-y-4">

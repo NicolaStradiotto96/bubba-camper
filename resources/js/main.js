@@ -525,17 +525,24 @@ document.addEventListener('livewire:init', () => {
         });
     }
 
-    // Pay Penalty
-    window.payPenaltyAction = function (bookingId, penaltyAmount) {
+    // Pay Penalty/Damage
+    window.payPenaltyAction = function (bookingId, penaltyAmount, type) {
         const theme = getSwalTheme();
 
+        const isDamage = type === 'damages';
+        const title = isDamage ? 'PAGAMENTO DANNI' : 'PAGAMENTO PENALE';
+        const description = isDamage
+            ? `Per regolarizzare la situazione danni della prenotazione <span class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>, è necessario corrispondere:`
+            : `Per completare l'annullamento e regolarizzare la prenotazione <span class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>, è necessario corrispondere la penale contrattuale pari a:`;
+
+        const label = isDamage ? 'Importo danni' : 'Importo da pagare';
+
         Swal.fire({
-            title: 'PAGAMENTO PENALE',
+            title: title,
             html: `
                 <div class="text-center space-y-4 px-2 font-black">
                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                        Per completare l'annullamento e regolarizzare la prenotazione <span
-                                    class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>, è necessario corrispondere la penale contrattuale pari a:
+                        ${description}
                     </p>
 
                     <div class="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
@@ -591,7 +598,7 @@ document.addEventListener('livewire:init', () => {
                     if (result.isConfirmed) {
 
                         // Stripe
-                        Livewire.dispatch('processPenaltyPayment', { bookingId: bookingId });
+                        Livewire.dispatch('processPenaltyPayment', { bookingId: bookingId, type: type });
                     } else if (result.isDenied) {
 
                         // Manual

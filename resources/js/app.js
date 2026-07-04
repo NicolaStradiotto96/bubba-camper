@@ -7,15 +7,35 @@ import "flatpickr/dist/flatpickr.css";
 window.flatpickr = flatpickr;
 flatpickr.localize(Italian);
 
-// GLIGHTBOX
 import GLightbox from 'glightbox';
 window.GLightbox = GLightbox;
 
-document.addEventListener('livewire:navigated', () => {
-    const lightbox = GLightbox({
+let lightboxInstance = null;
+
+window.initLightbox = () => {
+    if (lightboxInstance) {
+        lightboxInstance.destroy();
+    }
+
+    lightboxInstance = GLightbox({
+        selector: '.glightbox',
         touchNavigation: true,
         loop: true,
+        zoomable: true,
+        draggable: true
     });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.initLightbox();
+});
+
+document.addEventListener('livewire:navigated', () => {
+    window.initLightbox();
+});
+
+window.addEventListener('contentChanged', () => {
+    window.initLightbox();
 });
 
 // INTERNATIONAL TELEPHONE INPUT

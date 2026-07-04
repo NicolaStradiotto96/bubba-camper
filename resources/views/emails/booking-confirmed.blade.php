@@ -18,9 +18,9 @@ Il camper è pronto per la tua prossima avventura.
 <div class="divider"></div>
 
 ## 💳 Riepilogo Pagamenti
-- **Totale Prenotazione:** <span class="highlight">{{ number_format($booking->total_price, 2, ',', '.') }}€</span>
-- **Acconto versato (30%):** <span class="highlight">{{ number_format($booking->down_payment, 2, ',', '.') }}€</span>
-- **Saldo rimanente al ritiro (70%):** <span class="highlight">{{ number_format($booking->balance_payment, 2, ',', '.') }}€</span>
+- **Totale Prenotazione:** <span class="highlight">{{ number_format($booking->total_price, 2, ',', '') }}€</span>
+- **Acconto versato (30%):** <span class="highlight">{{ number_format($booking->down_payment, 2, ',', '') }}€</span>
+- **Saldo rimanente al ritiro (70%):** <span class="highlight">{{ number_format($booking->balance_payment, 2, ',', '') }}€</span>
 
 <div class="divider"></div>
 

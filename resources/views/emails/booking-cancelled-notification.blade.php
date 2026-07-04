@@ -21,9 +21,9 @@
 <div class="divider"></div>
 
 @if($booking->status === 'cancelled_by_admin')
-**Attenzione:** La prenotazione è stata annullata direttamente dall'amministrazione. Procedere con il rimborso totale di **{{ number_format($booking->down_payment + $booking->balance_payment, 2, ',', '.') }}€**.
+**Attenzione:** La prenotazione è stata annullata direttamente dall'amministrazione. Procedere con il rimborso totale di **{{ number_format($booking->down_payment + $booking->balance_payment, 2, ',', '') }}€**.
 @elseif($booking->payment_status === 'penalty_pending')
-**Attenzione:** Il sistema ha calcolato una **penale di {{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '.') }}€** a carico del cliente. Il cliente è stato avvisato di procedere con il pagamento tramite dashboard.
+**Attenzione:** Il sistema ha calcolato una **penale di {{ number_format($booking->calculateExpectedRefund()['penalty_amount'], 2, ',', '') }}€** a carico del cliente. Il cliente è stato avvisato di procedere con il pagamento tramite dashboard.
 @endif
 
 <x-mail::button :url="config('app.url') . '/dashboard'" color="amber">

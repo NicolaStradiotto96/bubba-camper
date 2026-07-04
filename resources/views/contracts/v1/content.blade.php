@@ -14,7 +14,7 @@
     </h5>
     <div class="pl-3 space-y-2 text-justify w-full">
         <p>
-            <strong class="text-gray-800 dark:text-gray-200 font-bold">1.1. Oggetto del contratto:</strong> con la
+            <strong class="text-gray-800 dark:text-gray-200 font-bold">1.1 Oggetto del contratto:</strong> con la
             sottoscrizione del presente contratto, composto di scheda di noleggio e di condizioni generali di contratto,
             il locatore concede al cliente in locazione, per il periodo indicato nella scheda di noleggio, il veicolo
             descritto nella medesima scheda. Il contratto si intende concluso alla data della sottoscrizione del
@@ -24,7 +24,7 @@
             declina ogni responsabilità per gli stessi.
         </p>
         <p>
-            <strong class="text-gray-800 dark:text-gray-200 font-bold">1.2. Caparra:</strong> la sottoscrizione del
+            <strong class="text-gray-800 dark:text-gray-200 font-bold">1.2 Caparra:</strong> la sottoscrizione del
             contratto dovrà essere accompagnata dal versamento di una caparra pari al 30% dell'importo totale
             complessivo del noleggio. In difetto di tale versamento il contratto non può intendersi validamente
             concluso. Il rilascio di copia della presente proposta di acquisto costituisce quietanza del versamento che
@@ -49,16 +49,18 @@
             <span class="w-1.5 h-3 bg-amber-500 rounded-sm mr-1.5 inline-block"></span>2. Deposito cauzionale
         </h5>
         <p class="pl-3 text-justify">
-            Al momento del ritiro del veicolo il cliente dovrà versare il deposito cauzionale, nella misura stabilita
-            nella scheda di noleggio, a garanzia del corretto uso e della integrità del veicolo stesso. Avrà diritto ad
-            ottenere la restituzione del deposito entro il termine massimo di 7 giorni lavorativi dalla riconsegna del
-            mezzo, una volta verificate e controllate le condizioni dello stesso e quantificati gli importi ancora
-            dovuti per tutto quanto previsto nei successivi articoli. Il termine per il versamento del deposito deve
-            intendersi essenziale con la conseguenza che il mancato versamento nei termini previsti determinerà la
-            risoluzione immediata del contratto ex art. 1457 c.c. ed il locatore avrà diritto ad ottenere il pagamento
-            di una penale di importo pari al 100% del costo dell'intera locazione, trattenendo gli importi versati a
-            titolo di caparra e acconto sino alla concorrenza della penale ed esigendo il pagamento del residuo fino
-            alla concorrenza della penale stessa.
+            Al momento del ritiro del veicolo, il cliente dovrà versare il deposito cauzionale, nella misura stabilita
+            nella scheda di noleggio, a garanzia del corretto uso e della integrale restituzione del veicolo. Il cliente
+            autorizza espressamente il locatore ad utilizzare il deposito cauzionale versato — anche mediante
+            pre-autorizzazione su carta di credito — per la copertura di qualsiasi danno, penale o addebito previsto dal
+            presente contratto, nonché a procedere ad ulteriore richiesta di pagamento per la parte eccedente l'importo
+            del deposito. Il locatore restituirà il deposito entro il termine massimo di 7 giorni lavorativi dalla
+            riconsegna del mezzo, previa verifica delle condizioni dello stesso e previa quantificazione di eventuali
+            importi dovuti ai sensi degli articoli successivi. Il versamento del deposito cauzionale costituisce
+            obbligazione essenziale; il mancato versamento determinerà la risoluzione immediata del contratto ai sensi
+            dell'art. 1457 c.c., con diritto del locatore di trattenere a titolo di penale l'intero importo della
+            locazione (caparra e acconti versati), fatto salvo il diritto di esigere il pagamento dell'eventuale residuo
+            a concorrenza della penale stessa.
         </p>
     </div>
 
@@ -277,8 +279,8 @@
                     locatore dovesse sostenere per infrazioni a norme civili, penali o amministrative che venissero
                     riscontrate durante la locazione, anche se comunicate al locatore o allo stesso cliente dopo la
                     riconsegna del veicolo. Il cliente inoltre si obbliga a rimborsare al locatore qualsiasi spesa
-                    legale, amministrativa ecc oltre a una <span
-                        class="font-bold text-amber-600 dark:text-amber-500">penale fissa di 30,00€</span> per la
+                    legale, amministrativa ecc oltre a una penale fissa di <span
+                        class="font-bold text-amber-600 dark:text-amber-500">30,00€</span> per la
                     gestione amministrativa e la rinotifica di ciascun verbale, per l'espletamento della pratica.
                 </li>
             </ul>
@@ -304,7 +306,7 @@
         </h5>
         <div class="pl-3 space-y-2 text-justify">
             <p>
-                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.1.</strong> Il cliente dichiara di
+                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.1</strong> Il cliente dichiara di
                 conoscere le norme riguardanti l'assicurazione degli autoveicoli in Italia, le norme del codice della
                 strada e tutte le norme vigenti nel paese di utilizzazione del veicolo. Si impegna, pertanto, ad usare
                 lo stesso con la massima diligenza, a circolare solo nei paesi in cui è prevista la copertura
@@ -320,30 +322,46 @@
                 utilizzato e a quelle massime dettate dalla casa costruttrice.
             </p>
             <p>
-                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.2.</strong> Il veicolo non potrà essere
+                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.2</strong> Il veicolo non potrà essere
                 sub-locato o dato in comodato a terzi.
             </p>
             <p>
-                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.3.</strong> Il veicolo non potrà essere
+                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.3</strong> Il veicolo non potrà essere
                 guidato da persone in condizioni fisiche non idonee o non in possesso dei requisiti richiesti dalle
                 norme di circolazione del paese nel quale viene utilizzato, sotto l'influenza di droghe, narcotici,
                 alcolici o intossicanti, medicinali che influenzino le capacità di guida o per scopi contrari alla
-                legge. Non potrà essere, inoltre, guidato da persone diverse da quelle indicate nella scheda di noleggio
+                legge. Non potrà essere, inoltre, guidato da persone diverse da quelle indicate nella scheda di
+                noleggio
                 e, comunque, da persone con un'età non inferiore a 23 anni e massima di 75 anni e che non abbiano
                 conseguito la patente da meno di 3 anni con validità nello Stato nel quale il veicolo è condotto.
             </p>
             <p>
-                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.4.</strong> È fatto divieto di trasportare
-                animali (se non di piccola taglia), sostanze e qualsiasi altra cosa che, a causa delle loro condizioni
-                od odore, possano danneggiare il veicolo e/o tardare la possibilità di rinoleggiarlo. In caso di pulizia
-                straordinaria del veicolo, al cliente verrà addebitato il relativo costo.
+                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.4</strong> È fatto divieto di
+                trasportare animali (se non di piccola taglia, max 10kg), sostanze e qualsiasi altra cosa che, a
+                causa delle loro condizioni od odore, possano danneggiare il veicolo e/o tardare la possibilità di
+                rinoleggiarlo. In caso di pulizia straordinaria del veicolo, al cliente verrà addebitato il relativo
+                costo di <span class="font-bold text-amber-600 dark:text-amber-500">100,00€</span>.
             </p>
             <p>
-                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.5.</strong> L'uso del veicolo in violazione
-                anche di una sola delle disposizioni contenute nei punti precedenti configurerà la responsabilità del
+                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.5</strong> Divieto di fumo: È
+                severamente vietato fumare all'interno del veicolo. Il divieto si estende all'uso di qualsiasi
+                prodotto a base di tabacco, sigarette elettroniche, vaporizzatori o simili. In caso di accertata
+                inosservanza di tale divieto, o qualora venga rilevato l'odore di fumo all'interno dell'abitacolo al
+                momento della riconsegna, il cliente sarà tenuto al pagamento di una penale di <span
+                    class="font-bold text-amber-600 dark:text-amber-500">100,00€</span> per il
+                ripristino delle condizioni igieniche e di salubrità del veicolo, a copertura dei costi di pulizia
+                straordinaria e lavaggio professionale degli interni.
+            </p>
+            <p>
+                <strong class="text-gray-800 dark:text-gray-200 font-bold">9.6</strong> L'uso del veicolo in
+                violazione
+                anche di una sola delle disposizioni contenute nei punti precedenti configurerà la responsabilità
+                del
                 cliente per tutti i costi derivanti al locatore, fermo restando il diritto di quest'ultimo al
-                risarcimento dei danni causatigli. Il locatore potrà far valere tali suoi diritti trattenendo l'importo
-                versato dal cliente a titolo di deposito cauzionale. Qualora l'ammontare dovuto eccedesse l'importo del
+                risarcimento dei danni causatigli. Il locatore potrà far valere tali suoi diritti trattenendo
+                l'importo
+                versato dal cliente a titolo di deposito cauzionale. Qualora l'ammontare dovuto eccedesse l'importo
+                del
                 deposito cauzionale, il cliente sarà tenuto a versare la differenza.
             </p>
         </div>
@@ -439,7 +457,7 @@
         </h5>
         <div class="pl-3 space-y-2 text-justify">
             <p>
-                <strong class="text-gray-800 dark:text-gray-200 font-bold">12.1.</strong> Se il cliente avesse
+                <strong class="text-gray-800 dark:text-gray-200 font-bold">12.1</strong> Se il cliente avesse
                 l'esigenza di prolungare il noleggio oltre i termini stabiliti, è necessario che si rivolga direttamente
                 alla nostra sede. Eventuale conferma dell'estensione sarà soggetta a disponibilità. Tuttavia il locatore
                 può autorizzare la ritardata riconsegna del veicolo a seguito di richiesta effettuata dal cliente per
@@ -450,12 +468,12 @@
                 autorizzato il prolungamento verrà applicata la tariffa del listino in vigore.
             </p>
             <p>
-                <strong class="text-gray-800 dark:text-gray-200 font-bold">12.2.</strong> Nessuna pretesa di riduzione
+                <strong class="text-gray-800 dark:text-gray-200 font-bold">12.2</strong> Nessuna pretesa di riduzione
                 del costo del noleggio potrà essere avanzata dal cliente in caso di riconsegna anticipata del veicolo
                 non concordata con il locatore.
             </p>
             <p>
-                <strong class="text-gray-800 dark:text-gray-200 font-bold">12.3.</strong> In caso di interruzione
+                <strong class="text-gray-800 dark:text-gray-200 font-bold">12.3</strong> In caso di interruzione
                 forzata del viaggio, il cliente è tenuto ad informare tempestivamente il locatore e comunque entro 24
                 ore.
             </p>
@@ -512,8 +530,8 @@
                 la locazione o per fatto accaduto durante la locazione, il veicolo locato fosse sottoposto a fermo
                 amministrativo, a sequestro civile o penale o a qualsiasi altro provvedimento civile, penale o
                 amministrativo che ne limiti la disponibilità, il cliente dovrà corrispondere al locatore, oltre alla
-                tariffa giornaliera di noleggio vigente in quel momento, una <span
-                    class="font-bold text-amber-600 dark:text-amber-500">penale di 50,00€ al giorno</span> (entrambe
+                tariffa giornaliera di noleggio vigente in quel momento, una penale di <span
+                    class="font-bold text-amber-600 dark:text-amber-500">50,00€</span> al giorno (entrambe
                 fino al dissequestro) ed oltre alle spese necessarie per ottenere il dissequestro o, comunque, la
                 liberazione del veicolo.
             </p>
@@ -530,6 +548,28 @@
                 Salvo il caso in cui proponente/cliente sia un consumatore, per qualunque controversia riguardante
                 l'interpretazione, la validità e l'esecuzione del presente contratto sarà competente il foro del luogo
                 di domicilio del locatore.
+            </p>
+        </div>
+    </div>
+
+    {{-- 16 --}}
+    <div class="space-y-2 pt-2">
+        <h5 class="font-black text-gray-900 dark:text-white uppercase text-[11px] tracking-wide flex items-center">
+            <span class="w-1.5 h-3 bg-amber-500 rounded-sm mr-1.5 inline-block"></span>16. Trattamento dei dati
+            personali (Privacy)
+        </h5>
+        <div class="pl-3 text-justify">
+            <p>
+                Il locatore, in qualità di Titolare del trattamento, informa il cliente che i dati personali raccolti
+                con il presente contratto verranno trattati nel rispetto del Regolamento UE 2016/679 (GDPR) e della
+                normativa vigente. Il trattamento è finalizzato all'esecuzione del contratto, all'adempimento degli
+                obblighi di legge (es. gestione amministrativa, contabile, fiscale e procedure di rinotifica sanzioni
+                stradali) e alla tutela del patrimonio aziendale. Il conferimento dei dati è obbligatorio per la
+                conclusione del contratto; il mancato conferimento comporterà l'impossibilità di procedere con il
+                noleggio. I dati saranno conservati per il tempo strettamente necessario alle finalità indicate e non
+                saranno oggetto di diffusione. Il cliente gode dei diritti di cui agli artt. 15-22 del GDPR (accesso,
+                rettifica, cancellazione, limitazione, opposizione). L'informativa completa è a disposizione del cliente
+                presso la sede del locatore e sul sito web aziendale.
             </p>
         </div>
     </div>
@@ -626,7 +666,20 @@
                     <tr>
                         <td
                             class="p-1 font-bold text-center border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
+                            9.4</td>
+                        <td class="p-1 text-justify">Divieto di trasporto animali/sostanze dannose e penale per pulizia
+                            straordinaria.</td>
+                    </tr>
+                    <tr>
+                        <td
+                            class="p-1 font-bold text-center border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
                             9.5</td>
+                        <td class="p-1 text-justify">Divieto di fumo e penale per ripristino condizioni igieniche.</td>
+                    </tr>
+                    <tr>
+                        <td
+                            class="p-1 font-bold text-center border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
+                            9.6</td>
                         <td class="p-1 text-justify">Costi e danni subiti dal locatore.</td>
                     </tr>
                     <tr>
@@ -707,6 +760,12 @@
                             class="p-1 font-bold text-center border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
                             15</td>
                         <td class="p-1 text-justify">Foro competente.</td>
+                    </tr>
+                    <tr>
+                        <td
+                            class="p-1 font-bold text-center border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
+                            16</td>
+                        <td class="p-1 text-justify">Informativa e trattamento dei dati personali.</td>
                     </tr>
                 </tbody>
             </table>

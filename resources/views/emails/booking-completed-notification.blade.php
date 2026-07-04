@@ -1,9 +1,9 @@
 <x-mail::message>
 <div style="background-color: #1f2937; padding: 20px; border-radius: 8px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-# 🚐 Prenotazione Confermata
+# ✅ Prenotazione Completata
 
-La prenotazione <code class="booking">#{{ $booking->id }}</code> è ora confermata: il pagamento dell'acconto è stato registrato e i documenti sono stati caricati e verificati.
+La prenotazione <code class="booking">#{{ $booking->id }}</code> è ora completata: il pagamento totale è stato verificato correttamente.
 
 <div class="divider"></div>
 

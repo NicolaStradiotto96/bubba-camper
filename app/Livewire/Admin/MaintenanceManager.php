@@ -41,7 +41,7 @@ class MaintenanceManager extends Component
 
         $this->reset(['editingId', 'camper_id', 'start_date', 'end_date', 'reason']);
         $this->dispatch('set-flatpickr-date', start: null, end: null);
-        session()->flash('success', 'Operazione completata con successo.');
+        $this->dispatch('notify', message: 'Operazione completata con successo.');
     }
 
     public function editBlock($id)

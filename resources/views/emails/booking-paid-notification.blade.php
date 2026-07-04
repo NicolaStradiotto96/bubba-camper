@@ -21,8 +21,8 @@
 <div class="divider"></div>
 
 ## 💶 Dettagli Pagamento
-- **Totale:** <span class="highlight">{{ number_format($booking->total_price, 2, ',', '.') }}€</span>
-- **Acconto versato:** <span class="highlight">{{ number_format($booking->down_payment, 2, ',', '.') }}€</span>
+- **Totale:** <span class="highlight">{{ number_format($booking->total_price, 2, ',', '') }}€</span>
+- **Acconto versato:** <span class="highlight">{{ number_format($booking->down_payment, 2, ',', '') }}€</span>
 
 <div class="divider"></div>
 

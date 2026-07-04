@@ -5,7 +5,7 @@
 
 Ciao **{{ $booking->customer_first_name }}**,
 
-abbiamo ricevuto correttamente l'acconto di {{ number_format($booking->down_payment, 2, ',', '.') }}€ per la tua prenotazione <code class="booking">#{{ $booking->id }}</code>.
+abbiamo ricevuto correttamente l'acconto di {{ number_format($booking->down_payment, 2, ',', '') }}€ per la tua prenotazione <code class="booking">#{{ $booking->id }}</code>.
 
 <div class="divider"></div>
 

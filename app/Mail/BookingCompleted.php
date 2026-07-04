@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class BookingPaidNotification extends Mailable
+class BookingCompleted extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -29,7 +29,7 @@ class BookingPaidNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Prenotazione Ricevuta ✅',
+            subject: 'Saldo ricevuto e conferma ritiro 🚐',
         );
     }
 
@@ -39,7 +39,7 @@ class BookingPaidNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.booking-paid-notification',
+            markdown: 'emails.booking-completed',
         );
     }
 

@@ -5,7 +5,7 @@
 
 Ciao **{{ $booking->customer_first_name }}**,
 
-ti confermiamo che il pagamento della penale di {{ number_format(($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0), 2, ',', '.') }}€ per la prenotazione <code class="booking">#{{ $booking->id }}</code> è stato ricevuto correttamente.
+ti confermiamo che il pagamento della penale di {{ number_format(($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0), 2, ',', '') }}€ per la prenotazione <code class="booking">#{{ $booking->id }}</code> è stato ricevuto correttamente.
 
 La pratica di annullamento è ora considerata chiusa.
 

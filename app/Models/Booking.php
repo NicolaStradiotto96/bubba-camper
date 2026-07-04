@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Models\Camper;
+use App\Models\Damage;
+use App\Models\Log;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 class Booking extends Model
@@ -144,5 +147,15 @@ class Booking extends Model
     public function camper(): BelongsTo
     {
         return $this->belongsTo(Camper::class);
+    }
+
+    public function logs(): HasMany
+    {
+        return $this->hasMany(Log::class);
+    }
+
+    public function damages(): HasMany
+    {
+        return $this->hasMany(Damage::class);
     }
 }

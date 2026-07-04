@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use Stripe\Checkout\Session;
+use Stripe\Stripe;
 
 class PenaltyController extends Controller
 {
@@ -53,14 +55,28 @@ class PenaltyController extends Controller
         ]);
     }
 
-    public function success(Booking $booking)
+    public function success(Request $request,Booking $booking)
     {
         if ($booking->user_id !== auth()->id()) {
             abort(403, 'Azione non autorizzata.');
         }
 
-        return redirect()->route('dashboard')
-            ->with('success', "Penale corrisposta con successo. La prenotazione #{$booking->id} è stata annullata ufficialmente.");
+        $sessionId = $request->query('session_id');
+        $message = "Operazione completata con successo.";
+
+        if ($sessionId) {
+            Stripe::setApiKey(config('services.stripe.secret'));
+            $session = Session::retrieve($sessionId);
+            $paymentType = $session->metadata->payment_type ?? 'penalty';
+
+            if ($paymentType === 'damages') {
+                $message = "Pagamento danni effettuato con successo per la prenotazione #{$booking->id}.";
+            } else {
+                $message = "Penale corrisposta con successo. La prenotazione #{$booking->id} è stata annullata ufficialmente.";
+            }
+        }
+
+        return redirect()->route('dashboard')->with('success', $message);
     }
 
     public function cancel(Booking $booking)

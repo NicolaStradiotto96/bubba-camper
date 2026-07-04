@@ -53,30 +53,31 @@ class BookingHistory extends Component
 
         $this->dispatch('open-booking-modal', [
             'id'               => $booking->id,
-            'created_at'       => $booking->created_at->timezone('Europe/Rome')->format('d/m/Y \a\l\l\e H:i'),
+            'created_at'       => $booking->created_at->format('d/m/Y \a\l\l\e H:i'),
             'name'             => "{$booking->customer_first_name} {$booking->customer_last_name}",
             'email'            => $booking->customer_email,
             'phone'            => $booking->customer_phone,
             'camper'           => $booking->camper->name,
             'start'            => $booking->start_date->format('d/m/Y'),
             'end'              => $booking->end_date->format('d/m/Y'),
-            'total'            => number_format($booking->total_price, 2, ',', '.') . '€',
-            'deposit'          => number_format($booking->down_payment, 2, ',', '.') . '€',
+            'total'            => number_format($booking->total_price, 2, ',', '') . '€',
+            'deposit'          => number_format($booking->down_payment, 2, ',', '') . '€',
             'down_payment'     => (float)($booking->down_payment ?? 0),
             'down_paid'        => (bool)$booking->down_paid,
             'balance_paid'     => (bool)$booking->balance_paid,
-            'balance'          => number_format($booking->balance_payment, 2, ',', '.') . '€',
-            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '.') . '€', // AGGIUNTO
-            'originalBalance'  => number_format($booking->total_price - $booking->down_payment, 2, ',', '.') . '€',
-            'refund'           => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '.') . '€',
+            'balance'          => number_format($booking->balance_payment, 2, ',', '') . '€',
+            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '') . '€', // AGGIUNTO
+            'originalBalance'  => number_format($booking->total_price - $booking->down_payment, 2, ',', '') . '€',
+            'refund'           => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '') . '€',
             'refundRaw'        => (float)$booking->calculateExpectedRefund()['refund_amount'],
-            'penalty'          => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '.') . '€',
+            'penalty'          => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '') . '€',
             'penaltyRaw'       => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
+            'damages'          => $booking->damages->toArray(),
             'status'           => $booking->status,
             'documents_status' => $booking->documents_status,
             'payment_status'   => $booking->payment_status,
             'penalty_receipt'  => $booking->penalty_receipt_path ? asset('storage/' . $booking->penalty_receipt_path) : null,
-            'refund_receipt'  => $booking->refund_receipt_path ? asset('storage/' . $booking->refund_receipt_path) : null,
+            'refund_receipt'   => $booking->refund_receipt_path ? asset('storage/' . $booking->refund_receipt_path) : null,
         ]);
     }
 
@@ -104,21 +105,19 @@ class BookingHistory extends Component
     }
 
     #[On('processPenaltyPayment')]
-    public function processPenaltyPayment($bookingId)
+    public function processPenaltyPayment($bookingId, $type = 'penalty')
     {
         $booking = auth()->user()->bookings()->findOrFail($bookingId);
 
-        if ($booking->status !== 'cancelled' || $booking->payment_status !== 'penalty_pending') {
-            return;
+        if ($type === 'damages') {
+            $amountToPay = ($booking->damages ?? collect())->where('status', 'pending')->sum('amount');
+            $description = "Pagamento Danni - Prenotazione #{$booking->id}";
+        } else {
+            $amountToPay = ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0);
+            $description = "Pagamento Penale - Prenotazione #{$booking->id}";
         }
 
-        $refundInfo = $booking->calculateExpectedRefund();
-        $totalPenalty = $refundInfo['penalty_amount'] ?? 0;
-        $depositPaid = $booking->down_payment ?? 0;
-
-        $penaltyToPay = $totalPenalty - $depositPaid;
-
-        if ($penaltyToPay <= 0) {
+        if ($amountToPay <= 0) {
             return;
         }
 
@@ -129,16 +128,13 @@ class BookingHistory extends Component
             'mode' => 'payment',
             'metadata' => [
                 'booking_id' => (string) $booking->id,
-                'payment_type' => 'penalty',
+                'payment_type' => $type,
             ],
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'eur',
-                    'product_data' => [
-                        'name' => "Pagamento Penale di Annullamento - Prenotazione #{$booking->id}",
-                        'description' => "Penale di " . number_format($totalPenalty, 2, ',', '.') . "€ meno acconto già versato di " . number_format($depositPaid, 2, ',', '.') . "€.",
-                    ],
-                    'unit_amount' => (int)($penaltyToPay * 100),
+                    'product_data' => ['name' => $description],
+                    'unit_amount' => (int)($amountToPay * 100),
                 ],
                 'quantity' => 1,
             ]],
@@ -154,7 +150,7 @@ class BookingHistory extends Component
     {
         $booking = auth()->user()->bookings()->findOrFail($bookingId);
 
-        if ($booking->status !== 'cancelled' || $booking->payment_status !== 'penalty_pending') {
+        if ($booking->payment_status !== 'penalty_pending') {
             return;
         }
 
@@ -181,7 +177,7 @@ class BookingHistory extends Component
     public function render()
     {
         $bookings = auth()->user()->bookings()
-            ->with('camper')
+            ->with('camper', 'damages')
             ->latest()
             ->paginate(10);
 

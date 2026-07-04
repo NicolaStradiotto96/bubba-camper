@@ -12,10 +12,8 @@
         class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
 
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase text-center mb-3">
-            Modifica Prenotazione #{{ $booking->id }}
+            Modifica Prenotazione <strong class="bg-gray-200 dark:bg-gray-900 py-1 px-2">#{{ $booking->id }}</strong>
         </h2>
-
-
 
         {{-- DETAILS --}}
         <div class="border-b border-gray-200 dark:border-gray-700 text-center pb-3 mb-3">
@@ -46,21 +44,20 @@
                     mode: 'range',
                     minDate: 'today',
                     dateFormat: 'd-m-Y',
-                    locale: { rangeSeparator: ' al ', firstDayOfWeek: 1 },
                     defaultDate: ['{{ $start_date }}', '{{ $end_date }}'],
-                    onChange: function(selectedDates, dateStr, instance) {
+                    locale: { rangeSeparator: ' al ', firstDayOfWeek: 1 },
+                    onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
-                            const startDate = instance.formatDate(selectedDates[0], 'Y-m-d');
-                            const endDate = instance.formatDate(selectedDates.length === 2 ?
-                                selectedDates[1] : selectedDates[0], 'Y-m-d');
-                            $wire.set('start_date', startDate);
-                            $wire.set('end_date', endDate);
+                            $wire.set('start_date', flatpickr.formatDate(selectedDates[0], 'd-m-Y'));
+                            $wire.set('end_date', flatpickr.formatDate(selectedDates[selectedDates.length - 1], 'd-m-Y'));
+                            $wire.validateRange();
                         }
                     }
                 });
                 
                 $wire.getBookedDatesProperty().then(booked => {
                     instance.set('disable', booked);
+                    instance.redraw();
                 });"
                     class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm text-center"
                     placeholder="Seleziona date...">
