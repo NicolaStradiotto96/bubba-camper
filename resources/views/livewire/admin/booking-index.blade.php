@@ -328,15 +328,15 @@
                                     @endif
 
                                     {{-- Damages --}}
-                                    @if ($booking->damages->contains('status', 'pending'))
+                                    @if ($booking->damages->whereIn('status', ['pending', 'verification'])->isNotEmpty())
                                         <div
                                             class="flex justify-between w-36 pt-1 border-t border-gray-100 dark:border-gray-700">
                                             <span class="text-gray-400">Danni:</span>
                                             <span
-                                                class="text-amber-500 animate-pulse">{{ number_format($booking->damages->where('status', 'pending')->sum('amount'), 2, ',', '') }}€
+                                                class="text-amber-500 animate-pulse">{{ number_format($booking->damages->whereIn('status', ['pending', 'verification'])->sum('amount'), 2, ',', '') }}€
                                             </span>
                                         </div>
-                                    @elseif ($booking->damages->contains('status', 'paid'))
+                                    @elseif ($booking->damages->where('status', 'paid')->isNotEmpty())
                                         <div
                                             class="flex justify-between w-36 pt-1 border-t border-gray-100 dark:border-gray-700">
                                             <span class="text-gray-400">Danni:</span>
@@ -372,15 +372,27 @@
                                                     $booking->payment_status === 'paid'))) &&
                                             $booking->payment_status !== 'fully_paid')
                                         <button type="button"
-                                            onclick="confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
+                                            onclick="event.stopPropagation(); confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
                                             Completa
                                         </button>
                                     @endif
 
+                                    {{-- Complete Damage --}}
+                                    @foreach ($booking->damages as $damage)
+                                        @if ($damage->status === 'verification')
+                                            <button type="button"
+                                                onclick="event.stopPropagation(); confirmDamageResolution('{{ $damage->id }}', '{{ number_format($damage->amount, 2, ',', '') }}€')"
+                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                                                Completa Danno #{{ $damage->id }}
+                                            </button>
+                                        @endif
+                                    @endforeach
+
                                     {{-- Invoice --}}
                                     @if ($booking->status === 'confirmed' && $booking->payment_status === 'fully_paid')
-                                        <button type="button" onclick="confirmInvoice('{{ $booking->id }}')"
+                                        <button type="button"
+                                            onclick="event.stopPropagation(); confirmInvoice('{{ $booking->id }}')"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
                                             Fattura
                                         </button>
@@ -389,7 +401,7 @@
                                     {{-- Confirm --}}
                                     @if ($booking->status === 'pending' && $booking->payment_status === 'paid')
                                         <button type="button"
-                                            onclick="confirmHostAction('{{ $booking->id }}', '{{ $booking->customer_first_name }}', '{{ $booking->customer_last_name }}', '{{ $booking->start_date->format('d/m/Y') }}', '{{ $booking->end_date->format('d/m/Y') }}')"
+                                            onclick="event.stopPropagation(); confirmHostAction('{{ $booking->id }}', '{{ $booking->customer_first_name }}', '{{ $booking->customer_last_name }}', '{{ $booking->start_date->format('d/m/Y') }}', '{{ $booking->end_date->format('d/m/Y') }}')"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             Conferma
                                         </button>
@@ -404,7 +416,7 @@
                                                 !$booking->id_card_front_path ||
                                                 !$booking->id_card_back_path))
                                         <button type="button"
-                                            @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
+                                            @click.stop="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             Carica Documenti
                                         </button>
@@ -415,7 +427,7 @@
                                         $booking->status !== 'cancelled' &&
                                             ($booking->payment_status === 'paid' || $booking->payment_status === 'fully_paid'))
                                         <button type="button"
-                                            onclick="confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['total_paid'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->calculateExpectedRefund()['penalty_amount'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
+                                            onclick="event.stopPropagation(); confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['total_paid'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->calculateExpectedRefund()['penalty_amount'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
                                             Annulla
                                         </button>
@@ -674,14 +686,14 @@
                         @endif
 
                         {{-- Damages --}}
-                        @if ($booking->damages->contains('status', 'pending'))
+                        @if ($booking->damages->whereIn('status', ['pending', 'verification'])->isNotEmpty())
                             <div class="flex justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
                                 <span class="text-gray-400">Danni:</span>
                                 <span
-                                    class="text-amber-500 animate-pulse">{{ number_format($booking->damages->where('status', 'pending')->sum('amount'), 2, ',', '') }}€
+                                    class="text-amber-500 animate-pulse">{{ number_format($booking->damages->whereIn('status', ['pending', 'verification'])->sum('amount'), 2, ',', '') }}€
                                 </span>
                             </div>
-                        @elseif ($booking->damages->contains('status', 'paid'))
+                        @elseif ($booking->damages->where('status', 'paid')->isNotEmpty())
                             <div class="flex justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
                                 <span class="text-gray-400">Danni:</span>
                                 <span
@@ -712,15 +724,27 @@
                                         $booking->payment_status === 'paid'))) &&
                                 $booking->payment_status !== 'fully_paid')
                             <button type="button"
-                                onclick="confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
+                                onclick="event.stopPropagation(); confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
                                 Completa
                             </button>
                         @endif
 
+                        {{-- Complete Damage --}}
+                        @foreach ($booking->damages as $damage)
+                            @if ($damage->status === 'verification')
+                                <button type="button"
+                                    onclick="event.stopPropagation(); confirmDamageResolution('{{ $damage->id }}', '{{ number_format($damage->amount, 2, ',', '') }}€')"
+                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                                    Completa
+                                </button>
+                            @endif
+                        @endforeach
+
                         {{-- Invoice --}}
                         @if ($booking->status === 'confirmed' && $booking->payment_status === 'fully_paid')
-                            <button type="button" onclick="confirmInvoice('{{ $booking->id }}')"
+                            <button type="button"
+                                onclick="event.stopPropagation(); confirmInvoice('{{ $booking->id }}')"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
                                 Fattura
                             </button>
@@ -729,7 +753,7 @@
                         {{-- Confirm --}}
                         @if ($booking->status === 'pending' && $booking->payment_status === 'paid')
                             <button type="button"
-                                onclick="confirmHostAction('{{ $booking->id }}', '{{ $booking->customer_first_name }}', '{{ $booking->customer_last_name }}', '{{ $booking->start_date->format('d/m/Y') }}', '{{ $booking->end_date->format('d/m/Y') }}')"
+                                onclick="event.stopPropagation(); confirmHostAction('{{ $booking->id }}', '{{ $booking->customer_first_name }}', '{{ $booking->customer_last_name }}', '{{ $booking->start_date->format('d/m/Y') }}', '{{ $booking->end_date->format('d/m/Y') }}')"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 Conferma
                             </button>
@@ -744,7 +768,7 @@
                                     !$booking->id_card_front_path ||
                                     !$booking->id_card_back_path))
                             <button type="button"
-                                @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
+                                @click.stop="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 Carica Documenti
                             </button>
@@ -753,7 +777,7 @@
                         {{-- Cancel --}}
                         @if ($booking->status !== 'cancelled' && $booking->payment_status === 'paid')
                             <button type="button"
-                                onclick="confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['total_paid'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->calculateExpectedRefund()['penalty_amount'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
+                                onclick="event.stopPropagation(); confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['total_paid'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->calculateExpectedRefund()['penalty_amount'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
                                 Annulla
                             </button>
@@ -1176,11 +1200,14 @@
                                         <template x-for="d in b.damages" :key="d.id">
                                             <div class="flex justify-between text-sm py-1">
                                                 <span class="text-gray-400 uppercase">
-                                                    Danno <span class="text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-1 px-1">#<span x-text="d.id"></span></span>:
+                                                    Danno <span
+                                                        class="text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-1 px-1">#<span
+                                                            x-text="d.id"></span></span>:
                                                 </span>
                                                 <span
-                                                    :class="d.status === 'pending' ? 'text-amber-500 animate-pulse' :
-                                                        'text-green-600'">
+                                                    :class="(d.status === 'pending' || d.status === 'verification') ?
+                                                    'text-amber-500 animate-pulse' :
+                                                    'text-green-600'">
                                                     <span
                                                         x-text="parseFloat(d.amount).toLocaleString('it-IT', {minimumFractionDigits: 2})"></span>€
                                                 </span>
@@ -1203,14 +1230,50 @@
 
                             {{-- Documents Viewver --}}
                             <div class="space-y-2">
+                                {{-- Damages --}}
+                                <template x-for="damage in b.damages" :key="damage.id">
+                                    <template x-if="damage.receipt_url">
+                                        <div class="text-center pt-2">
+
+                                            <div
+                                                class="group relative flex items-center justify-center w-full border border-green-500 rounded-xl overflow-hidden shadow-sm bg-green-50 dark:bg-green-900/20">
+
+                                                <a :href="damage.receipt_url" target="_blank"
+                                                    class="flex items-center justify-center gap-2 w-full uppercase tracking-widest text-green-600 dark:text-green-500 font-black text-xs py-3 px-4 transition-colors hover:bg-green-100 dark:hover:bg-green-900/40">
+                                                    <i class="fa-solid fa-file-lines text-base"></i>
+                                                    <span x-text="'Contabile Danno #' + damage.id"></span>
+                                                </a>
+
+                                                <button type="button"
+                                                    @click="rejectReceiptAction(b.id, 'damages', damage.id)"
+                                                    class="absolute right-0 top-0 bottom-0 w-12 opacity-100 md:w-0 md:opacity-0 group-hover:md:w-12 group-hover:md:opacity-100 bg-red-500 hover:bg-red-600 text-white transition-all duration-300 ease-in-out flex items-center justify-center overflow-hidden whitespace-nowrap">
+                                                    <span class="text-lg font-bold">&times;</span>
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </template>
+                                </template>
+
                                 {{-- Penalty --}}
                                 <template x-if="b.penalty_receipt">
                                     <div class="text-center pt-2">
-                                        <a :href="b.penalty_receipt" target="_blank"
-                                            class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40">
-                                            <i class="fa-solid fa-file-lines text-base"></i>
-                                            Contabile Penale
-                                        </a>
+
+                                        <div
+                                            class="group relative flex items-center justify-center w-full border border-green-500 rounded-xl overflow-hidden shadow-sm bg-green-50 dark:bg-green-900/20">
+
+                                            <a :href="b.penalty_receipt" target="_blank"
+                                                class="flex items-center justify-center gap-2 w-full uppercase tracking-widest text-green-600 dark:text-green-500 font-black text-xs py-3 px-4 transition-colors hover:bg-green-100 dark:hover:bg-green-900/40">
+                                                <i class="fa-solid fa-file-lines text-base"></i>
+                                                <span>Contabile Penale</span>
+                                            </a>
+
+                                            <button type="button" @click="rejectReceiptAction(b.id, 'penalty')"
+                                                class="absolute right-0 top-0 bottom-0 w-12 opacity-100 md:w-0 md:opacity-0 group-hover:md:w-12 group-hover:md:opacity-100 bg-red-500 hover:bg-red-600 text-white transition-all duration-300 ease-in-out flex items-center justify-center overflow-hidden whitespace-nowrap">
+                                                <span class="text-lg font-bold">&times;</span>
+                                            </button>
+                                        </div>
+
                                     </div>
                                 </template>
 
@@ -1225,33 +1288,34 @@
                                     </div>
                                 </template>
 
-                                <div class="grid grid-cols-2 gap-2 pt-2">
+                                <template x-if="b.dl_front || b.dl_back || b.id_front || b.id_back">
+                                    <div class="grid grid-cols-2 gap-2 pt-2">
 
-                                    {{-- Driver License --}}
-                                    <template x-if="b.dl_front || b.dl_back">
-                                        <button
-                                            @click="viewingDocs = { status: `open`, title: `Patente di Guida`, docs: [b.dl_front, b.dl_back], fields: ['driver_license_front', 'driver_license_back'] }"
-                                            class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
-                                            <i class="fa-solid fa-id-card text-base"></i>
-                                            Patente di Guida
-                                        </button>
-                                    </template>
+                                        {{-- Driver License --}}
+                                        <template x-if="b.dl_front || b.dl_back">
+                                            <button
+                                                @click="viewingDocs = { status: `open`, title: `Patente di Guida`, docs: [b.dl_front, b.dl_back], fields: ['driver_license_front', 'driver_license_back'] }"
+                                                class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
+                                                <i class="fa-solid fa-id-card text-base"></i>
+                                                Patente di Guida
+                                            </button>
+                                        </template>
 
-                                    {{-- ID Card --}}
-                                    <template x-if="b.id_front || b.id_back">
-                                        <button
-                                            @click="viewingDocs = { status: `open`, title: `Carta d'Identità`, docs: [b.id_front, b.id_back], fields: ['id_card_front', 'id_card_back'] }"
-                                            class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
-                                            <i class="fa-solid fa-id-card text-base"></i>
-                                            Carta d'Identità
-                                        </button>
-                                    </template>
+                                        {{-- ID Card --}}
+                                        <template x-if="b.id_front || b.id_back">
+                                            <button
+                                                @click="viewingDocs = { status: `open`, title: `Carta d'Identità`, docs: [b.id_front, b.id_back], fields: ['id_card_front', 'id_card_back'] }"
+                                                class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
+                                                <i class="fa-solid fa-id-card text-base"></i>
+                                                Carta d'Identità
+                                            </button>
+                                        </template>
 
-                                </div>
+                                    </div>
 
+                                </template>
 
-
-                                <div class="pt-2">
+                                <div>
                                     <x-danger-button x-show="toReject.length > 0"
                                         @click="$wire.rejectDocuments(b.id, toReject); toReject = []; closeAll();"
                                         class="w-full py-3 flex justify-center items-center">

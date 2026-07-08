@@ -7,6 +7,7 @@ use App\Mail\BookingCancellationRequest;
 use App\Mail\PenaltyRecieptNotification;
 use App\Mail\PenaltyRecieptRecieved;
 use App\Models\Booking;
+use App\Models\Damage;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -72,7 +73,14 @@ class BookingHistory extends Component
             'refundRaw'        => (float)$booking->calculateExpectedRefund()['refund_amount'],
             'penalty'          => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '') . '€',
             'penaltyRaw'       => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
-            'damages'          => $booking->damages->toArray(),
+            'damages' => $booking->damages->map(function ($d) {
+                return [
+                    'id'           => $d->id,
+                    'amount'       => $d->amount,
+                    'status'       => $d->status,
+                    'receipt_url'  => $d->receipt_path ? asset('storage/' . $d->receipt_path) : null,
+                ];
+            })->toArray(),
             'status'           => $booking->status,
             'documents_status' => $booking->documents_status,
             'payment_status'   => $booking->payment_status,
@@ -105,14 +113,15 @@ class BookingHistory extends Component
     }
 
     #[On('processPenaltyPayment')]
-    public function processPenaltyPayment($bookingId, $type = 'penalty')
+    public function processPenaltyPayment($bookingId, $type = 'penalty', $damageId = null)
     {
         $booking = auth()->user()->bookings()->findOrFail($bookingId);
 
         if ($type === 'damages') {
-            $amountToPay = ($booking->damages ?? collect())->where('status', 'pending')->sum('amount');
-            $description = "Pagamento Danni - Prenotazione #{$booking->id}";
-        } else {
+        $damage = Damage::findOrFail($damageId);
+        $amountToPay = $damage->amount;
+        $description = "Pagamento Danno #{$damage->id} - Prenotazione #{$booking->id}";
+    } else {
             $amountToPay = ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0);
             $description = "Pagamento Penale - Prenotazione #{$booking->id}";
         }
@@ -129,6 +138,7 @@ class BookingHistory extends Component
             'metadata' => [
                 'booking_id' => (string) $booking->id,
                 'payment_type' => $type,
+                'damage_id' => (string) $damageId,
             ],
             'line_items' => [[
                 'price_data' => [
@@ -146,31 +156,32 @@ class BookingHistory extends Component
     }
 
     #[On('processPenaltyBankTransfer')]
-    public function processPenaltyBankTransfer($bookingId)
+    public function processPenaltyBankTransfer($bookingId, $type = 'penalty', $damageId = null)
     {
         $booking = auth()->user()->bookings()->findOrFail($bookingId);
 
-        if ($booking->payment_status !== 'penalty_pending') {
-            return;
-        }
-
-        $sessionKey = 'uploaded_penalty_receipt_' . $booking->id;
-        $path = session($sessionKey);
-
-        if ($booking->penalty_receipt_path) {
-            $booking->payment_status = 'penalty_verification';
-            $booking->save();
+        if ($type === 'damages') {
+            $damage = Damage::findOrFail($damageId);
+            $damage->update(['status' => 'verification']);
 
             Mail::to($booking->customer_email)->send(new PenaltyRecieptRecieved($booking));
-            Mail::to(config('app.admin_email'))->send(new PenaltyRecieptNotification($booking));
+            Mail::to(config('app.admin_email'))->send(new PenaltyRecieptNotification($booking, $damage->amount, 'Danno'));
 
-            session()->forget($sessionKey);
-
-            session()->flash('success', "La contabile è stata inoltrata con successo. L'amministratore verificherà l'accredito del bonifico.");
-
+            session()->flash('success', "La contabile per il danno #{$damage->id} è stata inoltrata.");
             return $this->redirect(route('dashboard'), navigate: true);
         } else {
-            session()->flash('cancelled', "Errore: contabile non trovata nel sistema.");
+            if ($booking->payment_status !== 'penalty_pending' || !$booking->penalty_receipt_path) {
+                session()->flash('error', "Errore: contabile non trovata.");
+                return;
+            }
+
+            $booking->update(['payment_status' => 'penalty_verification']);
+
+            $amount = $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment;
+            Mail::to($booking->customer_email)->send(new PenaltyRecieptRecieved($booking));
+            Mail::to(config('app.admin_email'))->send(new PenaltyRecieptNotification($booking, $amount, 'Penale'));
+
+            session()->flash('success', "La contabile per la penale è stata inoltrata.");
         }
     }
 

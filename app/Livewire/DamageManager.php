@@ -123,13 +123,6 @@ class DamageManager extends Component
             ->sum('amount');
     }
 
-    public static function markDamagesAsPaid($bookingId)
-    {
-        Damage::where('booking_id', $bookingId)
-            ->where('status', 'pending')
-            ->update(['status' => 'paid']);
-    }
-
     #[Layout('layouts.app')]
     public function render()
     {

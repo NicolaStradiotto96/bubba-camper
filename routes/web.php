@@ -54,6 +54,10 @@ Route::post('/prenotazione/carica-contabile', [PenaltyController::class, 'upload
     ->middleware(['auth', 'verified'])
     ->name('bookings.upload-receipt');
 
+Route::post('/prenotazione/rifiuta-contabile', [PenaltyController::class, 'rejectReceipt'])
+    ->middleware(['auth', 'admin'])
+    ->name('bookings.reject-receipt');
+
 Route::get('/prenotazione/{booking}/pagamento-penale-confermato', [PenaltyController::class, 'success'])
     ->middleware(['auth', 'verified'])
     ->name('penalty.success');
@@ -63,7 +67,8 @@ Route::get('/prenotazione/{booking}/pagamento-penale-non-confermato', [PenaltyCo
     ->name('penalty.cancel');
 
 Route::get('/prenotazione/{bookingId}/pagamento-penale', [PenaltyController::class, 'getPenaltyAmount'])
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth', 'verified'])
+    ->name('pay.penalty');
 
 // PRICES
 Route::get('/prezzi', [CamperController::class, "prices"])->name("prices");

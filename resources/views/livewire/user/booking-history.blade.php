@@ -289,15 +289,15 @@
                                     @endif
 
                                     {{-- Damages --}}
-                                    @if ($booking->damages->contains('status', 'pending'))
+                                    @if ($booking->damages->whereIn('status', ['pending', 'verification'])->isNotEmpty())
                                         <div
                                             class="flex justify-between w-36 pt-1 border-t border-gray-100 dark:border-gray-700">
                                             <span class="text-gray-400">Danni:</span>
                                             <span
-                                                class="text-amber-500 animate-pulse">{{ number_format($booking->damages->where('status', 'pending')->sum('amount'), 2, ',', '') }}€
+                                                class="text-amber-500 animate-pulse">{{ number_format($booking->damages->whereIn('status', ['pending', 'verification'])->sum('amount'), 2, ',', '') }}€
                                             </span>
                                         </div>
-                                    @elseif ($booking->damages->contains('status', 'paid'))
+                                    @elseif ($booking->damages->where('status', 'paid')->isNotEmpty())
                                         <div
                                             class="flex justify-between w-36 pt-1 border-t border-gray-100 dark:border-gray-700">
                                             <span class="text-gray-400">Danni:</span>
@@ -330,20 +330,20 @@
                                             $booking->payment_status === 'penalty_pending' &&
                                             ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) > 0)
                                         <button type="button"
-                                            onclick="window.payPenaltyAction('{{ $booking->id }}', {{ ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) }}, 'penalty')"
+                                            onclick="event.stopPropagation(); window.payPenaltyAction('{{ $booking->id }}', {{ ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) }}, 'penalty')"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             Paga Penale
                                         </button>
                                     @endif
 
                                     {{-- Pay Damage --}}
-                                    @if (($booking->damages ?? collect())->where('status', 'pending')->sum('amount') > 0)
+                                    @foreach (($booking->damages ?? collect())->where('status', 'pending') as $damage)
                                         <button type="button"
-                                            onclick="window.payPenaltyAction('{{ $booking->id }}', {{ $booking->damages->where('status', 'pending')->sum('amount') }}, 'damages')"
+                                            onclick="event.stopPropagation(); window.payPenaltyAction('{{ $booking->id }}', {{ $damage->amount }}, 'damages', '{{ $damage->id }}')"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                                            Paga Danni
+                                            Paga Danno #{{ $damage->id }}
                                         </button>
-                                    @endif
+                                    @endforeach
 
                                     {{-- Documents --}}
                                     @if (
@@ -354,7 +354,7 @@
                                                 !$booking->id_card_front_path ||
                                                 !$booking->id_card_back_path))
                                         <button type="button"
-                                            @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
+                                            @click.stop="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             Carica Documenti
                                         </button>
@@ -363,7 +363,7 @@
                                     {{-- Request Cancellation --}}
                                     @if (($booking->status === 'confirmed' || $booking->status === 'pending') && $booking->payment_status === 'paid')
                                         <button type="button"
-                                            onclick="window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
+                                            onclick="event.stopPropagation(); window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
                                             class="bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
                                             Annulla Viaggio
                                         </button>
@@ -622,14 +622,14 @@
                         @endif
 
                         {{-- Damages --}}
-                        @if ($booking->damages->contains('status', 'pending'))
+                        @if ($booking->damages->whereIn('status', ['pending', 'verification'])->isNotEmpty())
                             <div class="flex justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
                                 <span class="text-gray-400">Danni:</span>
                                 <span
-                                    class="text-amber-500 animate-pulse">{{ number_format($booking->damages->where('status', 'pending')->sum('amount'), 2, ',', '') }}€
+                                    class="text-amber-500 animate-pulse">{{ number_format($booking->damages->whereIn('status', ['pending', 'verification'])->sum('amount'), 2, ',', '') }}€
                                 </span>
                             </div>
-                        @elseif ($booking->damages->contains('status', 'paid'))
+                        @elseif ($booking->damages->where('status', 'paid')->isNotEmpty())
                             <div class="flex justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
                                 <span class="text-gray-400">Danni:</span>
                                 <span
@@ -657,20 +657,20 @@
                                 $booking->payment_status === 'penalty_pending' &&
                                 ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) > 0)
                             <button type="button"
-                                onclick="window.payPenaltyAction('{{ $booking->id }}', {{ ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) }}, 'penalty')"
+                                onclick="event.stopPropagation(); window.payPenaltyAction('{{ $booking->id }}', {{ ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0) }}, 'penalty')"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 Paga Penale
                             </button>
                         @endif
 
                         {{-- Pay Damage --}}
-                        @if (($booking->damages ?? collect())->where('status', 'pending')->sum('amount') > 0)
+                        @foreach (($booking->damages ?? collect())->where('status', 'pending') as $damage)
                             <button type="button"
-                                onclick="window.payPenaltyAction('{{ $booking->id }}', {{ $booking->damages->where('status', 'pending')->sum('amount') }}, 'damages')"
+                                onclick="event.stopPropagation(); window.payPenaltyAction('{{ $booking->id }}', {{ $damage->amount }}, 'damages', '{{ $damage->id }}')"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                                Paga Danni
+                                Paga Danno #{{ $damage->id }}
                             </button>
-                        @endif
+                        @endforeach
 
                         {{-- Documents --}}
                         @if (
@@ -681,7 +681,7 @@
                                     !$booking->id_card_front_path ||
                                     !$booking->id_card_back_path))
                             <button type="button"
-                                @click="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
+                                @click.stop="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 Carica Documenti
                             </button>
@@ -690,7 +690,7 @@
                         {{-- Request Cancellation --}}
                         @if (($booking->status === 'confirmed' || $booking->status === 'pending') && $booking->payment_status === 'paid')
                             <button type="button"
-                                onclick="window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
+                                onclick="event.stopPropagation(); window.requestUserCancellation('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['penalty_amount'] ?? 0 }})"
                                 class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
                                 Annulla Viaggio
                             </button>
@@ -729,7 +729,7 @@
 
                     {{-- Header --}}
                     <div
-                        class="bg-gray-50 dark:bg-gray-700/50 font-black px-6 py-3 border-b border-gray-100 dark:border-gray-700 ">
+                        class="bg-gray-50 dark:bg-gray-700/50 font-black p-2 border-b border-gray-100 dark:border-gray-700 ">
 
                         {{-- ID --}}
                         <div class="flex justify-between items-center">
@@ -756,7 +756,7 @@
 
                     </div>
 
-                    <div class="p-2 space-y-2">
+                    <div class="p-2 mb-2 space-y-2">
                         <div class="text-center">
 
                             <div class="flex flex-col sm:flex-row gap-2">
@@ -1057,8 +1057,9 @@
                                                             x-text="d.id"></span></span>:
                                                 </span>
                                                 <span
-                                                    :class="d.status === 'pending' ? 'text-amber-500 animate-pulse' :
-                                                        'text-red-600'">
+                                                    :class="(d.status === 'pending' || d.status === 'verification') ?
+                                                    'text-amber-500 animate-pulse' :
+                                                    'text-red-600'">
                                                     <span
                                                         x-text="'-' + parseFloat(d.amount).toLocaleString('it-IT', {minimumFractionDigits: 2})"></span>€
                                                 </span>
@@ -1081,6 +1082,19 @@
 
                             {{-- Receipt --}}
                             <div class="space-y-2">
+                                {{-- Damages --}}
+                                <template x-for="damage in b.damages" :key="damage.id">
+                                    <template x-if="damage.receipt_url">
+                                        <div class="text-center pt-2">
+                                            <a :href="damage.receipt_url" target="_blank"
+                                                class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40">
+                                                <i class="fa-solid fa-file-lines text-base"></i>
+                                                <span x-text="'Contabile Danno #' + damage.id"></span>
+                                            </a>
+                                        </div>
+                                    </template>
+                                </template>
+
                                 {{-- Penalty --}}
                                 <template x-if="b.penalty_receipt">
                                     <div class="text-center pt-2">

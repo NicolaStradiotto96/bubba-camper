@@ -448,6 +448,36 @@ document.addEventListener('livewire:init', () => {
         });
     };
 
+    // Complete Damage
+    window.confirmDamageResolution = function (damageId, amount) {
+        const theme = getSwalTheme();
+
+        Swal.fire({
+            title: 'REGISTRA SALDO',
+            html: `Hai ricevuto il pagamento di <b class="text-green-500 text-xl">${amount}</b>?<br>L'azione chiuderà la pratica del danno.`,
+            icon: 'success',
+            iconColor: '#1fae53',
+            showCancelButton: true,
+            confirmButtonText: 'PROCEDI',
+            confirmButtonColor: '#1fae53',
+            cancelButtonText: 'CHIUDI',
+            background: theme.background,
+            color: theme.color,
+            didOpen: (popup) => {
+                popup.style.border = `2px solid ${theme.border}`;
+            },
+            customClass: {
+                popup: 'rounded-xl',
+                confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2',
+                cancelButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Livewire.dispatch('confirmDamageResolution', { damageId: damageId });
+            }
+        });
+    };
+
     // Invoice
     window.confirmInvoice = function (id) {
         const theme = getSwalTheme();
@@ -526,7 +556,7 @@ document.addEventListener('livewire:init', () => {
     }
 
     // Pay Penalty/Damage
-    window.payPenaltyAction = function (bookingId, penaltyAmount, type) {
+    window.payPenaltyAction = function (bookingId, penaltyAmount, type, damageId = null) {
         const theme = getSwalTheme();
 
         const isDamage = type === 'damages';
@@ -598,7 +628,7 @@ document.addEventListener('livewire:init', () => {
                     if (result.isConfirmed) {
 
                         // Stripe
-                        Livewire.dispatch('processPenaltyPayment', { bookingId: bookingId, type: type });
+                        Livewire.dispatch('processPenaltyPayment', { bookingId: bookingId, type: type, damageId: damageId });
                     } else if (result.isDenied) {
 
                         // Manual
@@ -753,7 +783,10 @@ document.addEventListener('livewire:init', () => {
                                 const formData = new FormData();
                                 formData.append('receipt', fileResult.value);
                                 formData.append('booking_id', bookingId);
-                                formData.append('type', 'penalty');
+                                formData.append('type', type);
+                                if (type === 'damages') {
+                                    formData.append('damage_id', damageId);
+                                }
 
                                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
@@ -767,7 +800,11 @@ document.addEventListener('livewire:init', () => {
                                     .then(response => response.json())
                                     .then(data => {
                                         if (data.success) {
-                                            Livewire.dispatch('processPenaltyBankTransfer', { bookingId: bookingId });
+                                            const payload = { bookingId: bookingId, type: type };
+                                            if (type === 'damages') {
+                                                payload.damageId = damageId;
+                                            }
+                                            Livewire.dispatch('processPenaltyBankTransfer', payload);
                                             Swal.close();
                                         } else {
                                             Swal.fire({
@@ -837,4 +874,55 @@ document.addEventListener('livewire:init', () => {
             }
         });
     };
+
+    // REJECT RECIEPT
+    window.rejectReceiptAction = function (bookingId, type, damageId = null) {
+        const theme = getSwalTheme();
+
+        Swal.fire({
+            title: 'RIFIUTA CONTABILE',
+            input: 'textarea',
+            inputLabel: 'Motivazione del rifiuto',
+            inputPlaceholder: 'Inserisci il motivo per cui la ricevuta non è valida...',
+            showCancelButton: true,
+            confirmButtonText: 'PROCEDI',
+            confirmButtonColor: '#ef4444',
+            cancelButtonText: 'CHIUDI',
+            background: theme.background,
+            color: theme.color,
+            didOpen: (popup) => {
+                popup.style.border = `2px solid ${theme.border}`;
+            },
+            customClass: {
+                popup: 'rounded-xl',
+                confirmButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                denyButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2',
+                cancelButton: 'text-md rounded-xl font-black tracking-widest px-3 py-2'
+            },
+            preConfirm: (reason) => {
+                if (!reason) {
+                    Swal.showValidationMessage('Devi inserire una motivazione!');
+                }
+                return reason;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/prenotazione/rifiuta-contabile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        booking_id: bookingId,
+                        type: type,
+                        damage_id: damageId,
+                        reason: result.value
+                    })
+                }).then(() => {
+                    Livewire.dispatch('refresh-page');
+                });
+            }
+        });
+    }
 });

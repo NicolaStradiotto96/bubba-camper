@@ -5,11 +5,11 @@
 
 Ciao **{{ $booking->customer_first_name }}**,
 
-ti confermiamo di aver ricevuto la contabile per la penale relativa alla prenotazione <code class="booking">#{{ $booking->id }}</code>.
+ti confermiamo di aver ricevuto la contabile relativa alla prenotazione <code class="booking">#{{ $booking->id }}</code>.
 
 Il nostro team verificherà l'effettivo accredito del bonifico bancario entro le prossime 48 ore lavorative. 
 
-Una volta completata la verifica, riceverai una notifica di conferma e la pratica di annullamento verrà ufficialmente chiusa.
+Una volta completata la verifica, riceverai una notifica di conferma e la pratica verrà ufficialmente chiusa.
 
 <div style="margin-top: 30px; border-top: 1px solid #374151; padding-top: 20px; font-size: 0.9em; color: #9ca3af;">
 Il team di {{ config('app.name', 'Bubba Camper') }} 🐶

@@ -9,9 +9,12 @@ use App\Mail\BookingCompletedNotification;
 use App\Mail\BookingConfirmed;
 use App\Mail\BookingConfirmedNotification;
 use App\Mail\DocumentRejected;
+use App\Mail\PenaltyDamagePaid;
+use App\Mail\PenaltyDamagePaidNotification;
 use App\Mail\PenaltyPaid;
 use App\Mail\PenaltyPaidNotification;
 use App\Models\Booking;
+use App\Models\Damage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\On;
@@ -46,6 +49,25 @@ class BookingIndex extends Component
 
             session()->flash('success', "Prenotazione #{$booking->id} confermata.");
         }
+    }
+
+    #[On('confirmDamageResolution')]
+    public function confirmDamageResolution($damageId)
+    {
+        if (!auth()->user()->is_admin) {
+            abort(403);
+        }
+
+        $damage = Damage::findOrFail($damageId);
+
+        $damage->update(['status' => 'paid']);
+
+        Mail::to($damage->booking->customer_email)->send(new PenaltyDamagePaid($damage));
+        Mail::to(config('app.admin_email'))->send(new PenaltyDamagePaidNotification($damage));
+
+        session()->flash('success', "Il danno #{$damage->id} è stato risolto con successo.");
+
+        $this->dispatch('refresh-page');
     }
 
     #[On('cancelBooking')]
@@ -252,7 +274,14 @@ class BookingIndex extends Component
             'refundRaw'        => (float)$booking->calculateExpectedRefund()['refund_amount'],
             'penalty'          => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '') . '€',
             'penaltyRaw'       => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
-            'damages'          => $booking->damages->toArray(),
+            'damages' => $booking->damages->map(function ($d) {
+                return [
+                    'id'           => $d->id,
+                    'amount'       => $d->amount,
+                    'status'       => $d->status,
+                    'receipt_url'  => $d->receipt_path ? asset('storage/' . $d->receipt_path) : null,
+                ];
+            })->toArray(),
             'status'           => $booking->status,
             'documents_status' => $booking->documents_status,
             'payment_status'   => $booking->payment_status,

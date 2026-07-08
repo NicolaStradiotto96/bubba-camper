@@ -83,7 +83,7 @@
                     <div
                         class="w-full h-96 rounded-2xl overflow-hidden shadow-lg border border-gray-300 dark:border-gray-700">
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2783.8269244852063!2d11.806780776833884!3d45.75461561401408!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4778d9e0cd4a0873%3A0x52cec110268c0360!2sBirreria%20El%20Tocayo!5e0!3m2!1sit!2sit!4v1776084275365!5m2!1sit!2sit"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d847.6341657294789!2d11.809442363842784!3d45.754668480412846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4778d9d5a701c64b%3A0xfafed0b8469e8ad6!2sBubba%20Camper!5e1!3m2!1sit!2sit!4v1783519360897!5m2!1sit!2sit"
                             width="100%" height="100%" style="border:0; clip-path: inset(2px);" allowfullscreen=""
                             loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                             class="dark:opacity-80 dark:contrast-125 rounded-3xl">

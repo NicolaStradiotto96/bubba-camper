@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Booking;
+use App\Models\Damage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -11,14 +11,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PenaltyRecieptNotification extends Mailable
+class PenaltyDamagePaidNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public Booking $booking, public float $amount, public string $type)
+    public function __construct(public Damage $damage)
     {
         //
     }
@@ -29,7 +29,7 @@ class PenaltyRecieptNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Contabile ricevuta 🧾',
+            subject: 'Danno regolarizzato ✅',
         );
     }
 
@@ -39,7 +39,7 @@ class PenaltyRecieptNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.penalty-reciept-notification',
+            markdown: 'emails.penalty-damage-paid-notification',
         );
     }
 

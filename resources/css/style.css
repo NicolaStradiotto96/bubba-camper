@@ -103,6 +103,16 @@
     font-size: 0.875rem;
 }
 
+.swal2-textarea {
+    resize: none !important;
+}
+
+.swal2-textarea:focus {
+    border-color: var(--accent2) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
 /* PAGINATION */
 [wire\:click*="page"].focus\:ring-blue-800,
 [wire\:click*="page"]:focus,

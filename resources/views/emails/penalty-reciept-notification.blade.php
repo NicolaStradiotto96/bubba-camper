@@ -1,15 +1,15 @@
 <x-mail::message>
 <div style="background-color: #1f2937; padding: 20px; border-radius: 8px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-# 🧾 Verifica Penale Richiesta
+# 🧾 Verifica Contabile Richiesta
 
-Un cliente ha caricato la contabile di pagamento per la penale della prenotazione <code class="booking">#{{ $booking->id }}</code>.
+Un cliente ha caricato la contabile di pagamento per {{ $type === 'Danno' ? 'un danno' : 'la penale' }} della prenotazione <code class="booking">#{{ $booking->id }}</code>.
 
 <div class="divider"></div>
 
 ## 👤 Dati Cliente
 - **Nome:** <span class="highlight">{{ $booking->customer_first_name }} {{ $booking->customer_last_name }}</span>
-- **Email:** <a href="'mailto:' . {{ $booking->customer_email }}" class="highlight">{{ $booking->customer_email }}</a>
+- **Email:** <a href="mailto:{{ $booking->customer_email }}" class="highlight">{{ $booking->customer_email }}</a>
 - **Telefono:** <span class="highlight">{{ $booking->customer_phone }}</span>
 
 <div class="divider"></div>
@@ -20,15 +20,15 @@ Un cliente ha caricato la contabile di pagamento per la penale della prenotazion
 
 <div class="divider"></div>
 
-## 💶 Dettagli Penale
-- **Importo Penale da verificare:** <span class="highlight">{{ number_format(($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0), 2, ',', '') }}€</span>
+## 💶 Costi
+- **Importo da verificare:** <span class="highlight">{{ number_format($amount, 2, ',', '') }}€</span>
 
 <div class="divider"></div>
 
 ## 📝 Prossimi Step
 1. Accedi al tuo home banking per verificare l'effettiva ricezione del bonifico.
 2. Controlla il documento caricato tramite il pannello di controllo.
-3. Se tutto è corretto, procedi alla chiusura definitiva della pratica di annullamento.
+3. Se tutto è corretto, procedi alla chiusura definitiva della pratica.
 
 <x-mail::button :url="config('app.url') . '/dashboard'" color="amber">
 VAI ALLA DASHBOARD

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ReceiptRejected;
 use App\Models\Booking;
+use App\Models\Damage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 
@@ -13,8 +16,9 @@ class PenaltyController extends Controller
     {
         $request->validate([
             'booking_id' => 'required|exists:bookings,id',
+            'damage_id'  => 'required_if:type,damages|exists:damages,id',
             'receipt' => 'required|file|mimes:pdf,png,jpg,jpeg|max:5120',
-            'type' => 'required|in:refund,penalty'
+            'type' => 'required|in:refund,penalty,damages'
         ]);
 
         $booking = Booking::findOrFail($request->booking_id);
@@ -24,17 +28,22 @@ class PenaltyController extends Controller
         }
 
         if ($request->hasFile('receipt')) {
-            $folder = ($request->type === 'refund') ? 'refund_receipts' : 'penalty_receipts';
-            $path = $request->file('receipt')->store($folder, 'public');
-
-            if ($request->type === 'refund') {
-                $booking->refund_receipt_path = $path;
+            if ($request->type === 'damages') {
+                $damage = Damage::findOrFail($request->damage_id);
+                $path = $request->file('receipt')->store('damage_receipts', 'public');
+                $damage->update(['receipt_path' => $path]);
             } else {
-                $booking->penalty_receipt_path = $path;
+                $folder = ($request->type === 'refund') ? 'refund_receipts' : 'penalty_receipts';
+                $path = $request->file('receipt')->store($folder, 'public');
+
+                if ($request->type === 'refund') {
+                    $booking->refund_receipt_path = $path;
+                } else {
+                    $booking->penalty_receipt_path = $path;
+                }
+
+                $booking->save();
             }
-
-            $booking->save();
-
             return response()->json(['success' => true]);
         }
 
@@ -55,7 +64,33 @@ class PenaltyController extends Controller
         ]);
     }
 
-    public function success(Request $request,Booking $booking)
+    public function rejectReceipt(Request $request)
+    {
+        $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'type'       => 'required|in:penalty,damages',
+            'damage_id'  => 'required_if:type,damages|exists:damages,id',
+            'reason'     => 'required|string|max:500'
+        ]);
+
+        $booking = Booking::findOrFail($request->booking_id);
+
+        if ($request->type === 'damages') {
+            $model = Damage::findOrFail($request->damage_id);
+            $model->update(['status' => 'pending', 'receipt_path' => null]);
+            $subject = 'Danno';
+        } else {
+            $booking->update(['payment_status' => 'penalty_pending', 'penalty_receipt_path' => null]);
+            $model = $booking;
+            $subject = 'Penale';
+        }
+
+        Mail::to($booking->customer_email)->send(new ReceiptRejected($booking, $request->reason, $subject));
+
+        return response()->json(['success' => true]);
+    }
+
+    public function success(Request $request, Booking $booking)
     {
         if ($booking->user_id !== auth()->id()) {
             abort(403, 'Azione non autorizzata.');

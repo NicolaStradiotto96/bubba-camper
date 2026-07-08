@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->text('description');
             $table->string('status')->default('pending');
+            $table->string('receipt_path')->nullable();
             $table->timestamps();
         });
     }
