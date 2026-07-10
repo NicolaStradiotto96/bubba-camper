@@ -26,6 +26,7 @@ class BookingIndex extends Component
     use WithPagination;
 
     public $bookingId;
+    public $searchId = '';
 
     protected $listeners = ['refresh-page' => '$refresh'];
 
@@ -345,12 +346,31 @@ class BookingIndex extends Component
         $this->dispatch('refresh-page');
     }
 
+    public function updatingSearchId()
+    {
+        $this->resetPage();
+    }
+
+    // public function render()
+    // {
+    //     return view('livewire.admin.booking-index', [
+    //         'bookings' => Booking::with('camper')
+    //             ->latest()
+    //             ->paginate(10)
+    //     ]);
+    // }
+
     public function render()
     {
+        $bookingsQuery = Booking::with('camper')
+            ->latest();
+
+        if (!empty($this->searchId)) {
+            $bookingsQuery->where('id', $this->searchId);
+        }
+
         return view('livewire.admin.booking-index', [
-            'bookings' => Booking::with('camper')
-                ->latest()
-                ->paginate(10)
+            'bookings' => $bookingsQuery->paginate(10)
         ]);
     }
 }

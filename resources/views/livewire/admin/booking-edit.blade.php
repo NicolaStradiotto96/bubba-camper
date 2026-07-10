@@ -12,7 +12,7 @@
         class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
 
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase text-center mb-3">
-            Modifica Prenotazione <strong class="bg-gray-200 dark:bg-gray-900 py-1 px-2">#{{ $booking->id }}</strong>
+            Modifica Prenotazione <strong class="id">#{{ $booking->id }}</strong>
         </h2>
 
         {{-- DETAILS --}}

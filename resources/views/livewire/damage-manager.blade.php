@@ -16,7 +16,7 @@
         </h2>
 
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase mb-1 text-center">
-            Prenotazione <strong class="bg-gray-200 dark:bg-gray-900 py-1 px-2">#{{ $booking->id }}</strong>
+            Prenotazione <strong class="id">#{{ $booking->id }}</strong>
         </h2>
 
         {{-- DETAILS --}}

@@ -38,12 +38,35 @@
     color: #000000;
 }
 
-.top-15 {
-    top: 3.75rem;
-}
-
 .no-scroll {
     overflow: hidden !important;
+}
+
+.id {
+    user-select: all;
+    padding: 0.25rem 0.25rem;
+    color: #374151;
+    background-color: #e5e7eb;
+}
+
+.dark .id {
+    color: #d1d5db;
+    background-color: #111827;
+}
+
+.damage-id {
+    user-select: all;
+    padding: 0.25rem 0.25rem;
+    color: var(--accent2);
+    background-color: #e5e7eb;
+}
+
+.dark .damage-id {
+    background-color: #111827;
+}
+
+.top-15 {
+    top: 3.75rem;
 }
 
 /* GLIGHTBOX */
@@ -111,6 +134,16 @@
     border-color: var(--accent2) !important;
     box-shadow: none !important;
     outline: none !important;
+}
+
+.swal2-toast .swal2-icon {
+    margin: 0.5em !important;
+}
+
+.swal2-title,
+.swal2-html-container {
+    margin: 0.2em 0.5em !important;
+    text-align: center !important;
 }
 
 /* PAGINATION */

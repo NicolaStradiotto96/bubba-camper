@@ -484,7 +484,7 @@ document.addEventListener('livewire:init', () => {
 
         Swal.fire({
             title: 'FATTURA PRENOTAZIONE',
-            html: `Vuoi impostare lo stato della prenotazione <span class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${id}</span> su "Fatturata"?`,
+            html: `Vuoi impostare lo stato della prenotazione <span class="id">#${id}</span> su "Fatturata"?`,
             icon: 'success',
             iconColor: '#1fae53',
             showCancelButton: true,
@@ -513,7 +513,7 @@ document.addEventListener('livewire:init', () => {
         const theme = getSwalTheme();
 
         let message = `Sei sicuro di voler richiedere l'annullamento della prenotazione <span
-                                    class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>?`;
+                                    class="id">#${bookingId}</span>?`;
 
         if (penaltyAmount > 0) {
             message += `<br><br><span class="text-amber-500 font-bold">Attenzione:</span> In base alle tempistiche contrattuali, è prevista una penale di trattenuta pari a <b>${penaltyAmount}€</b>.`;
@@ -562,8 +562,8 @@ document.addEventListener('livewire:init', () => {
         const isDamage = type === 'damages';
         const title = isDamage ? 'PAGAMENTO DANNI' : 'PAGAMENTO PENALE';
         const description = isDamage
-            ? `Per regolarizzare la situazione danni della prenotazione <span class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>, è necessario corrispondere:`
-            : `Per completare l'annullamento e regolarizzare la prenotazione <span class="bg-gray-200 dark:bg-gray-900 py-0.5 px-1">#${bookingId}</span>, è necessario corrispondere la penale contrattuale pari a:`;
+            ? `Per regolarizzare la situazione danni della prenotazione <span class="id">#${bookingId}</span>, è necessario corrispondere:`
+            : `Per completare l'annullamento e regolarizzare la prenotazione <span class="id">#${bookingId}</span>, è necessario corrispondere la penale contrattuale pari a:`;
 
         const label = isDamage ? 'Importo danni' : 'Importo da pagare';
 
@@ -758,28 +758,6 @@ document.addEventListener('livewire:init', () => {
                             }
                         }).then((fileResult) => {
                             if (fileResult.isConfirmed && fileResult.value) {
-
-                                Swal.fire({
-                                    title: 'Caricamento in corso...',
-                                    allowOutsideClick: false,
-                                    background: theme.background,
-                                    color: theme.color,
-                                    didOpen: (popup) => {
-                                        popup.style.border = `2px solid ${theme.border}`;
-
-                                        Swal.showLoading();
-
-                                        const loader = popup.querySelector('.swal2-loader');
-                                        if (loader) {
-                                            loader.style.borderTopColor = '#d97706';
-                                            loader.style.borderBottomColor = '#d97706';
-                                        }
-                                    },
-                                    customClass: {
-                                        popup: 'rounded-xl',
-                                    }
-                                });
-
                                 const formData = new FormData();
                                 formData.append('receipt', fileResult.value);
                                 formData.append('booking_id', bookingId);
@@ -925,4 +903,61 @@ document.addEventListener('livewire:init', () => {
             }
         });
     }
+
+    // CONFIRM DELETE
+    window.confirmAction = function (id, title, text, eventName) {
+        const theme = getSwalTheme();
+
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            iconColor: '#ef4444',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'PROCEDI',
+            cancelButtonText: 'CHIUDI',
+            background: theme.background,
+            color: theme.color,
+            didOpen: (popup) => {
+                popup.style.border = `2px solid ${theme.border}`;
+            },
+            customClass: {
+                popup: 'rounded-xl',
+                confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2',
+                cancelButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Livewire.dispatch(eventName, { id: id });
+            }
+        });
+    }
+
+    // SUCCESS MESSAGE
+    window.addEventListener('swal-success', event => {
+        const theme = getSwalTheme();
+        const data = event.detail[0];
+
+        Swal.fire({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            icon: 'success',
+            iconColor: '#1fae53',
+            title: 'OPERAZIONE COMPLETATA',
+            text: data.message,
+            background: theme.background,
+            color: theme.color,
+            didOpen: (toast) => {
+                toast.style.marginTop = '80px';
+                toast.style.border = `2px solid ${theme.border}`;
+            },
+            customClass: {
+                popup: 'rounded-xl border border-gray-200 dark:border-gray-700'
+            }
+        });
+    });
 });

@@ -5,7 +5,7 @@
 
 Ciao **{{ $damage->booking->customer_first_name }}**,
 
-ti confermiamo di aver ricevuto correttamente il pagamento di **{{ number_format($damage->amount, 2, ',', '.') }}€** relativo al danno <code class="booking">#{{ $damage->id }}</code> segnalato per la prenotazione <code class="booking">#{{ $damage->booking_id }}</code>.
+ti confermiamo di aver ricevuto correttamente il pagamento di **{{ number_format($damage->amount, 2, ',', '.') }}€** relativo al danno <code class="damage">#{{ $damage->id }}</code> segnalato per la prenotazione <code class="booking">#{{ $damage->booking_id }}</code>.
 
 **Dettaglio della pratica:**
 <x-mail::panel>

@@ -7,6 +7,7 @@ use App\Models\Camper;
 use App\Models\Maintenance;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -41,7 +42,7 @@ class MaintenanceManager extends Component
 
         $this->reset(['editingId', 'camper_id', 'start_date', 'end_date', 'reason']);
         $this->dispatch('set-flatpickr-date', start: null, end: null);
-        $this->dispatch('notify', message: 'Operazione completata con successo.');
+        $this->dispatch('swal-success', ['message' => 'Indisponibilità aggiunta con successo!']);
     }
 
     public function editBlock($id)
@@ -64,9 +65,19 @@ class MaintenanceManager extends Component
         $this->dispatch('set-flatpickr-date', start: null, end: null);
     }
 
+    #[On('removeBlock')]
     public function removeBlock($id)
     {
-        Maintenance::find($id)->delete();
+        $block = Maintenance::findOrFail($id);
+
+        if ($block->end_date->isPast()) {
+            $this->dispatch('swal-error', ['message' => 'Non puoi eliminare una manutenzione già conclusa.']);
+            return;
+        }
+
+        $block->delete();
+
+        $this->dispatch('swal-success', ['message' => 'Blocco eliminato con successo!']);
     }
 
     public function getBookedDatesProperty()

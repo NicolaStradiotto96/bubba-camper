@@ -15,9 +15,8 @@
             Gestione Indisponibilità
         </h2>
 
-        <div x-data="{ open: false, message: '' }"
-            @notify.window="message = $event.detail.message; open = true"
-            x-show="open" x-transition class="mb-6 p-4 bg-green-50 text-green-700 rounded-lg text-center font-bold">
+        <div x-data="{ open: false, message: '' }" @notify.window="message = $event.detail.message; open = true" x-show="open"
+            x-transition class="mb-6 p-4 bg-green-50 text-green-700 rounded-lg text-center font-bold">
             <span x-text="message"></span>
         </div>
 
@@ -146,8 +145,10 @@
                                 class="text-amber-500 {{ $editingId || $this->isDirty ? 'opacity-30 cursor-not-allowed' : 'hover:text-amber-700' }} ml-1 px-1">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button wire:click="removeBlock({{ $block->id }})" @disabled($editingId || $this->isDirty)
-                                class="text-red-500 {{ $editingId || $this->isDirty ? 'opacity-30 cursor-not-allowed' : 'hover:text-red-700' }}  px-1">
+                            <button type="button" @if ($block->end_date->isPast()) disabled @endif
+                                onclick="confirmAction({{ $block->id }}, 'ELIMINARE IL BLOCCO?', 'Questa azione cancellerà definitivamente il blocco dal server e il camper tornerà disponibile nelle date selezionate. Sei sicuro?', 'removeBlock')"
+                                @disabled($editingId || $this->isDirty || $block->end_date->isPast())
+                                class="text-red-500 {{ $editingId || $this->isDirty || $block->end_date->isPast() ? 'opacity-30 cursor-not-allowed' : 'hover:text-red-700' }} px-1 transition">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>

@@ -5,7 +5,7 @@
 
 Ciao **{{ $damage->booking->customer_first_name }}**,
 
-la contabile caricata per {{ $type === 'Danno' ? 'il danno' : 'la penale' }} <code class="booking">#{{ $damage->id }}</code> relativo alla prenotazione <code class="booking">#{{ $damage->booking_id }}</code> purtroppo non è valida.
+la contabile caricata per {{ $type === 'Danno' ? 'il danno' : 'la penale' }} <code class="damage">#{{ $damage->id }}</code> relativo alla prenotazione <code class="booking">#{{ $damage->booking_id }}</code> purtroppo non è valida.
 
 **Motivazione:**
 <x-mail::panel>

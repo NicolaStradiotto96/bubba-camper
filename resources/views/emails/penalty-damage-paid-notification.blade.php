@@ -3,7 +3,7 @@
 
 # ✅ Danno regolarizzato
 
-È stato registrato il pagamento del danno <code class="booking">#{{ $damage->id }}</code> per la prenotazione <code class="booking">#{{ $damage->booking_id }}</code>.
+È stato registrato il pagamento del danno <code class="damage">#{{ $damage->id }}</code> per la prenotazione <code class="booking">#{{ $damage->booking_id }}</code>.
 
 <div style="margin: 20px 0; border-top: 1px solid #374151;"></div>
 

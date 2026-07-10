@@ -48,7 +48,7 @@
             @else
                 {{-- USERS DASHBOARD --}}
                 <div
-                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg p-6 mx-4 text-center border border-gray-300 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg p-6 text-center border border-gray-300 dark:border-gray-700 mb-8 mx-4">
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Ciao,
                         {{ auth()->user()->first_name }}!
                     </h3>

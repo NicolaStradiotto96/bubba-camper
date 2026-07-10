@@ -22,6 +22,7 @@ class BookingHistory extends Component
     protected $listeners = ['refresh-page' => '$refresh'];
 
     public $receiptUpload;
+    public $searchId = '';
 
     public function checkBookingAccess($id)
     {
@@ -118,10 +119,10 @@ class BookingHistory extends Component
         $booking = auth()->user()->bookings()->findOrFail($bookingId);
 
         if ($type === 'damages') {
-        $damage = Damage::findOrFail($damageId);
-        $amountToPay = $damage->amount;
-        $description = "Pagamento Danno #{$damage->id} - Prenotazione #{$booking->id}";
-    } else {
+            $damage = Damage::findOrFail($damageId);
+            $amountToPay = $damage->amount;
+            $description = "Pagamento Danno #{$damage->id} - Prenotazione #{$booking->id}";
+        } else {
             $amountToPay = ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0);
             $description = "Pagamento Penale - Prenotazione #{$booking->id}";
         }
@@ -185,15 +186,23 @@ class BookingHistory extends Component
         }
     }
 
+    public function updatingSearchId()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $bookings = auth()->user()->bookings()
+        $query = auth()->user()->bookings()
             ->with('camper', 'damages')
-            ->latest()
-            ->paginate(10);
+            ->latest();
+
+        if (!empty($this->searchId)) {
+            $query->where('id', $this->searchId);
+        }
 
         return view('livewire.user.booking-history', [
-            'bookings' => $bookings
+            'bookings' => $query->paginate(10)
         ]);
     }
 }

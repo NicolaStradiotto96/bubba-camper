@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Damage;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -35,6 +36,7 @@ class DamageIndex extends Component
         $this->dispatch('contentChanged');
     }
 
+    #[On('removeDamage')]
     public function removeDamage($id)
     {
         if (!auth()->user()?->is_admin) {
@@ -51,7 +53,7 @@ class DamageIndex extends Component
 
         $damage->delete();
 
-        $this->dispatch('notify', message: 'Danno eliminato con successo!');
+        $this->dispatch('swal-success', ['message' => 'Danno eliminato con successo!']);
     }
 
     #[Layout('layouts.app')]
@@ -62,7 +64,10 @@ class DamageIndex extends Component
         $cleanSearch = trim(str_replace('#', '', $this->search_id));
 
         if (!empty($cleanSearch)) {
-            $query->where('booking_id', 'like', $cleanSearch . '%');
+            $query->where(function ($q) use ($cleanSearch) {
+                $q->where('id', 'like', $cleanSearch . '%')
+                    ->orWhere('booking_id', 'like', $cleanSearch . '%');
+            });
         }
 
         return view('livewire.damage-index', [

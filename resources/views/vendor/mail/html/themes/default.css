@@ -88,9 +88,15 @@ strong {
 }
 
 .booking {
-    background: #111827;
-    padding: 2px 5px;
-    color: #e0e0e0;
+    padding: 0.25rem 0.25rem;
+    color: #d1d5db;
+    background-color: #111827;
+}
+
+.damage {
+    padding: 0.25rem 0.25rem;
+    color: #f59e0b;
+    background-color: #111827;
 }
 
 img {
