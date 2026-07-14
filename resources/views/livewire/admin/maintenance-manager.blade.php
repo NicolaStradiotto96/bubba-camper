@@ -2,7 +2,7 @@
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
-            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
+            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
@@ -14,11 +14,6 @@
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase mb-8 text-center">
             Gestione Indisponibilità
         </h2>
-
-        <div x-data="{ open: false, message: '' }" @notify.window="message = $event.detail.message; open = true" x-show="open"
-            x-transition class="mb-6 p-4 bg-green-50 text-green-700 rounded-lg text-center font-bold">
-            <span x-text="message"></span>
-        </div>
 
         <form wire:submit.prevent="saveBlock" class="space-y-6">
             <section
@@ -34,17 +29,17 @@
                     <div>
                         <x-input-label for="camper_id" value="Veicolo" />
                         <select wire:model.live="camper_id" id="camper_id"
-                            class="block mt-1 w-full rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-700 focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-0 dark:text-white text-center">
+                            class="block mt-1 w-full rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-700 focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500 dark:text-white text-center">
                             <option value="">Seleziona camper...</option>
                             @foreach ($campers as $camper)
                                 <option value="{{ $camper->id }}">{{ $camper->name }}</option>
                             @endforeach
                         </select>
-                        <x-input-error :messages="$errors->get('camper_id')" class="mt-1" />
+                        <x-input-error :messages="$errors->get('camper_id')" class="text-center mt-1" />
                     </div>
 
                     {{-- Calendar --}}
-                    <div wire:ignore wire:key="calendar-container-{{ $camper_id }}">
+                    <div wire:ignore.self wire:key="calendar-container-{{ $camper_id }}">
                         <x-input-label value="Intervallo Indisponibilità" />
 
                         <input type="text" id="maintenance_range" x-data="{
@@ -68,14 +63,23 @@
                         });
                         const
                             updateDisabledDates = () => {
+                                $el.disabled = true;
+                                $el.placeholder = 'Caricamento date...';
+                        
                                 $wire.call('getBookedDatesProperty').then(booked => {
                                     instance.set('disable', booked);
+                        
+                                    $el.disabled = false;
+                                    $el.placeholder = 'Seleziona date...';
                                 });
                             };
                         
                         updateDisabledDates();
                         
-                        $watch('camper_id', () => updateDisabledDates());
+                        $watch('camper_id', () => {
+                            instance.clear();
+                            updateDisabledDates();
+                        });
                         
                         window.addEventListener('set-flatpickr-date', (e) => {
                             instance.setDate([e.detail.start, e.detail.end]);
@@ -86,10 +90,14 @@
                             instance.clear();
                             updateDisabledDates();
                         });"
-                            class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm text-center"
+                            class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-md shadow-sm text-center disabled:cursor-wait"
                             placeholder="Seleziona date...">
+                        <div class="flex flex-col">
+                            <x-input-error :messages="$errors->get('start_date')" class="text-center mt-1" />
+                            <x-input-error :messages="$errors->get('end_date')" class="text-center mt-1" />
+                        </div>
                     </div>
-                    <x-input-error :messages="$errors->get('maintenance_range')" class="mt-1" />
+
 
                 </div>
 
@@ -97,8 +105,8 @@
                 <div>
                     <x-input-label for="reason" value="Motivazione" />
                     <x-text-input wire:model.live="reason" id="reason" class="block mt-1 w-full" type="text"
-                        placeholder="es: Manutenzione periodica" />
-                    <x-input-error :messages="$errors->get('reason')" class="mt-1" />
+                        placeholder="Dettagli sull'indisponbilità..." />
+                    <x-input-error :messages="$errors->get('reason')" class="text-center mt-1" />
                 </div>
             </section>
 
@@ -107,8 +115,14 @@
                     class="text-gray-500 hover:text-gray-700 ml-4">
                     Annulla
                 </x-secondary-button>
-                <x-primary-button>
-                    {{ $editingId ? 'Aggiorna' : 'Blocca Date' }}
+                <x-primary-button type="submit" wire:loading.attr="disabled"
+                    class="disabled:opacity-50 disabled:cursor-wait">
+                    <span wire:loading.remove wire:target="saveBlock">
+                        {{ $editingId ? 'Aggiorna' : 'Blocca Date' }}
+                    </span>
+                    <span wire:loading wire:target="saveBlock">
+                        Caricamento...
+                    </span>
                 </x-primary-button>
             </div>
         </form>
@@ -142,13 +156,13 @@
 
                         <div class="flex">
                             <button wire:click="editBlock({{ $block->id }})" @disabled($editingId || $this->isDirty)
-                                class="text-amber-500 {{ $editingId || $this->isDirty ? 'opacity-30 cursor-not-allowed' : 'hover:text-amber-700' }} ml-1 px-1">
+                                class="text-amber-500 {{ $editingId || $this->isDirty ? 'opacity-30 cursor-not-allowed' : 'hover:text-amber-700' }} ml-1 px-1 focus:outline-none focus:outline-amber-500">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             <button type="button" @if ($block->end_date->isPast()) disabled @endif
                                 onclick="confirmAction({{ $block->id }}, 'ELIMINARE IL BLOCCO?', 'Questa azione cancellerà definitivamente il blocco dal server e il camper tornerà disponibile nelle date selezionate. Sei sicuro?', 'removeBlock')"
                                 @disabled($editingId || $this->isDirty || $block->end_date->isPast())
-                                class="text-red-500 {{ $editingId || $this->isDirty || $block->end_date->isPast() ? 'opacity-30 cursor-not-allowed' : 'hover:text-red-700' }} px-1 transition">
+                                class="text-red-500 {{ $editingId || $this->isDirty || $block->end_date->isPast() ? 'opacity-30 cursor-not-allowed' : 'hover:text-red-700' }} px-1 focus:outline-none focus:outline-amber-500">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('damages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('booking_id')->constrained()->onDelete('cascade');
+            $table->foreignId('booking_id')->index()->constrained()->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->text('description');
             $table->string('status')->default('pending');

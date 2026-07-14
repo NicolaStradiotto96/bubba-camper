@@ -6,9 +6,11 @@ use App\Mail\PenaltyDamage;
 use App\Models\Booking;
 use App\Models\Damage;
 use App\Models\DamagePhoto;
+use App\Models\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -25,8 +27,13 @@ class DamageManager extends Component
     public $existing_photos = [];
     public $originalAmount;
 
+    // IS ADMIN?
     public function mount(Booking $booking, $damage_id = null)
     {
+        if (!auth()->user()?->is_admin) {
+        abort(403);
+    }
+
         $this->booking = $booking;
         $this->damageId = $damage_id;
 
@@ -39,6 +46,30 @@ class DamageManager extends Component
         }
     }
 
+    // RULES
+    protected function rules()
+    {
+        return [
+            'amount' => 'required|numeric|min:0',
+            'description' => 'required|string',
+            'photos.*' => 'file|mimes:pdf,png,jpg,jpeg|max:5120',
+        ];
+    }
+
+    // ERROR MESSAGES
+    protected function messages()
+    {
+        return [
+            'amount.required'      => 'Inserisci l\'importo della penale.',
+            'amount.numeric'       => 'L\'importo deve essere un numero.',
+            'amount.min'           => 'L\'importo non può essere negativo.',
+            'description.required' => 'La descrizione del danno è obbligatoria.',
+            'photos.*.mimes'       => 'Solo i file di tipo pdf, jpeg, png o jpg sono permessi.',
+            'photos.*.max'         => 'Ogni foto deve pesare al massimo 5MB.',
+        ];
+    }
+
+    // SHOW PHOTO
     public function updatedTemporaryPhotos($value)
     {
         foreach ($value as $file) {
@@ -48,34 +79,34 @@ class DamageManager extends Component
         $this->temporary_photos = [];
     }
 
+    // REMOVE PHOTO
     public function removePhoto($index)
     {
         unset($this->photos[$index]);
         $this->photos = array_values($this->photos);
     }
 
-    public function removeExistingPhoto($photoId)
+    // REMOVE EXISTING PHOTO
+    #[On('removeExistingPhoto')]
+    public function removeExistingPhoto($id)
     {
-        $photo = DamagePhoto::findOrFail($photoId);
+        $photo = DamagePhoto::findOrFail($id);
+        $damage = $photo->damage;
 
         Storage::disk('public')->delete($photo->path);
 
         $photo->delete();
 
-        $this->existing_photos = $this->existing_photos->reject(function ($item) use ($photoId) {
-            return $item->id == $photoId;
-        });
+        $this->logDamage('damage_updated', "Eliminata foto dal danno #{$damage->id} per il camper #{$this->booking->camper_id}", $damage);
+
+        $this->existing_photos = $this->existing_photos->reject(fn($item) => $item->id == $id);
     }
 
+    // SAVE DAMAGE
     public function saveDamage()
     {
-        if (!auth()->user()?->is_admin) abort(403);
 
-        $this->validate([
-            'amount' => 'required|numeric',
-            'description' => 'required|string',
-            'photos.*' => 'image|max:10240',
-        ]);
+        $this->validate($this->rules(), $this->messages());
 
         $isUpdate = !empty($this->damageId);
 
@@ -87,6 +118,8 @@ class DamageManager extends Component
                 'booking_id' => $this->booking->id,
                 'amount' => $this->amount,
                 'description' => $this->description,
+                'status'      => 'pending',
+                'camper_id'   => $this->booking->camper_id,
             ]
         );
 
@@ -95,37 +128,50 @@ class DamageManager extends Component
             $damage->photos()->create(['path' => $path]);
         }
 
-        if (!$isUpdate) {
-            Mail::to($this->booking->customer_email)->send(new PenaltyDamage($damage, false));
-            $this->booking->logs()->create([
-                'type' => 'damage_reported',
-                'message' => "Segnalato danno da {$this->amount}€",
-            ]);
-        } elseif ($amountChanged) {
-            Mail::to($this->booking->customer_email)->send(new PenaltyDamage($damage, true));
-            $this->booking->logs()->create([
-                'type' => 'damage_updated',
-                'message' => "Aggiornato danno da {$this->originalAmount}€ a {$this->amount}€",
-            ]);
+        $this->photos = [];
+
+        try {
+            if (!$isUpdate) {
+                Mail::to($this->booking->customer_email)->send(new PenaltyDamage($damage, false));
+                $this->logDamage('damage_reported', "Segnalato danno da {$this->amount}€ per il camper #{$this->booking->camper_id}", $damage);
+            } elseif ($amountChanged) {
+                Mail::to($this->booking->customer_email)->send(new PenaltyDamage($damage, true));
+                $this->logDamage('damage_updated', "Aggiornato danno da {$this->originalAmount}€ a {$this->amount}€ per il camper #{$this->booking->camper_id}", $damage);
+            }
+        } catch (\Exception $e) {
+            \Log::error("Errore invio mail danno (ID: {$damage->id}, Camper: {$this->booking->camper_id}): " . $e->getMessage());
         }
 
-        $damage->status = 'pending';
-        $damage->save();
-
-        $this->dispatch('notify', message: $isUpdate ? 'Danno aggiornato!' : 'Danno segnalato!');
+        session()->flash('swal-success', $isUpdate ? 'Danno aggiornato con successo!' : 'Danno segnalato con successo!');
         return redirect()->route('damage.index');
     }
 
-    public static function getAmountForBooking($bookingId)
+    // UPDATE ERRORS
+    public function updated($propertyName)
     {
-        return Damage::where('booking_id', $bookingId)
-            ->where('status', 'pending')
-            ->sum('amount');
+        $this->validateOnly($propertyName, $this->rules(), $this->messages());
     }
 
+    // RENDER
     #[Layout('layouts.app')]
     public function render()
     {
         return view('livewire.damage-manager');
+    }
+
+    // LOG
+    private function logDamage(string $type, string $message, Damage $damage)
+    {
+        Log::create([
+            'booking_id' => $damage->booking_id,
+            'type'       => $type,
+            'message'    => $message,
+            'context'    => [
+                'user_id'    => auth()->id(),
+                'ip_address' => request()->ip(),
+                'damage_id'  => $damage->id,
+                'camper_id'  => $this->booking->camper_id,
+            ],
+        ]);
     }
 }

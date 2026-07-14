@@ -17,6 +17,7 @@ use App\Models\Booking;
 use App\Models\Damage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -30,13 +31,17 @@ class BookingIndex extends Component
 
     protected $listeners = ['refresh-page' => '$refresh'];
 
+    // IS ADMIN?
+    public function mount()
+    {
+        if (!auth()->user()?->is_admin) {
+            abort(403);
+        }
+    }
+
     #[On('confirmBooking')]
     public function confirmBooking($bookingId)
     {
-        if (!auth()->user()->is_admin) {
-            abort(403);
-        }
-
         $booking = Booking::findOrFail($bookingId);
 
         if ($booking->status === 'pending' && $booking->payment_status === 'paid') {
@@ -55,10 +60,6 @@ class BookingIndex extends Component
     #[On('confirmDamageResolution')]
     public function confirmDamageResolution($damageId)
     {
-        if (!auth()->user()->is_admin) {
-            abort(403);
-        }
-
         $damage = Damage::findOrFail($damageId);
 
         $damage->update(['status' => 'paid']);
@@ -74,10 +75,7 @@ class BookingIndex extends Component
     #[On('cancelBooking')]
     public function cancelBooking($bookingId, $applyPenalty = true, $useStripe = false, $byAdmin = false)
     {
-        if (!auth()->user()->is_admin) abort(403);
-
         $booking = Booking::findOrFail($bookingId);
-
 
         $totalPaid = ($booking->payment_status === 'fully_paid')
             ? $booking->total_price
@@ -146,10 +144,6 @@ class BookingIndex extends Component
     #[On('markAsPaid')]
     public function markAsPaid($bookingId)
     {
-        if (!auth()->user()->is_admin) {
-            abort(403);
-        }
-
         $booking = Booking::findOrFail($bookingId);
 
         if ($booking->status === 'cancelled') {
@@ -196,10 +190,6 @@ class BookingIndex extends Component
     #[On('markAsInvoiced')]
     public function markAsInvoiced($bookingId)
     {
-        if (!auth()->user()->is_admin) {
-            abort(403);
-        }
-
         $booking = Booking::findOrFail($bookingId);
 
         $booking->status = 'invoiced';
@@ -212,20 +202,20 @@ class BookingIndex extends Component
 
     public function getStatsProperty()
     {
-        $stats = [
-            'total' => Booking::count(),
-            'pending' => Booking::where('status', 'pending')->count(),
-            'cancellation_pending' => Booking::where('status', 'cancellation_pending')->count(),
-            'penalty_pending' => Booking::where('payment_status', 'penalty_pending')->count(),
-            'penalty_verification' => Booking::where('payment_status', 'penalty_verification')->count(),
-            'confirmed' => Booking::where('status', 'confirmed')->count(),
-            'earnings' => Booking::where('status', 'confirmed')->sum('total_price'),
-        ];
+        $data = Booking::selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN status = 'cancellation_pending' THEN 1 ELSE 0 END) as cancellation_pending,
+            SUM(CASE WHEN payment_status = 'penalty_pending' THEN 1 ELSE 0 END) as penalty_pending,
+            SUM(CASE WHEN payment_status = 'penalty_verification' THEN 1 ELSE 0 END) as penalty_verification,
+            SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
+            SUM(CASE WHEN status = 'confirmed' THEN total_price ELSE 0 END) as earnings
+        ")->first();
 
-        $totalPending = $stats['pending'] + $stats['cancellation_pending'] + $stats['penalty_verification'];
+        $totalPending = $data->pending + $data->cancellation_pending + $data->penalty_verification;
 
         return [
-            'counts' => $stats,
+            'counts' => $data->toArray(),
             'totalPending' => $totalPending,
             'style' => [
                 'border' => $totalPending > 0 ? 'border-amber-500' : 'border-green-500',
@@ -237,19 +227,7 @@ class BookingIndex extends Component
 
     public function openBookingDetails($bookingId)
     {
-        if (!auth()->user()->is_admin) {
-            abort(403);
-        }
-
-        try {
-            \Illuminate\Support\Facades\Artisan::call('app:cleanup-unpaid-bookings');
-        } catch (\Exception $e) {
-        }
-
-        $this->dispatch('booking-updated');
-
-
-        $booking = Booking::with('camper')->findOrFail($bookingId);
+        $booking = Booking::with(['camper', 'damages'])->findOrFail($bookingId);
 
         $this->dispatch('open-booking-modal', [
             'id'               => $booking->id,
@@ -269,7 +247,7 @@ class BookingIndex extends Component
             'down_paid'        => (bool)$booking->down_paid,
             'balance_paid'     => (bool)$booking->balance_paid,
             'balance'          => number_format($booking->balance_payment, 2, ',', '') . '€',
-            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '') . '€', // AGGIUNTO
+            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '') . '€',
             'originalBalance'  => number_format($booking->total_price - $booking->down_payment, 2, ',', '') . '€',
             'refund'           => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '') . '€',
             'refundRaw'        => (float)$booking->calculateExpectedRefund()['refund_amount'],
@@ -317,8 +295,6 @@ class BookingIndex extends Component
 
     public function rejectDocuments($bookingId, array $fields)
     {
-        if (!auth()->user()->isAdmin()) abort(403);
-
         $this->bookingId = $bookingId;
 
         $booking = Booking::findOrFail($this->bookingId);
@@ -330,7 +306,7 @@ class BookingIndex extends Component
                 $pathColumn = $field . '_path';
 
                 if ($booking->$pathColumn) {
-                    \Storage::disk('local')->delete($booking->$pathColumn);
+                    Storage::delete($booking->$pathColumn);
                     $booking->$pathColumn = null;
                     $rejectedFields[] = $field;
                 }
@@ -351,26 +327,16 @@ class BookingIndex extends Component
         $this->resetPage();
     }
 
-    // public function render()
-    // {
-    //     return view('livewire.admin.booking-index', [
-    //         'bookings' => Booking::with('camper')
-    //             ->latest()
-    //             ->paginate(10)
-    //     ]);
-    // }
-
+    // RENDER
     public function render()
     {
-        $bookingsQuery = Booking::with('camper')
-            ->latest();
-
-        if (!empty($this->searchId)) {
-            $bookingsQuery->where('id', $this->searchId);
-        }
+        $bookings = Booking::with('camper')
+            ->when($this->searchId, fn($q) => $q->where('id', $this->searchId))
+            ->latest()
+            ->paginate(10);
 
         return view('livewire.admin.booking-index', [
-            'bookings' => $bookingsQuery->paginate(10)
+            'bookings' => $bookings
         ]);
     }
 }

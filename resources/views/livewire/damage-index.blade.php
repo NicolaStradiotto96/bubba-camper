@@ -1,8 +1,8 @@
-<div class="min-h-[calc(100vh-160px)] mx-4" x-data="{ open: false }" @open-modal.window="open = true">
+<div class="min-h-[calc(100vh-160px)] mx-4" x-data="{ open: false }" @open-modal.window="open = true" x-effect="open ? document.body.classList.add('no-scroll') : document.body.classList.remove('no-scroll')">>
 
     <div class="max-w-5xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
-            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
+            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
@@ -102,20 +102,20 @@
                             <td class="px-2 py-4" @click.stop>
                                 <div class="flex justify-center gap-2">
                                     @if ($d->status === 'paid')
-                                        <span class="text-amber-500 opacity-30 cursor-not-allowed">
+                                        <span class="text-amber-500 opacity-30 cursor-not-allowed focus:outline-none focus:outline-amber-500">
                                             <i class="fa-solid fa-pen-to-square text-lg"></i>
                                         </span>
-                                        <span class="text-red-500 opacity-30 cursor-not-allowed">
+                                        <span class="text-red-500 opacity-30 cursor-not-allowed focus:outline-none focus:outline-amber-500">
                                             <i class="fa-solid fa-trash text-lg"></i>
                                         </span>
                                     @else
                                         <a href="{{ route('damage.edit', ['booking' => $d->booking_id, 'damage_id' => $d->id]) }}"
-                                            wire:navigate class="text-amber-500 hover:text-amber-600">
+                                            wire:navigate class="text-amber-500 hover:text-amber-600 focus:outline-none focus:outline-amber-500">
                                             <i class="fa-solid fa-pen-to-square text-lg"></i>
                                         </a>
                                         <button type="button"
                                             onclick="confirmAction({{ $d->id }}, 'ELIMINARE IL DANNO?', 'Questa azione cancellerà definitivamente il danno dal server. Non potrai tornare indietro!', 'removeDamage')"
-                                            class="text-red-500 hover:text-red-600">
+                                            class="text-red-500 hover:text-red-600 focus:outline-none focus:outline-amber-500">
                                             <i class="fa-solid fa-trash text-lg"></i>
                                         </button>
                                     @endif
@@ -291,7 +291,7 @@
                     <div
                         class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
                         <p class="text-lg font-black text-gray-400 uppercase tracking-widest mb-1">Importo:</p>
-                        @if ($d->status === 'paid')
+                        @if ($selectedDamage->status === 'paid')
                             <p class="font-black text-2xl text-green-500">
                                 {{ number_format($selectedDamage->amount, 2, ',', '') }}€</p>
                         @else

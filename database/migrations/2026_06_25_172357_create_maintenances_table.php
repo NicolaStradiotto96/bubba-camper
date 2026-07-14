@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('maintenances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('camper_id')->constrained()->onDelete('cascade');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->date('start_date')->index();
+            $table->date('end_date')->index();
             $table->string('reason')->nullable();
             $table->timestamps();
         });

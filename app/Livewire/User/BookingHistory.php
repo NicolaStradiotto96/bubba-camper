@@ -46,11 +46,6 @@ class BookingHistory extends Component
 
     public function openBookingDetails($bookingId)
     {
-        try {
-            \Illuminate\Support\Facades\Artisan::call('app:cleanup-unpaid-bookings');
-        } catch (\Exception $e) {
-        }
-
         $booking = Booking::with('camper')->findOrFail($bookingId);
 
         $this->dispatch('open-booking-modal', [
@@ -68,7 +63,7 @@ class BookingHistory extends Component
             'down_paid'        => (bool)$booking->down_paid,
             'balance_paid'     => (bool)$booking->balance_paid,
             'balance'          => number_format($booking->balance_payment, 2, ',', '') . '€',
-            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '') . '€', // AGGIUNTO
+            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '') . '€',
             'originalBalance'  => number_format($booking->total_price - $booking->down_payment, 2, ',', '') . '€',
             'refund'           => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '') . '€',
             'refundRaw'        => (float)$booking->calculateExpectedRefund()['refund_amount'],

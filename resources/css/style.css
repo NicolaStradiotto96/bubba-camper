@@ -150,8 +150,21 @@
 [wire\:click*="page"].focus\:ring-blue-800,
 [wire\:click*="page"]:focus,
 [wire\:click*="page"]:active {
+    border-color: var(--accent2) !important;
+    --tw-ring-color: var(--accent2) !important;
+}
+
+[aria-current="page"] span {
+    background-color: var(--accent) !important;
+    color: white !important;
     border-color: var(--accent) !important;
-    --tw-ring-color: var(--accent) !important;
+    font-weight: 900 !important;
+}
+
+[wire\:click*="page"]:hover:not([aria-current="page"] span) {
+    border-color: var(--accent2) !important;
+    color: var(--accent2) !important;
+    z-index: 10 !important;
 }
 
 /* FLATPICKR */

@@ -2,7 +2,7 @@
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
-            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
+            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
@@ -31,13 +31,7 @@
             </p>
         </div>
 
-        @if (session()->has('success'))
-            <div class="mb-6 p-4 bg-green-50 text-green-700 rounded-lg text-center font-bold">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <form wire:submit.prevent="saveDamage" class="space-y-6">
+        <form wire:submit.prevent="saveDamage" class="space-y-6" novalidate>
 
             {{-- DAMAGE DETAILS --}}
             <section class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -50,18 +44,18 @@
                     {{-- Price --}}
                     <div>
                         <x-input-label for="amount" value="Importo Penale (€)" />
-                        <x-text-input wire:model="amount" id="amount" class="block mt-1 w-full text-center"
-                            type="number" step="0.01" />
-                        <x-input-error :messages="$errors->get('amount')" class="mt-2" />
+                        <x-text-input x-price wire:model.blur="amount" id="amount" class="block mt-1 w-full text-center"
+                            type="text" step="0.01" />
+                        <x-input-error :messages="$errors->get('amount')" class="text-center mt-1" />
                     </div>
 
                     {{-- Description --}}
                     <div>
                         <x-input-label for="description" value="Descrizione Danno" />
-                        <textarea wire:model="description" id="description" rows="3"
-                            class="text-center mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm resize-none"
+                        <textarea wire:model.blur="description" id="description" rows="3"
+                            class="text-center mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-md shadow-sm resize-none"
                             placeholder="Dettagli sulla natura del danno..."></textarea>
-                        <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('description')" class="text-center mt-1" />
                     </div>
 
                     {{-- Photos --}}
@@ -72,18 +66,28 @@
 
                         <div class="w-full text-center">
 
-                            <input type="file" id="photos" wire:model="temporary_photos" multiple accept="image/*"
-                                class="hidden" />
+                            <input type="file" id="photos" wire:model.blur="temporary_photos" multiple
+                                accept=".png,.jpg,.jpeg,application/pdf" class="hidden" />
 
                             <button type="button" onclick="document.getElementById('photos').click()"
-                                class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl transition shadow-md">
+                                class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 focus:outline-none focus:outline-amber-500 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl transition shadow-md">
                                 <i class="fa-solid fa-plus"></i> Aggiungi Foto
                             </button>
 
                             <div class="mt-4 min-h-[82px] max-h-20 flex flex-wrap justify-center gap-3 overflow-y-auto">
                                 @foreach ($photos as $index => $photo)
                                     <div class="relative shadow rounded-lg overflow-hidden border border-amber-500">
-                                        <img src="{{ $photo->temporaryUrl() }}" class="h-20 w-20 object-cover">
+                                        @if (in_array($photo->extension(), ['png', 'jpg', 'jpeg']))
+                                            <img src="{{ $photo->temporaryUrl() }}" class="h-20 w-20 object-cover">
+                                        @else
+                                            <div
+                                                class="h-20 w-20 flex items-center justify-center bg-gray-200 dark:bg-gray-900">
+
+                                                <i
+                                                    class="fa-solid fa-file-{{ $photo->extension() === 'pdf' ? 'pdf' : 'code' }} text-2xl 
+                                                    {{ $photo->extension() === 'pdf' ? 'text-red-500' : 'text-gray-500' }}"></i>
+                                            </div>
+                                        @endif
 
                                         <button type="button" wire:click="removePhoto({{ $index }})"
                                             class="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-bl flex items-center justify-center transition-colors focus:outline-none">
@@ -96,18 +100,24 @@
                             {{-- Existing Photos --}}
                             @if (count($existing_photos) > 0)
                                 <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <p class="text-xs uppercase font-black tracking-wider text-gray-400 mb-3">Foto attuali:
+                                    <p class="text-xs uppercase font-black tracking-wider text-gray-400 mb-3">Foto
+                                        attuali:
                                     </p>
                                     <div class="flex flex-wrap justify-center gap-3">
                                         @foreach ($existing_photos as $photo)
                                             <div
                                                 class="relative shadow rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
-                                                <img src="{{ asset('storage/' . $photo->path) }}"
-                                                    class="h-20 w-20 object-cover">
+                                                @if (str_ends_with(strtolower($photo->path), '.pdf'))
+                                                    <div
+                                                        class="h-20 w-20 flex items-center justify-center bg-gray-200 dark:bg-gray-900">
+                                                        <i class="fa-solid fa-file-pdf text-2xl text-red-500"></i>
+                                                    </div>
+                                                @else
+                                                    <img src="{{ asset('storage/' . $photo->path) }}"
+                                                        class="h-20 w-20 object-cover">
+                                                @endif
 
-                                                <button type="button"
-                                                    wire:click="removeExistingPhoto({{ $photo->id }})"
-                                                    wire:confirm="Vuoi eliminare questa foto?"
+                                                <button type="button" onclick="confirmAction({{ $photo->id }}, 'ELIMINARE LA FOTO?', 'Questa azione non può essere annullata.', 'removeExistingPhoto')"
                                                     class="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-bl flex items-center justify-center transition-colors focus:outline-none">
                                                     <i class="fa-solid fa-xmark text-[10px]"></i>
                                                 </button>
@@ -117,6 +127,15 @@
                                 </div>
                             @endif
                         </div>
+
+                        @if ($errors->has('photos.*'))
+                            <div class="mt-1">
+                                @foreach ($errors->get('photos.*') as $message)
+                                    <x-input-error :messages="$message[0]" class="text-center mt-1" />
+                                @endforeach
+                            </div>
+                        @endif
+
                     </div>
                 </div>
             </section>
@@ -128,7 +147,7 @@
                 </x-secondary-button>
 
                 <x-primary-button wire:loading.attr="disabled" wire:target="photos, temporary_photos, saveDamage"
-                    class="w-full sm:w-auto justify-center">
+                    class="w-full sm:w-auto justify-center disabled:opacity-50 disabled:cursor-wait">
 
                     <span wire:loading.remove wire:target="photos, temporary_photos, saveDamage">
                         {{ $damageId ? 'Aggiorna Danno' : 'Notifica Danno' }}

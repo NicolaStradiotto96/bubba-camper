@@ -24,6 +24,31 @@
 
     {{ $slot }}
 
+    {{-- SWEET ALERT 2 MESSAGES --}}
+    @if (session()->has('swal-success'))
+        <script>
+            document.addEventListener('livewire:navigated', () => {
+                Livewire.dispatch('swal-success', {
+                    message: "{{ session('swal-success') }}"
+                });
+            }, {
+                once: true
+            });
+        </script>
+    @endif
+
+    @if (session()->has('swal-error'))
+        <script>
+            document.addEventListener('livewire:navigated', () => {
+                Livewire.dispatch('swal-error', {
+                    message: "{{ session('swal-error') }}"
+                });
+            }, {
+                once: true
+            });
+        </script>
+    @endif
+
 </body>
 
 </html>

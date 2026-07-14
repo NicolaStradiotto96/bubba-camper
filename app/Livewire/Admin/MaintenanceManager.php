@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Booking;
 use App\Models\Camper;
+use App\Models\Log;
 use App\Models\Maintenance;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
@@ -20,36 +21,73 @@ class MaintenanceManager extends Component
     public $end_date;
     public $reason;
     public $editingId = null;
+    public $isFetchingDates = false;
 
+    // IS ADMIN?
+    public function mount()
+    {
+        if (!auth()->check() || !auth()->user()->is_admin) {
+            abort(403, 'Accesso non autorizzato.');
+        }
+    }
+
+    // CANCEL EDIT
+    public function cancelEdit()
+    {
+        $this->resetValidation();
+        $this->isFetchingDates = false;
+        $this->reset(['editingId', 'camper_id', 'start_date', 'end_date', 'reason']);
+        $this->dispatch('set-flatpickr-date', start: null, end: null);
+    }
+
+    // SAVE MAINTENANCE
     public function saveBlock()
     {
+
         $this->validate([
             'camper_id'  => 'required|exists:campers,id',
             'start_date' => 'required|date',
             'end_date'   => 'required|date|after_or_equal:start_date',
             'reason'     => 'nullable|string'
+        ], [
+            'camper_id.required'  => 'Devi selezionare un camper',
+            'camper_id.exists'    => 'Il camper selezionato non è valido',
+            'start_date.required' => 'Devi selezionare una data di inizio',
+            'end_date.required'   => 'Devi selezionare una data di fine',
+            'end_date.after_or_equal' => 'La data di fine non può essere precedente a quella di inizio',
         ]);
 
-        Maintenance::updateOrCreate(
-            ['id' => $this->editingId],
-            [
-                'camper_id'  => $this->camper_id,
-                'start_date' => Carbon::createFromFormat('d-m-Y', $this->start_date)->format('Y-m-d'),
-                'end_date'   => Carbon::createFromFormat('d-m-Y', $this->end_date)->format('Y-m-d'),
-                'reason'     => $this->reason
-            ]
-        );
+        try {
+            $block = Maintenance::updateOrCreate(
+                ['id' => $this->editingId],
+                [
+                    'camper_id'  => $this->camper_id,
+                    'start_date' => Carbon::createFromFormat('d-m-Y', $this->start_date)->format('Y-m-d'),
+                    'end_date'   => Carbon::createFromFormat('d-m-Y', $this->end_date)->format('Y-m-d'),
+                    'reason'     => $this->reason
+                ]
+            );
+        } catch (\Exception $e) {
+            $this->addError('start_date', 'Errore nel formato data.');
+            $this->addError('end_date', 'Errore nel formato data.');
+            return;
+        }
 
-        $this->reset(['editingId', 'camper_id', 'start_date', 'end_date', 'reason']);
-        $this->dispatch('set-flatpickr-date', start: null, end: null);
+        $action = $this->editingId ? 'aggiornata' : 'creata';
+        $this->logMaintenance('maintenance_' . ($this->editingId ? 'updated' : 'created'), "Indisponibilità $action per il camper #{$this->camper_id}", $block);
+
+        $this->cancelEdit();
+
         $this->dispatch('swal-success', ['message' => 'Indisponibilità aggiunta con successo!']);
     }
 
+    // EDIT MAINTENANCE
     public function editBlock($id)
     {
         $this->resetValidation();
 
         $block = Maintenance::findOrFail($id);
+
         $this->editingId = $block->id;
         $this->camper_id = $block->camper_id;
         $this->reason = $block->reason;
@@ -59,27 +97,25 @@ class MaintenanceManager extends Component
         $this->dispatch('set-flatpickr-date', start: $this->start_date, end: $this->end_date);
     }
 
-    public function cancelEdit()
-    {
-        $this->reset(['editingId', 'camper_id', 'start_date', 'end_date', 'reason']);
-        $this->dispatch('set-flatpickr-date', start: null, end: null);
-    }
-
+    // REMOVE MAINTENANCE
     #[On('removeBlock')]
     public function removeBlock($id)
     {
         $block = Maintenance::findOrFail($id);
 
         if ($block->end_date->isPast()) {
-            $this->dispatch('swal-error', ['message' => 'Non puoi eliminare una manutenzione già conclusa.']);
+            $this->dispatch('swal-error', ['message' => 'Non puoi eliminare una indisponibilità già conclusa.']);
             return;
         }
 
+        $this->logMaintenance('maintenance_deleted', "Indisponibilità eliminata per il camper #{$block->camper_id}", $block);
+
         $block->delete();
 
-        $this->dispatch('swal-success', ['message' => 'Blocco eliminato con successo!']);
+        $this->dispatch('swal-success', ['message' => 'Indisponibilità eliminata con successo!']);
     }
 
+    // CALENDAR
     public function getBookedDatesProperty()
     {
         if (!$this->camper_id) {
@@ -134,23 +170,37 @@ class MaintenanceManager extends Component
 
     public function validateRange()
     {
-        if (!$this->start_date || !$this->end_date) return;
+        if (empty($this->start_date) || empty($this->end_date)) return;
 
-        $start = Carbon::createFromFormat('d-m-Y', $this->start_date)->format('Y-m-d');
-        $end = Carbon::createFromFormat('d-m-Y', $this->end_date)->format('Y-m-d');
+        try {
+            $start = Carbon::createFromFormat('d-m-Y', $this->start_date)->format('Y-m-d');
+            $end = Carbon::createFromFormat('d-m-Y', $this->end_date)->format('Y-m-d');
+        } catch (\Exception $e) {
+            $this->addError('start_date', 'Errore nel formato data.');
+            $this->addError('end_date', 'Errore nel formato data.');
+            return;
+        }
 
         $isBooked = Booking::where('camper_id', $this->camper_id)
             ->whereNotIn('status', Booking::getExcludedStatuses())
             ->where(function ($q) use ($start, $end) {
                 $q->whereBetween('start_date', [$start, $end])
-                    ->orWhereBetween('end_date', [$start, $end]);
+                    ->orWhereBetween('end_date', [$start, $end])
+                    ->orWhere(function ($query) use ($start, $end) {
+                        $query->where('start_date', '<', $start)
+                            ->where('end_date', '>', $end);
+                    });
             })->exists();
 
         $isMaintained = Maintenance::where('camper_id', $this->camper_id)
             ->where('id', '!=', $this->editingId)
             ->where(function ($q) use ($start, $end) {
                 $q->whereBetween('start_date', [$start, $end])
-                    ->orWhereBetween('end_date', [$start, $end]);
+                    ->orWhereBetween('end_date', [$start, $end])
+                    ->orWhere(function ($query) use ($start, $end) {
+                        $query->where('start_date', '<', $start)
+                            ->where('end_date', '>', $end);
+                    });
             })->exists();
 
         if ($isBooked || $isMaintained) {
@@ -159,6 +209,7 @@ class MaintenanceManager extends Component
         }
     }
 
+    // IS EDITING
     public function getIsDirtyProperty()
     {
         return empty($this->editingId) && (
@@ -169,6 +220,31 @@ class MaintenanceManager extends Component
         );
     }
 
+    // RESET ERRORS
+    public function updatedCamperId()
+    {
+        $this->isFetchingDates = true;
+        $this->resetValidation();
+        $this->dispatch('loading-dates');
+    }
+
+    public function finishLoading()
+    {
+        $this->isFetchingDates = false;
+        $this->dispatch('dates-loaded');
+    }
+
+    public function updatedStartDate()
+    {
+        $this->resetValidation();
+    }
+
+    public function updatedEndDate()
+    {
+        $this->resetValidation();
+    }
+
+    // RENDER
     #[Layout('layouts.app')]
     public function render()
     {
@@ -183,6 +259,23 @@ class MaintenanceManager extends Component
         return view('livewire.admin.maintenance-manager', [
             'campers' => Camper::all(),
             'blocks'  => $blocks
+        ]);
+    }
+
+    // LOG
+    private function logMaintenance(string $type, string $message, Maintenance $maintenance)
+    {
+        Log::create([
+            'type'    => $type,
+            'message' => $message,
+            'context' => [
+                'user_id'        => auth()->id(),
+                'ip_address'     => request()->ip(),
+                'maintenance_id' => $maintenance->id,
+                'camper_id'      => $maintenance->camper_id,
+                'period'         => $maintenance->start_date->format('d/m/Y') . ' - ' . $maintenance->end_date->format('d/m/Y'),
+                'reason'         => $maintenance->reason,
+            ],
         ]);
     }
 }

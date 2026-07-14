@@ -937,7 +937,7 @@ document.addEventListener('livewire:init', () => {
     // SUCCESS MESSAGE
     window.addEventListener('swal-success', event => {
         const theme = getSwalTheme();
-        const data = event.detail[0];
+        const data = Array.isArray(event.detail) ? event.detail[0] : event.detail;
 
         Swal.fire({
             toast: true,
@@ -953,11 +953,59 @@ document.addEventListener('livewire:init', () => {
             color: theme.color,
             didOpen: (toast) => {
                 toast.style.marginTop = '80px';
-                toast.style.border = `2px solid ${theme.border}`;
+                toast.style.border = `2px solid #1fae53`;
             },
             customClass: {
-                popup: 'rounded-xl border border-gray-200 dark:border-gray-700'
+                popup: 'rounded-xl'
             }
+        });
+    });
+
+    // ERROR MESSAGE
+    window.addEventListener('swal-error', event => {
+        const theme = getSwalTheme();
+        const data = Array.isArray(event.detail) ? event.detail[0] : event.detail;
+
+        Swal.fire({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            icon: 'error',
+            iconColor: '#ef4444',
+            title: 'ERRORE',
+            text: data.message,
+            background: theme.background,
+            color: theme.color,
+            didOpen: (toast) => {
+                toast.style.marginTop = '80px';
+                toast.style.border = `2px solid #ef4444`;
+            },
+            customClass: {
+                popup: 'rounded-xl'
+            }
+        });
+    });
+});
+
+document.addEventListener('alpine:init', () => {
+    Alpine.directive('numbers', (el) => {
+        el.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+    });
+
+    Alpine.directive('price', (el) => {
+        el.addEventListener('input', (e) => {
+            let val = e.target.value;
+            val = val.replace(/[^0-9.,]/g, '');
+            val = val.replace(',', '.');
+            const parts = val.split('.');
+            if (parts.length > 2) {
+                val = parts[0] + '.' + parts.slice(1).join('');
+            }
+            e.target.value = val;
         });
     });
 });

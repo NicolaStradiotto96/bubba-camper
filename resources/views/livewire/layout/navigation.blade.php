@@ -27,7 +27,7 @@ new class extends Component {
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center w-48">
-                    <a href="{{ route('welcome') }}" wire:navigate>
+                    <a href="{{ route('welcome') }}" wire:navigate class="focus:outline-none focus:ring-2 focus:ring-amber-500">
                         <x-application-logo size="small" />
                     </a>
                 </div>
@@ -59,10 +59,10 @@ new class extends Component {
                     <livewire:admin-notification />
                 </div>
                 @auth
-                    <x-dropdown align="right" width="48">
+                <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button
-                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm tracking-wider leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white/0 dark:bg-gray-800/0 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm tracking-wider leading-4 font-medium text-gray-500 dark:text-gray-400 bg-white/0 dark:bg-gray-800/0 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition ease-in-out duration-150">
                                 <div x-data="{{ json_encode(['name' => auth()->user()->first_name]) }}" x-text="name"
                                     x-on:profile-updated.window="name = $event.detail.first_name"></div>
 
@@ -89,7 +89,7 @@ new class extends Component {
                             </x-dropdown-link>
 
                             <!-- Authentication -->
-                            <button wire:click="logout" class="w-full text-start">
+                            <button wire:click="logout" class="w-full text-start focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <x-dropdown-link>
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
@@ -112,7 +112,7 @@ new class extends Component {
             <!-- Hamburger -->
             <div class="-me-2 flex items-center md:hidden">
                 <button @click.stop="open = ! open"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-100/70 dark:hover:bg-gray-900/70 focus:outline-none focus:bg-gray-100/70 dark:focus:bg-gray-900/70 focus:text-gray-600 dark:focus:text-gray-400 transition duration-150 ease-in-out">
+                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-100/70 dark:hover:bg-gray-900/70 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-gray-100/70 dark:focus:bg-gray-900/70 focus:text-gray-600 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

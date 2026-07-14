@@ -37,11 +37,17 @@ class Booking extends Model
         'id_card_front_path',
         'id_card_back_path',
         'documents_status',
-        'documents_status',
         'refund_receipt_path',
-        'refund_paid_at'  => 'datetime',
+        'refund_paid_at',
         'penalty_receipt_path',
-        'penalty_paid_at' => 'datetime',
+        'penalty_paid_at',
+        'user_id',
+        'down_paid',
+        'down_paid_at',
+        'balance_paid',
+        'balance_paid_at',
+        'payment_status',
+        'stripe_payment_id'
     ];
 
     protected $casts = [
@@ -50,11 +56,17 @@ class Booking extends Model
         'total_price' => 'decimal:2',
         'down_payment' => 'decimal:2',
         'balance_payment' => 'decimal:2',
-        'cancellation_requested_at' => 'datetime',
-        'cancellation_confirmed_at' => 'datetime',
         'terms_accepted' => 'boolean',
         'privacy_accepted' => 'boolean',
+        'down_paid' => 'boolean',
+        'balance_paid' => 'boolean',
         'terms_and_privacy_accepted_at' => 'datetime',
+        'cancellation_requested_at' => 'datetime',
+        'cancellation_confirmed_at' => 'datetime',
+        'refund_paid_at' => 'datetime',
+        'penalty_paid_at' => 'datetime',
+        'down_paid_at' => 'datetime',
+        'balance_paid_at' => 'datetime',
     ];
 
     public function getRouteKeyName()
