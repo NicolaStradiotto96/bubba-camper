@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\Camper;
 use App\Models\Damage;
-use App\Models\Log;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -95,7 +94,7 @@ class Booking extends Model
     public function calculateExpectedRefund()
     {
         $today = now()->startOfDay();
-        $startDate = \Carbon\Carbon::parse($this->start_date)->startOfDay();
+        $startDate = $this->start_date->copy()->startOfDay();
         $daysToTrip = $today->diffInDays($startDate, false);
 
         if ($daysToTrip < 10) {
@@ -159,11 +158,6 @@ class Booking extends Model
     public function camper(): BelongsTo
     {
         return $this->belongsTo(Camper::class);
-    }
-
-    public function logs(): HasMany
-    {
-        return $this->hasMany(Log::class);
     }
 
     public function damages(): HasMany

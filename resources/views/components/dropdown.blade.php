@@ -5,7 +5,7 @@ $alignmentClasses = match ($align) {
     'left' => 'ltr:origin-top-left rtl:origin-top-right start-0',
     'top' => 'origin-top',
     'center' => 'left-1/2 -translate-x-1/2 origin-top',
-    default => 'ltr:origin-top-right rtl:origin-top-left end-0',
+    default => 'ltr:origin-top-right rtl:origin-top-left 2xl:left-1/2 2xl:-translate-x-1/2 2xl:origin-top end-0',
 };
 
 $width = match ($width) {

@@ -231,7 +231,7 @@ return [
         'line_address_1'           => 'indirizzo di linea 1',
         'line_address_2'           => 'indirizzo di linea 2',
         'login'                    => 'login',
-        'message'                  => 'Messaggio',
+        'message'                  => 'messaggio',
         'middle_name'              => 'secondo nome',
         'minute'                   => 'minuto',
         'mobile'                   => 'cellulare',

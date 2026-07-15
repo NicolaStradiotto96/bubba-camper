@@ -5,17 +5,40 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description"
+        content="Noleggio camper curati nei dettagli. Prenota la tua avventura on-the-road con Bubba Camper e vivi la libertà in totale comfort.">
 
-    <title>{{ config('app.name', 'Bubba Camper') }}</title>
+    {{-- Socials --}}
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ !empty($title) ? $title . ' | ' : '' }}{{ config('app.name') }}">
+    <meta property="og:description"
+        content="Noleggio camper curati nei dettagli. Prenota la tua avventura on-the-road con Bubba Camper e vivi la libertà in totale comfort.">
+    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:type" content="website">
 
-    <!-- Fonts -->
+    {{-- Title --}}
+    <title>
+        {{ !empty($title) ? $title . ' | ' : '' }}{{ config('app.name', 'Bubba Camper') }}
+    </title>
+
+    {{-- Robots --}}
+    @stack('meta')
+
+    {{-- Preload Welcome Background --}}
+    @if (request()->routeIs('welcome'))
+        <link rel="preload" as="image" href="{{ asset('images/bg.webp') }}">
+    @endif
+
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     {{-- Favicon --}}
     <link rel="icon" type="image/svg+xml" href="{{ Vite::asset('resources/images/logo.svg') }}">
 
-    <!-- Scripts -->
+    {{-- Scripts --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>

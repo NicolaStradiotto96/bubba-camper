@@ -2,7 +2,7 @@
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
-            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500">
+            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
@@ -15,7 +15,7 @@
             Gestione Indisponibilità
         </h2>
 
-        <form wire:submit.prevent="saveBlock" class="space-y-6">
+        <form class="space-y-6" novalidate>
             <section
                 class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-700 space-y-4">
                 <h3
@@ -110,19 +110,13 @@
                 </div>
             </section>
 
-            <div class="flex justify-center gap-3">
-                <x-secondary-button type="button" wire:click="cancelEdit"
-                    class="text-gray-500 hover:text-gray-700 ml-4">
+            <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-3">
+                <x-secondary-button type="button" wire:click="cancelEdit" class="w-full sm:w-auto justify-center text-gray-500 hover:text-gray-700">
                     Annulla
                 </x-secondary-button>
-                <x-primary-button type="submit" wire:loading.attr="disabled"
-                    class="disabled:opacity-50 disabled:cursor-wait">
-                    <span wire:loading.remove wire:target="saveBlock">
-                        {{ $editingId ? 'Aggiorna' : 'Blocca Date' }}
-                    </span>
-                    <span wire:loading wire:target="saveBlock">
-                        Caricamento...
-                    </span>
+                <x-primary-button type="button" wire:click="saveBlock" wire:loading.attr="disabled" wire:target="saveBlock"
+                    class="w-full sm:w-auto justify-center disabled:opacity-50 disabled:cursor-wait">
+                    {{ $editingId ? 'Aggiorna' : 'Blocca Date' }}
                 </x-primary-button>
             </div>
         </form>
@@ -156,13 +150,13 @@
 
                         <div class="flex">
                             <button wire:click="editBlock({{ $block->id }})" @disabled($editingId || $this->isDirty)
-                                class="text-amber-500 {{ $editingId || $this->isDirty ? 'opacity-30 cursor-not-allowed' : 'hover:text-amber-700' }} ml-1 px-1 focus:outline-none focus:outline-amber-500">
+                                class="text-amber-500 {{ $editingId || $this->isDirty ? 'opacity-30 cursor-not-allowed' : 'hover:text-amber-700' }} ml-1 px-1 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             <button type="button" @if ($block->end_date->isPast()) disabled @endif
                                 onclick="confirmAction({{ $block->id }}, 'ELIMINARE IL BLOCCO?', 'Questa azione cancellerà definitivamente il blocco dal server e il camper tornerà disponibile nelle date selezionate. Sei sicuro?', 'removeBlock')"
                                 @disabled($editingId || $this->isDirty || $block->end_date->isPast())
-                                class="text-red-500 {{ $editingId || $this->isDirty || $block->end_date->isPast() ? 'opacity-30 cursor-not-allowed' : 'hover:text-red-700' }} px-1 focus:outline-none focus:outline-amber-500">
+                                class="text-red-500 {{ $editingId || $this->isDirty || $block->end_date->isPast() ? 'opacity-30 cursor-not-allowed' : 'hover:text-red-700' }} px-1 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>

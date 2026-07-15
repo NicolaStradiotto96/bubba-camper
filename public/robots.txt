@@ -2,6 +2,8 @@ User-agent: *
 Disallow: /admin/
 Disallow: /login
 Disallow: /register
+Disallow: /checkout/
+Disallow: /booking/
 Allow: /
 
 Sitemap: https://www.bubbacamper.it/sitemap.xml

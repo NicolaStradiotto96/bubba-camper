@@ -1,15 +1,24 @@
 @props(['camper'])
 
-<div
+<div itemscope itemtype="https://schema.org/Product"
     class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-300 dark:border-gray-700 flex flex-col h-full">
+    <meta itemprop="name" content="{{ $camper->name }}">
+
+    <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="EUR" />
+        <meta itemprop="price" content="{{ $camper->getPriceForDate() }}" />
+        <link itemprop="availability"
+            href="{{ $camper->is_active ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}" />
+    </div>
+
     <div class="relative h-64 w-full flex-shrink-0 bg-gray-100 dark:bg-gray-900">
-        <img src="{{ asset('storage/' . $camper->image_path) }}" alt="{{ $camper->name }}"
+        <img src="{{ asset('storage/' . $camper->image_path) }}" alt="{{ $camper->name }}" loading="lazy"
             class="w-full h-full object-cover object-center text-white">
 
         @auth
             @if (auth()->user()->is_admin)
                 <a href="{{ route('camper.edit', $camper) }}" wire:navigate
-                    class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-md font-black text-xs uppercase tracking-wider shadow-lg transition-colors flex items-center gap-1">
+                    class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-md font-black text-xs uppercase tracking-wider shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition flex items-center gap-1">
                     <i class="fa-solid fa-pen-to-square"></i> Modifica
                 </a>
             @endif
@@ -27,7 +36,7 @@
                 {{ $camper->name }}
             </h2>
 
-            <p class="text-gray-600 dark:text-gray-400 mt-2 text-sm leading-relaxed line-clamp-2">
+            <p class="text-gray-600 dark:text-gray-400 mt-2 text-sm leading-relaxed line-clamp-2 min-h-[3rem]">
                 {{ $camper->description }}
             </p>
         </div>
@@ -41,7 +50,9 @@
                 {{ $camper->is_active ? 'Disponibile' : 'Non Disponibile' }}
             </p>
 
-            <x-primary-anchor href="{{ route('show', $camper) }}" wire:navigate>
+            <x-primary-anchor href="{{ route('show', $camper) }}"
+                aria-label="Vedi i dettagli del camper {{ $camper->name }}" wire:navigate x-data="{ loading: false }"
+                @click="loading = true" x-bind:class="loading ? 'opacity-50 cursor-wait' : ''">
                 {{ __('Vedi Dettagli') }}
             </x-primary-anchor>
         </div>

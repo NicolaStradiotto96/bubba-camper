@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="Completa Prenotazione">
 
     <div class="bg-gray-50 dark:bg-gray-900 flex items-center justify-center min-h-[calc(100vh-160px)]">
         <div class="max-w-5xl mx-auto px-4 w-full">
@@ -11,7 +11,8 @@
 
             <div class="flex items-center justify-center lg:justify-start">
                 <a href="{{ route('show', $camper) }}" wire:navigate
-                    class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
+                    onclick="if (history.length > 1) { event.preventDefault(); history.back(); }"
+                    class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i
                         class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
                     {{ __('Torna indietro') }}
@@ -30,7 +31,8 @@
 
                         <div
                             class="w-full h-64 rounded-xl overflow-hidden mb-4 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 flex-shrink-0">
-                            <img src="{{ asset('storage/' . $camper->image_path) }}" alt="{{ $camper->name }}"
+                            <img src="{{ asset('storage/' . $camper->image_path) }}"
+                                alt="Foto del camper {{ $camper->name }}" loading="lazy"
                                 class="w-full h-full object-cover object-center block">
                         </div>
 

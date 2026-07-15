@@ -11,6 +11,7 @@ use App\Models\Maintenance;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -269,6 +270,7 @@ class BookingManager extends Component
 
     // RENDER
     #[Layout('layouts.app')]
+    #[Title('Crea Prenotazione')]
     public function render()
     {
         return view('livewire.admin.booking-manager', [

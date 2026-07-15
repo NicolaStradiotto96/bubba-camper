@@ -1,5 +1,10 @@
-<x-app-layout>
+@push('meta')
+    <meta name="robots" content="noindex, nofollow">
+@endpush
+
+<x-app-layout title="Pagamento Interrotto">
     <div class="bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-160px)] flex items-center">
+
         <div class="w-full md:w-[48rem] max-w-3xl mx-auto px-4 text-center">
             <div
                 class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700">
@@ -14,12 +19,12 @@
 
                         <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
                             <a href="{{ route('dashboard') }}" wire:navigate
-                                class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm uppercase">
+                                class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm uppercase">
                                 Vai alla tua Dashboard
                             </a>
 
                             <a href="{{ route('index') }}" wire:navigate
-                                class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm uppercase">
+                                class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm uppercase">
                                 Torna ai Camper
                             </a>
                         </div>
@@ -28,5 +33,6 @@
 
             </div>
         </div>
+
     </div>
 </x-app-layout>

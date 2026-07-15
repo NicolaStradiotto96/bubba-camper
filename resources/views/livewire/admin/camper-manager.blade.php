@@ -2,7 +2,7 @@
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
-            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
+            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
@@ -14,7 +14,7 @@
             {{ $isEditMode ? 'Modifica Camper' : 'Crea Camper' }}
         </h2>
 
-        <form wire:submit.prevent="saveCamper" class="space-y-8">
+        <form class="space-y-8" novalidate>
 
             {{-- GENERAL INFORMATIONS --}}
             <section class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -26,8 +26,9 @@
                     <div class="grid grid-cols-1 justify-center items-center">
                         <div>
                             <x-input-label for="name" value="Nome Camper" />
-                            <x-text-input wire:model="name" id="name" class="block mt-1 w-full" type="text" />
-                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                            <x-text-input wire:model.blur="name" id="name" class="block mt-1 w-full"
+                                type="text" />
+                            <x-input-error :messages="$errors->get('name')" class="text-center mt-1" />
                         </div>
                     </div>
 
@@ -35,41 +36,42 @@
                         <div>
                             <x-input-label for="is_active" value="Stato" />
                             <label class="relative inline-flex items-center cursor-pointer select-none my-2">
-                                <input type="checkbox" wire:model="is_active" class="sr-only peer">
+                                <input type="checkbox" wire:model.blur="is_active" class="sr-only peer">
 
                                 <div
-                                    class="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600 dark:peer-checked:bg-amber-500">
+                                    class="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-500 transition rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600 dark:peer-checked:bg-amber-500">
                                 </div>
                             </label>
-                            <x-input-error :messages="$errors->get('is_active')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('is_active')" class="text-center mt-1" />
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-4 grid grid-cols-3 gap-4">
                     <div>
-                        <x-input-label value="Stagione Bassa (€)" />
-                        <x-text-input wire:model="prices.low" type="number" class="mt-1 w-full" />
-                        <x-input-error :messages="$errors->get('prices.low')" />
+                        <x-input-label for="prices_low" value="Stagione Bassa (€)" />
+                        <x-text-input wire:model.blur="prices_low" id="prices_low" type="text" class="mt-1 w-full" />
+                        <x-input-error :messages="$errors->get('prices_low')" class="text-center mt-1" />
                     </div>
                     <div>
-                        <x-input-label value="Stagione Media (€)" />
-                        <x-text-input wire:model="prices.mid" type="number" class="mt-1 w-full" />
-                        <x-input-error :messages="$errors->get('prices.mid')" />
+                        <x-input-label for="prices_mid" value="Stagione Media (€)" />
+                        <x-text-input wire:model.blur="prices_mid" id="prices_mid" type="text" class="mt-1 w-full" />
+                        <x-input-error :messages="$errors->get('prices_mid')" class="text-center mt-1" />
 
                     </div>
                     <div>
-                        <x-input-label value="Stagione Alta (€)" />
-                        <x-text-input wire:model="prices.high" type="number" class="mt-1 w-full" />
-                        <x-input-error :messages="$errors->get('prices.high')" />
+                        <x-input-label for="prices_high" value="Stagione Alta (€)" />
+                        <x-text-input wire:model.blur="prices_high" id="prices_high" type="text"
+                            class="mt-1 w-full" />
+                        <x-input-error :messages="$errors->get('prices_high')" class="text-center mt-1" />
                     </div>
                 </div>
 
                 <div class="mt-4">
                     <x-input-label for="description" value="Descrizione" />
-                    <textarea wire:model="description" id="description" rows="3"
-                        class="text-center mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm resize-none"></textarea>
-                    <x-input-error :messages="$errors->get('description')" />
+                    <textarea wire:model.blur="description" id="description" rows="3"
+                        class="text-center mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-md shadow-sm resize-none"></textarea>
+                    <x-input-error :messages="$errors->get('description')" class="text-center mt-1" />
 
                 </div>
             </section>
@@ -84,7 +86,7 @@
                         <i class="fa-solid fa-van-shuttle"></i>Caratteristiche Principali
                     </h3>
                     <button type="button"
-                        class="text-gray-500 hover:text-amber-500 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        class="text-gray-500 hover:text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                         <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                     </button>
                 </div>
@@ -95,19 +97,19 @@
                     x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
                     class="space-y-4 mt-4 overflow-hidden">
 
-                    <div x-data="{ sub: 'Caratteristiche principali' }">
+                    <div x-data="{ sub: 'Caratteristiche principali' }" class="p-1">
 
                         @foreach ($camperAttributes['main'] as $subCategory => $items)
                             <div x-show="sub === '{{ $subCategory }}'" class="space-y-3 p-3">
                                 @foreach ($items as $index => $item)
                                     <div class="flex gap-2">
                                         <x-text-input
-                                            wire:model="camperAttributes.main.{{ $subCategory }}.{{ $index }}.label"
+                                            wire:model.blur="camperAttributes.main.{{ $subCategory }}.{{ $index }}.label"
                                             placeholder="Etichetta"
                                             class="w-1/2 bg-transparent dark:bg-transparent cursor-not-allowed font-black"
                                             disabled />
                                         <x-text-input
-                                            wire:model="camperAttributes.main.{{ $subCategory }}.{{ $index }}.value"
+                                            wire:model.blur="camperAttributes.main.{{ $subCategory }}.{{ $index }}.value"
                                             placeholder="Valore" class="w-1/2" />
                                     </div>
                                 @endforeach
@@ -127,7 +129,7 @@
                         <i class="fa-solid fa-gears"></i>Caratteristiche Tecniche
                     </h3>
                     <button type="button"
-                        class="text-gray-500 hover:text-amber-500 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        class="text-gray-500 hover:text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                         <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                     </button>
                 </div>
@@ -138,9 +140,9 @@
                     x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
                     class="space-y-4 mt-4 overflow-hidden">
 
-                    <div x-data="{ sub: 'Caratteristiche tecniche' }">
+                    <div x-data="{ sub: 'Caratteristiche tecniche' }" class="p-1">
                         <select x-model="sub"
-                            class="w-full mb-4 rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-white focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-0">
+                            class="w-full mb-4 rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-white focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500">
                             @foreach (array_keys($camperAttributes['specs']) as $sub)
                                 <option value="{{ $sub }}">{{ $sub }}</option>
                             @endforeach
@@ -151,14 +153,14 @@
                                 @foreach ($items as $index => $item)
                                     <div class="flex gap-2">
                                         <x-text-input
-                                            wire:model="camperAttributes.specs.{{ $subCategory }}.{{ $index }}.label"
+                                            wire:model.blur="camperAttributes.specs.{{ $subCategory }}.{{ $index }}.label"
                                             placeholder="Etichetta" class="w-1/2" />
                                         <x-text-input
-                                            wire:model="camperAttributes.specs.{{ $subCategory }}.{{ $index }}.value"
+                                            wire:model.blur="camperAttributes.specs.{{ $subCategory }}.{{ $index }}.value"
                                             placeholder="Valore" class="w-1/2" />
                                         <button type="button"
                                             wire:click="removeRow('specs', '{{ $subCategory }}', {{ $index }})"
-                                            class="text-red-500 hover:text-red-700 p-2">
+                                            class="text-red-500 hover:text-red-700 p-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
@@ -186,7 +188,7 @@
                         <i class="fa-solid fa-toolbox"></i>Equipaggiamento
                     </h3>
                     <button type="button"
-                        class="text-gray-500 hover:text-amber-500 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        class="text-gray-500 hover:text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                         <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                     </button>
                 </div>
@@ -197,9 +199,9 @@
                     x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
                     class="space-y-4 mt-4 overflow-hidden">
 
-                    <div x-data="{ sub: 'Alla guida' }">
+                    <div x-data="{ sub: 'Alla guida' }" class="p-1">
                         <select x-model="sub"
-                            class="w-full mb-4 rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-white focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-0">
+                            class="w-full mb-4 rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-white focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500">
                             @foreach (array_keys($camperAttributes['equipment']) as $sub)
                                 <option value="{{ $sub }}">{{ $sub }}</option>
                             @endforeach
@@ -210,14 +212,14 @@
                                 @foreach ($items as $index => $item)
                                     <div class="flex gap-2">
                                         <x-text-input
-                                            wire:model="camperAttributes.equipment.{{ $subCategory }}.{{ $index }}.label"
+                                            wire:model.blur="camperAttributes.equipment.{{ $subCategory }}.{{ $index }}.label"
                                             placeholder="Etichetta" class="w-1/2" />
                                         <x-text-input
-                                            wire:model="camperAttributes.equipment.{{ $subCategory }}.{{ $index }}.value"
+                                            wire:model.blur="camperAttributes.equipment.{{ $subCategory }}.{{ $index }}.value"
                                             placeholder="Valore" class="w-1/2" />
                                         <button type="button"
                                             wire:click="removeRow('equipment', '{{ $subCategory }}', {{ $index }})"
-                                            class="text-red-500 hover:text-red-700 p-2">
+                                            class="text-red-500 hover:text-red-700 p-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
@@ -245,7 +247,7 @@
                         <i class="fa-solid fa-hand-holding-dollar"></i>Cauzione
                     </h3>
                     <button type="button"
-                        class="text-gray-500 hover:text-amber-500 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        class="text-gray-500 hover:text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                         <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                     </button>
                 </div>
@@ -256,19 +258,19 @@
                     x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
                     class="space-y-4 mt-4 overflow-hidden">
 
-                    <div x-data="{ sub: 'Cauzione' }">
+                    <div x-data="{ sub: 'Cauzione' }" class="p-1">
 
                         @foreach ($camperAttributes['policies'] as $subCategory => $items)
                             <div x-show="sub === '{{ $subCategory }}'" class="space-y-3 p-3">
                                 @foreach ($items as $index => $item)
                                     <div class="flex gap-2">
                                         <x-text-input
-                                            wire:model="camperAttributes.policies.{{ $subCategory }}.{{ $index }}.label"
+                                            wire:model.blur="camperAttributes.policies.{{ $subCategory }}.{{ $index }}.label"
                                             placeholder="Etichetta"
                                             class="w-1/2 bg-transparent dark:bg-transparent cursor-not-allowed font-black"
                                             disabled />
                                         <x-text-input
-                                            wire:model="camperAttributes.policies.{{ $subCategory }}.{{ $index }}.value"
+                                            wire:model.blur="camperAttributes.policies.{{ $subCategory }}.{{ $index }}.value"
                                             placeholder="Valore" class="w-1/2" />
                                     </div>
                                 @endforeach
@@ -295,12 +297,12 @@
                             </label>
 
                             <div class="flex flex-col justify-center items-center">
-                                <input type="file" id="main_image" wire:model="main_image" accept="image/*"
-                                    class="hidden"
+                                <input type="file" id="main_image" wire:model.blur="main_image"
+                                    accept=".png,.jpg,.jpeg,application" class="hidden"
                                     onchange="document.getElementById('text-main-image').innerText = this.files[0] ? this.files[0].name : 'Nessun file selezionato'" />
 
                                 <button type="button" onclick="document.getElementById('main_image').click()"
-                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl transition shadow-md focus:outline-none">
+                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl transition shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                     <i class="fa-solid fa-camera"></i> Sfoglia...
                                 </button>
 
@@ -335,7 +337,7 @@
                         </div>
 
                         <div class="min-h-[24px] text-center mt-2">
-                            <x-input-error :messages="$errors->get('main_image')" class="text-xs" />
+                            <x-input-error :messages="$errors->get('main_image')" class="text-center mt-1" />
                         </div>
                     </div>
 
@@ -348,12 +350,12 @@
                             </label>
 
                             <div class="flex flex-col justify-center items-center">
-                                <input type="file" id="images" wire:model="images" multiple accept="image/*"
-                                    class="hidden"
+                                <input type="file" id="images" wire:model.blur="images" multiple
+                                    accept=".png,.jpg,.jpeg,application" class="hidden"
                                     onchange="document.getElementById('text-gallery-images').innerText = this.files.length > 0 ? this.files.length + ' file selezionati' : 'Nessun file selezionato'" />
 
                                 <button type="button" onclick="document.getElementById('images').click()"
-                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl transition shadow-md focus:outline-none">
+                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                     <i class="fa-solid fa-camera"></i> Sfoglia...
                                 </button>
 
@@ -412,14 +414,15 @@
                         </div>
 
                         <div class="min-h-[24px] text-center mt-2">
-                            <x-input-error :messages="$errors->get('images.*')" class="text-xs" />
+                            <x-input-error :messages="$errors->get('images.*')" class="text-center mt-1" />
                         </div>
                     </div>
 
                 </div>
             </section>
 
-            <div class="flex flex-col-reverse sm:flex-row items-center {{ $isEditMode ? 'justify-between' : 'justify-center' }} gap-3">
+            <div
+                class="flex flex-col-reverse sm:flex-row items-center {{ $isEditMode ? 'justify-between' : 'justify-center' }} gap-3">
 
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     @if ($isEditMode)
@@ -435,7 +438,9 @@
                         class="w-full sm:w-auto justify-center">
                         Annulla
                     </x-secondary-button>
-                    <x-primary-button wire:loading.attr="disabled" class="w-full sm:w-auto justify-center">
+                    <x-primary-button type="button" wire:click="saveCamper" wire:loading.attr="disabled"
+                        wire:target="saveCamper"
+                        class="w-full sm:w-auto justify-center disabled:opacity-50 disabled:cursor-wait">
                         {{ $isEditMode ? 'Salva Modifiche' : 'Crea Camper' }}
                     </x-primary-button>
                 </div>

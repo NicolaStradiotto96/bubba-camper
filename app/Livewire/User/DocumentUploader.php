@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\User;
 
 use App\Mail\DocumentRecieved;
 use App\Mail\DocumentRecievedNotification;
 use App\Models\Booking;
+use App\Models\Log;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -62,6 +62,7 @@ class DocumentUploader extends Component
         $this->dispatch('$refresh');
     }
 
+    // RESET FORM
     public function resetForm()
     {
         $this->reset(['driver_license_front', 'driver_license_back', 'id_card_front', 'id_card_back']);
@@ -72,11 +73,17 @@ class DocumentUploader extends Component
         $this->dispatch('$refresh');
     }
 
+    // UPDATE ERRRORS
     public function updated($propertyName)
     {
-        $this->resetValidation($propertyName);
+        if (in_array($propertyName, ['driver_license_front', 'driver_license_back', 'id_card_front', 'id_card_back'])) {
+            $this->validateOnly($propertyName, [
+                $propertyName => 'file|mimes:pdf,png,jpg,jpeg|max:5120'
+            ]);
+        }
     }
 
+    // UPLOAD DOCUMENTS
     public function uploadDocuments()
     {
         if (!$this->bookingId) return;
@@ -104,7 +111,7 @@ class DocumentUploader extends Component
                 continue;
             }
 
-            $rules[$field] = 'required|file|mimes:jpg,jpeg,png,pdf|max:5120';
+            $rules[$field] = 'required|file|mimes:pdf,png,jpg,jpeg|max:5120';
         }
 
         $this->validate($rules);
@@ -122,11 +129,18 @@ class DocumentUploader extends Component
                 $newPaths['documents_status'] = 'uploaded';
                 $booking->update($newPaths);
 
+                $this->logDocuments(
+                    'documents_uploaded',
+                    "Documenti caricati per la prenotazione #{$booking->id}",
+                    $booking,
+                    array_keys($newPaths)
+                );
+
                 try {
                     Mail::to($booking->customer_email)->send(new DocumentRecieved($booking));
                     Mail::to(config('app.admin_email'))->send(new DocumentRecievedNotification($booking));
                 } catch (\Exception $e) {
-                    Log::error("Errore invio notifica documenti: " . $e->getMessage());
+                    \Log::error("Errore invio notifica documenti: " . $e->getMessage());
                 }
             }
         });
@@ -137,8 +151,25 @@ class DocumentUploader extends Component
         $this->dispatch('refresh-page');
     }
 
+    // RENDER
     public function render()
     {
-        return view('livewire.document-uploader');
+        return view('livewire.user.document-uploader');
+    }
+
+    // LOG
+    private function logDocuments(string $type, string $message, Booking $booking, array $fields)
+    {
+        Log::create([
+            'type'    => $type,
+            'message' => $message,
+            'context' => [
+                'user_id'    => auth()->id(),
+                'ip_address' => request()->ip(),
+                'booking_id' => $booking->id,
+                'camper_id'  => $booking->camper_id,
+                'fields'     => $fields,
+            ],
+        ]);
     }
 }

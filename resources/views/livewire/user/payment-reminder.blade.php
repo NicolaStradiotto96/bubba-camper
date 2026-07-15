@@ -1,4 +1,4 @@
-<div wire:poll.1s="updateTime">
+<div wire:poll.30s="updateTime">
     @if ($booking && $timeLeft && $isPaying)
         <div>
             <div
@@ -22,7 +22,28 @@
                 <i class="fa-solid fa-clock text-amber-500 opacity-20 animate-spin text-5xl"
                     style="animation-duration: 10s;"></i>
                 <span class="absolute text-xl font-black text-amber-600 dark:text-amber-500 font-mono">
-                    {{ $timeLeft }}
+                    @if ($booking)
+                        <div x-data="{
+                            expiry: {{ $expiryTimestamp }},
+                            time: '',
+                            init() {
+                                let timer = setInterval(() => {
+                                    let diff = this.expiry - Math.floor(Date.now() / 1000);
+                                    if (diff <= 0) {
+                                        this.time = '00:00';
+                                        clearInterval(timer);
+                                        $wire.$refresh();
+                                    } else {
+                                        let m = Math.floor(diff / 60);
+                                        let s = diff % 60;
+                                        this.time = m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+                                    }
+                                }, 1000);
+                            }
+                        }">
+                            <span x-text="time"></span>
+                        </div>
+                    @endif
                 </span>
             </div>
 
@@ -37,8 +58,8 @@
                 <span>{{ $formattedDates }}</span>
             </div>
 
-            <x-primary-anchor href="{{ route('checkout', $booking) }}"
-                class="px-6 py-3">
+            <x-primary-anchor href="{{ route('checkout', $booking) }}" class="px-6 py-3"
+                x-data="{ loading: false }" @click="loading = true" x-bind:class="loading ? 'opacity-50 cursor-wait' : ''">
                 Paga Ora
             </x-primary-anchor>
         </div>

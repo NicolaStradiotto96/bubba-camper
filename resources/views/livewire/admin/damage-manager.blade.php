@@ -2,7 +2,7 @@
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
-            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500">
+            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
@@ -31,7 +31,7 @@
             </p>
         </div>
 
-        <form wire:submit.prevent="saveDamage" class="space-y-6" novalidate>
+        <form class="space-y-6" novalidate>
 
             {{-- DAMAGE DETAILS --}}
             <section class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -44,8 +44,8 @@
                     {{-- Price --}}
                     <div>
                         <x-input-label for="amount" value="Importo Penale (€)" />
-                        <x-text-input x-price wire:model.blur="amount" id="amount" class="block mt-1 w-full text-center"
-                            type="text" step="0.01" />
+                        <x-text-input x-price wire:model.blur="amount" id="amount"
+                            class="block mt-1 w-full text-center" type="text" step="0.01" />
                         <x-input-error :messages="$errors->get('amount')" class="text-center mt-1" />
                     </div>
 
@@ -70,7 +70,7 @@
                                 accept=".png,.jpg,.jpeg,application/pdf" class="hidden" />
 
                             <button type="button" onclick="document.getElementById('photos').click()"
-                                class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 focus:outline-none focus:outline-amber-500 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl transition shadow-md">
+                                class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl shadow-md">
                                 <i class="fa-solid fa-plus"></i> Aggiungi Foto
                             </button>
 
@@ -117,7 +117,8 @@
                                                         class="h-20 w-20 object-cover">
                                                 @endif
 
-                                                <button type="button" onclick="confirmAction({{ $photo->id }}, 'ELIMINARE LA FOTO?', 'Questa azione non può essere annullata.', 'removeExistingPhoto')"
+                                                <button type="button"
+                                                    onclick="confirmAction({{ $photo->id }}, 'ELIMINARE LA FOTO?', 'Questa azione non può essere annullata.', 'removeExistingPhoto')"
                                                     class="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-bl flex items-center justify-center transition-colors focus:outline-none">
                                                     <i class="fa-solid fa-xmark text-[10px]"></i>
                                                 </button>
@@ -146,15 +147,12 @@
                     Annulla
                 </x-secondary-button>
 
-                <x-primary-button wire:loading.attr="disabled" wire:target="photos, temporary_photos, saveDamage"
+                <x-primary-button type="button" wire:click="saveDamage" wire:loading.attr="disabled"
+                    wire:target="photos, temporary_photos, saveDamage"
                     class="w-full sm:w-auto justify-center disabled:opacity-50 disabled:cursor-wait">
 
-                    <span wire:loading.remove wire:target="photos, temporary_photos, saveDamage">
-                        {{ $damageId ? 'Aggiorna Danno' : 'Notifica Danno' }}
-                    </span>
-                    <span wire:loading wire:target="photos, temporary_photos, saveDamage">
-                        Caricamento...
-                    </span>
+                    {{ $damageId ? 'Aggiorna Danno' : 'Notifica Danno' }}
+
                 </x-primary-button>
             </div>
 

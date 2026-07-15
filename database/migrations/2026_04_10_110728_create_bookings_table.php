@@ -21,10 +21,10 @@ return new class extends Migration
             $table->string('customer_email');
             $table->string('customer_phone')->nullable();
 
-            $table->foreignId('camper_id')->constrained()->onDelete('cascade');
+            $table->foreignId('camper_id')->constrained()->onDelete('cascade')->index();
 
-            $table->date("start_date");
-            $table->date("end_date");
+            $table->date("start_date")->index();
+            $table->date("end_date")->index();
 
             $table->boolean('terms_accepted')->default(false);
             $table->boolean('privacy_accepted')->default(false);

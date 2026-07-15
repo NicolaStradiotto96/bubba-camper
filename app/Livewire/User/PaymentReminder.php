@@ -2,6 +2,8 @@
 
 namespace App\Livewire\User;
 
+use App\Models\Log;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class PaymentReminder extends Component
@@ -21,6 +23,7 @@ class PaymentReminder extends Component
         $this->updateTime();
     }
 
+    // UPDATE TIMER
     public function updateTime()
     {
         if (!$this->booking) return;
@@ -28,31 +31,54 @@ class PaymentReminder extends Component
         $expiryTime = $this->booking->created_at->addMinutes(15);
 
         if (now()->greaterThanOrEqualTo($expiryTime) || $this->booking->status !== 'pending') {
+            $this->booking->update(['status' => 'expired']);
+
+            $this->logPaymentExpiration('booking_expired', "Prenotazione #{$this->booking->id} scaduta per mancato pagamento.", $this->booking);
+
             $this->booking = null;
             $this->timeLeft = null;
 
-            session()->flash('error', 'Il tempo per il pagamento è scaduto.');
+            $this->dispatch('swal-error', ['message' => 'Il tempo per il pagamento è scaduto. La prenotazione è stata annullata.']);
         } else {
             $this->timeLeft = gmdate("i:s", now()->diffInSeconds($expiryTime));
         }
     }
 
+    // RENDER
     public function render()
     {
-        $this->updateTime();
-
         $isPaying = auth()->user()->isPayingRightNow();
+
+        $expiryTimestamp = $this->booking
+            ? $this->booking->created_at->addMinutes(15)->timestamp
+            : null;
 
         $formattedDates = '';
         if ($this->booking) {
-            $start = \Carbon\Carbon::parse($this->booking->start_date)->format('d/m/Y');
-            $end = \Carbon\Carbon::parse($this->booking->end_date)->format('d/m/Y');
+            $start = Carbon::parse($this->booking->start_date)->format('d/m/Y');
+            $end = Carbon::parse($this->booking->end_date)->format('d/m/Y');
             $formattedDates = "dal $start al $end";
         }
 
         return view('livewire.user.payment-reminder', [
-            'formattedDates' => $formattedDates,
-            'isPaying' => $isPaying
+            'isPaying' => $isPaying,
+            'expiryTimestamp' => $expiryTimestamp,
+            'formattedDates' => $formattedDates
+        ]);
+    }
+
+    // LOG
+    private function logPaymentExpiration(string $type, string $message, $booking)
+    {
+        Log::create([
+            'type'       => $type,
+            'message'    => $message,
+            'context'    => [
+                'booking_id' => $booking->id,
+                'user_id'    => auth()->id(),
+                'ip_address' => request()->ip(),
+                'status'     => 'expired',
+            ],
         ]);
     }
 }

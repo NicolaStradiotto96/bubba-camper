@@ -2,7 +2,7 @@
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
-            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500">
+            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
@@ -26,7 +26,7 @@
             </p>
         </div>
 
-        <form wire:submit.prevent="updateDates" class="space-y-6">
+        <form class="space-y-6" novalidate>
 
             {{-- Calendar --}}
             <div wire:ignore wire:key="calendar-container-{{ $camper_id }}">
@@ -90,11 +90,9 @@
 
             <div class="flex justify-center gap-3 mt-8">
                 <x-secondary-button type="button" onclick="history.back()">Annulla</x-secondary-button>
-                <x-primary-button class="bg-amber-500 disabled:opacity-50 disabled:cursor-wait" wire:loading.attr="disabled">
-
-                    <span wire:loading.remove>Aggiorna Prenotazione</span>
-
-                    <span wire:loading>Caricamento...</span>
+                <x-primary-button type="button" wire:click="updateDates"
+                    class="bg-amber-500 disabled:opacity-50 disabled:cursor-wait" wire:loading.attr="disabled">
+                    {{ __('Aggiorna Prenotazione') }}
                 </x-primary-button>
             </div>
     </div>

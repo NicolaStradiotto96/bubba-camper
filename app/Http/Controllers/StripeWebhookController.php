@@ -10,8 +10,8 @@ use App\Mail\PenaltyPaid;
 use App\Mail\PenaltyPaidNotification;
 use App\Models\Booking;
 use App\Models\Damage;
+use App\Models\Log;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Webhook;
@@ -31,70 +31,98 @@ class StripeWebhookController extends Controller
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
-        if ($event->type === 'checkout.session.completed') {
-            $session = $event->data->object;
-            $bookingId = $session->metadata->booking_id ?? null;
-            $paymentType = $session->metadata->payment_type ?? null;
-
-            if ($bookingId) {
-                try {
-                    $booking = Booking::find($bookingId);
-                    if ($booking) {
-                        $booking->stripe_payment_id = $session->payment_intent ?? $session->id;
-
-                        if ($paymentType === 'penalty') {
-
-                            $booking->payment_status = 'penalty_paid';
-                            $booking->balance_paid = true;
-                            $booking->balance_paid_at = now();
-                            $booking->penalty_paid_at = now();
-                            $booking->save();
-
-                            Mail::to($booking->customer_email)->send(new PenaltyPaid($booking));
-                            Mail::to(config('app.admin_email'))->send(new PenaltyPaidNotification($booking));
-
-                            Log::info("Stripe Webhook: Pagamento penale ricevuto", [
-                                'booking_id' => $bookingId,
-                                'stripe_session_id' => $session->id,
-                                'amount' => $session->amount_total / 100 . '€'
-                            ]);
-                        } elseif ($paymentType === 'damages') {
-                            $damageId = $session->metadata->damage_id ?? null;
-
-                            if ($damageId) {
-                                $damage = Damage::find($damageId);
-                                if ($damage) {
-                                    $damage->update(['status' => 'paid']);
-                                    Log::info("Stripe Webhook: Pagamento singolo danno ricevuto", ['damage_id' => $damageId]);
-                                }
-                            }
-
-                            Mail::to($damage->booking->customer_email)->send(new PenaltyDamagePaid($damage));
-                            Mail::to(config('app.admin_email'))->send(new PenaltyDamagePaidNotification($damage));
-                        } else {
-                            if ($booking->payment_status !== 'paid') {
-                                $booking->payment_status = 'paid';
-                                $booking->down_paid = true;
-                                $booking->down_paid_at = now();
-                                $booking->save();
-
-                                Mail::to($booking->customer_email)->send(new BookingPaid($booking));
-                                Mail::to(config('app.admin_email'))->send(new BookingPaidNotification($booking));
-
-                                Log::info("Stripe Webhook: Pagamento acconto (30%) ricevuto", [
-                                    'booking_id' => $bookingId,
-                                    'stripe_session_id' => $session->id,
-                                    'amount' => $session->amount_total / 100 . '€'
-                                ]);
-                            }
-                        }
-                    }
-                } catch (\Exception $e) {
-                    Log::error("Errore durante l'aggiornamento del booking {$bookingId}: " . $e->getMessage());
-                }
-            }
+        if ($event->type !== 'checkout.session.completed') {
+            return response()->json(['status' => 'ignored'], 200);
         }
 
-        return response()->json(['status' => 'success'], 200);
+        $session = $event->data->object;
+        $bookingId = $session->metadata->booking_id ?? null;
+        $paymentType = $session->metadata->payment_type ?? null;
+
+        if (!$bookingId) return response()->json(['error' => 'No booking_id'], 400);
+
+        $booking = Booking::find($bookingId);
+        if (!$booking) return response()->json(['error' => 'Booking not found'], 404);
+
+        try {
+            $booking->stripe_payment_id = $session->payment_intent ?? $session->id;
+            $amount = $session->amount_total / 100;
+
+            // PENALTY
+            if ($paymentType === 'penalty') {
+                if ($booking->payment_status === 'penalty_paid') return response()->json(['status' => 'already_processed']);
+
+                $booking->update([
+                    'payment_status' => 'penalty_paid',
+                    'balance_paid' => true,
+                    'balance_paid_at' => now(),
+                    'penalty_paid_at' => now()
+                ]);
+
+                Mail::to($booking->customer_email)->send(new PenaltyPaid($booking));
+                Mail::to(config('app.admin_email'))->send(new PenaltyPaidNotification($booking));
+
+                $this->logStripeEvent('payment_penalty', 'Pagamento penale ricevuto', $booking, [
+                    'amount' => $amount,
+                    'stripe_session_id' => $session->id
+                ]);
+            }
+
+            // DAMAGES
+            elseif ($paymentType === 'damages') {
+                $damage = Damage::find($session->metadata->damage_id ?? null);
+                if ($damage && $damage->status !== 'paid') {
+                    $damage->update(['status' => 'paid']);
+
+                    Mail::to($damage->booking->customer_email)->send(new PenaltyDamagePaid($damage));
+                    Mail::to(config('app.admin_email'))->send(new PenaltyDamagePaidNotification($damage));
+
+                    $this->logStripeEvent('payment_damage', 'Pagamento danno ricevuto', $booking, [
+                        'damage_id' => $damage->id,
+                        'amount' => $amount
+                    ]);
+                }
+            }
+
+            // BOOKING
+            else {
+                if ($booking->payment_status === 'paid') return response()->json(['status' => 'already_processed']);
+
+                $booking->update([
+                    'payment_status' => 'paid',
+                    'down_paid' => true,
+                    'down_paid_at' => now()
+                ]);
+
+                Mail::to($booking->customer_email)->send(new BookingPaid($booking));
+                Mail::to(config('app.admin_email'))->send(new BookingPaidNotification($booking));
+
+                $this->logStripeEvent('payment_booking', 'Pagamento acconto ricevuto', $booking, [
+                    'amount' => $amount,
+                    'stripe_session_id' => $session->id
+                ]);
+            }
+
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            \Log::error("Stripe Webhook Error: " . $e->getMessage(), ['booking_id' => $bookingId]);
+            return response()->json(['error' => 'Internal error'], 500);
+        }
+    }
+
+    // LOG
+    private function logStripeEvent(string $type, string $message, Booking $booking, array $extraContext = [])
+    {
+        Log::create([
+            'type'    => $type,
+            'message' => $message,
+            'context' => array_merge([
+                'booking_id' => $booking->id,
+                'camper_id'  => $booking->camper_id,
+                'user_id'    => $booking->user_id,
+                'ip_address' => request()->ip(),
+                'timestamp'  => now()->toDateTimeString(),
+            ], $extraContext),
+        ]);
     }
 }

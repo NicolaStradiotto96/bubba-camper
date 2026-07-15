@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('booking_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('type');
             $table->string('message');
             $table->json('context')->nullable();

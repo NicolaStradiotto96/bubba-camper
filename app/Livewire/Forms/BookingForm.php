@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Camper;
 use App\Models\Maintenance;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Livewire\Component;
 
 class BookingForm extends Component
@@ -25,34 +26,7 @@ class BookingForm extends Component
         $this->camper = $camper;
     }
 
-    public function updated($propertyName, $value)
-    {
-        if ($propertyName === 'date_range') {
-            $this->resetErrorBag(['date_range', 'days_count', 'terms_accepted', 'privacy_accepted']);
-
-            if (empty($value)) {
-                $this->total_price = 0;
-                $this->days_count = 0;
-                $this->addError('date_range', 'Seleziona un intervallo di almeno 2 giorni.');
-                return;
-            }
-
-            $this->splitDates($value);
-
-            if ($this->start_date && $this->end_date) {
-                $this->calculateBooking();
-
-                $this->resetErrorBag(['date_range', 'days_count', 'terms_accepted', 'privacy_accepted']);
-
-                $this->validateOnly('days_count', [
-                    'days_count' => 'integer|min:2'
-                ], [
-                    'days_count.min' => 'Il noleggio deve essere di almeno 2 giorni.'
-                ]);
-            }
-        }
-    }
-
+    // CALENDAR
     protected function splitDates($value)
     {
         $separator = ' al ';
@@ -113,6 +87,7 @@ class BookingForm extends Component
         return array_values(array_unique($allDates));
     }
 
+    // PRICES
     protected function calculateBooking()
     {
         $start = Carbon::parse($this->start_date);
@@ -126,11 +101,11 @@ class BookingForm extends Component
         }
 
         $total = 0;
-        $tempDate = $start->copy();
 
-        while ($tempDate <= $end) {
-            $total += $this->getDayPrice($tempDate);
-            $tempDate->addDay();
+        $period = CarbonPeriod::create($start, $end);
+
+        foreach ($period as $date) {
+            $total += $this->getDayPrice($date);
         }
 
         $this->total_price = $total;
@@ -152,6 +127,7 @@ class BookingForm extends Component
         return $this->camper->price_low ?? 100;
     }
 
+    // CREATE BOOKING
     public function saveBooking()
     {
         if (!$this->start_date || !$this->end_date) {
@@ -224,31 +200,24 @@ class BookingForm extends Component
             return;
         }
 
-        $booking = new Booking();
-
-        $booking->user_id = auth()->id();
-        $booking->customer_first_name = auth()->user()->first_name;
-        $booking->customer_last_name = auth()->user()->last_name;
-        $booking->customer_email = auth()->user()->email;
-        $booking->customer_phone = auth()->user()->phone;
-        $booking->camper_id = $this->camper->id;
-        $booking->start_date = $this->start_date;
-        $booking->end_date = $this->end_date;
-        $booking->terms_accepted = true;
-        $booking->privacy_accepted = true;
-        $booking->terms_and_privacy_accepted_at = now();
-        $booking->terms_and_privacy_accepted_ip = request()->ip();
-        $booking->contract_version = config('contracts.active_version');
-        $this->calculateBooking();
-        $booking->total_price = $this->total_price;
-        $booking->down_paid = false;
-        $booking->down_paid_at = null;
-        $booking->balance_paid = false;
-        $booking->balance_paid_at = null;
-        $booking->payment_status = 'unpaid';
-        $booking->status = 'pending';
-
-        $booking->save();
+        $booking = Booking::create([
+            'user_id' => auth()->id(),
+            'customer_first_name' => auth()->user()->first_name,
+            'customer_last_name' => auth()->user()->last_name,
+            'customer_email' => auth()->user()->email,
+            'customer_phone' => auth()->user()->phone,
+            'camper_id' => $this->camper->id,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'terms_accepted' => true,
+            'privacy_accepted' => true,
+            'terms_and_privacy_accepted_at' => now(),
+            'terms_and_privacy_accepted_ip' => request()->ip(),
+            'contract_version' => config('contracts.active_version'),
+            'total_price' => $this->total_price,
+            'payment_status' => 'unpaid',
+            'status' => 'pending',
+        ]);
 
         $this->dispatch('clear-calendar');
 
@@ -257,6 +226,36 @@ class BookingForm extends Component
         return redirect()->route('checkout', $booking);
     }
 
+    // UPDATE ERRORS
+    public function updated($propertyName, $value)
+    {
+        if ($propertyName === 'date_range') {
+            $this->resetErrorBag(['date_range', 'days_count', 'terms_accepted', 'privacy_accepted']);
+
+            if (empty($value)) {
+                $this->total_price = 0;
+                $this->days_count = 0;
+                $this->addError('date_range', 'Seleziona un intervallo di almeno 2 giorni.');
+                return;
+            }
+
+            $this->splitDates($value);
+
+            if ($this->start_date && $this->end_date) {
+                $this->calculateBooking();
+
+                $this->resetErrorBag(['date_range', 'days_count', 'terms_accepted', 'privacy_accepted']);
+
+                $this->validateOnly('days_count', [
+                    'days_count' => 'integer|min:2'
+                ], [
+                    'days_count.min' => 'Il noleggio deve essere di almeno 2 giorni.'
+                ]);
+            }
+        }
+    }
+
+    // RENDER
     public function render()
     {
         return view('livewire.forms.booking-form');

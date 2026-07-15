@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Admin;
 
 use App\Mail\PenaltyDamage;
 use App\Models\Booking;
@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -31,8 +32,8 @@ class DamageManager extends Component
     public function mount(Booking $booking, $damage_id = null)
     {
         if (!auth()->user()?->is_admin) {
-        abort(403);
-    }
+            abort(403);
+        }
 
         $this->booking = $booking;
         $this->damageId = $damage_id;
@@ -64,7 +65,7 @@ class DamageManager extends Component
             'amount.numeric'       => 'L\'importo deve essere un numero.',
             'amount.min'           => 'L\'importo non può essere negativo.',
             'description.required' => 'La descrizione del danno è obbligatoria.',
-            'photos.*.mimes'       => 'Solo i file di tipo pdf, jpeg, png o jpg sono permessi.',
+            'photos.*.mimes'       => 'Solo i file di tipo pdf, png, jpg o jpeg sono permessi.',
             'photos.*.max'         => 'Ogni foto deve pesare al massimo 5MB.',
         ];
     }
@@ -97,7 +98,7 @@ class DamageManager extends Component
 
         $photo->delete();
 
-        $this->logDamage('damage_updated', "Eliminata foto dal danno #{$damage->id} per il camper #{$this->booking->camper_id}", $damage);
+        $this->logDamage('damage_updated', "Eliminata foto dal danno #{$damage->id}", $damage, $damage->amount, $damage->amount);
 
         $this->existing_photos = $this->existing_photos->reject(fn($item) => $item->id == $id);
     }
@@ -133,10 +134,10 @@ class DamageManager extends Component
         try {
             if (!$isUpdate) {
                 Mail::to($this->booking->customer_email)->send(new PenaltyDamage($damage, false));
-                $this->logDamage('damage_reported', "Segnalato danno da {$this->amount}€ per il camper #{$this->booking->camper_id}", $damage);
+                $this->logDamage('damage_reported', "Segnalato danno da {$this->amount}€", $damage, null, $this->amount);
             } elseif ($amountChanged) {
                 Mail::to($this->booking->customer_email)->send(new PenaltyDamage($damage, true));
-                $this->logDamage('damage_updated', "Aggiornato danno da {$this->originalAmount}€ a {$this->amount}€ per il camper #{$this->booking->camper_id}", $damage);
+                $this->logDamage('damage_updated', "Aggiornato danno da {$this->originalAmount}€ a {$this->amount}€", $damage, $this->originalAmount, $this->amount);
             }
         } catch (\Exception $e) {
             \Log::error("Errore invio mail danno (ID: {$damage->id}, Camper: {$this->booking->camper_id}): " . $e->getMessage());
@@ -154,23 +155,26 @@ class DamageManager extends Component
 
     // RENDER
     #[Layout('layouts.app')]
+    #[Title('Segnala Danno')]
     public function render()
     {
-        return view('livewire.damage-manager');
+        return view('livewire.admin.damage-manager');
     }
 
     // LOG
-    private function logDamage(string $type, string $message, Damage $damage)
+    private function logDamage(string $type, string $message, Damage $damage, $oldAmount = null, $newAmount = null)
     {
         Log::create([
-            'booking_id' => $damage->booking_id,
-            'type'       => $type,
-            'message'    => $message,
-            'context'    => [
+            'type'    => $type,
+            'message' => $message,
+            'context' => [
                 'user_id'    => auth()->id(),
                 'ip_address' => request()->ip(),
                 'damage_id'  => $damage->id,
+                'booking_id' => $damage->booking_id,
                 'camper_id'  => $this->booking->camper_id,
+                'old_amount' => $oldAmount,
+                'new_amount' => $newAmount,
             ],
         ]);
     }

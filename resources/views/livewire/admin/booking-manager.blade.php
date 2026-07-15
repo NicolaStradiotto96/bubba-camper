@@ -2,7 +2,7 @@
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
-            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500">
+            class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
             <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
@@ -15,7 +15,7 @@
             Nuova Prenotazione
         </h2>
 
-        <form wire:submit.prevent="saveManualBooking" class="space-y-6" novalidate>
+        <form class="space-y-6" novalidate>
 
             {{-- CUSTOMER INFOS --}}
             <section
@@ -98,7 +98,7 @@
 
                         <div wire:ignore class="mt-1">
                             <x-text-input x-numbers x-ref="phoneInput" type="tel" id="customer_phone"
-                                class="block w-full text-start" />
+                                autocomplete="tel" class="block w-full text-start" />
                         </div>
 
                         <x-input-error :messages="$errors->get('customer_phone')" class="text-center mt-1" />
@@ -189,15 +189,10 @@
                 <x-secondary-button type="button" wire:click="resetForm" class="w-full sm:w-auto justify-center">
                     Annulla
                 </x-secondary-button>
-                <x-primary-button wire:loading.attr="disabled"
+                <x-primary-button type="button" wire:click="saveManualBooking" wire:loading.attr="disabled"
+                    wire:target="saveManualBooking"
                     class="w-full sm:w-auto justify-center disabled:opacity-50 disabled:cursor-wait">
-                    <span wire:loading.remove wire:target="saveManualBooking">
-                        Crea Prenotazione
-                    </span>
-
-                    <span wire:loading wire:target="saveManualBooking">
-                        Caricamento...
-                    </span>
+                    {{ __('Crea Prenotazione') }}
                 </x-primary-button>
             </div>
 

@@ -19,7 +19,11 @@ new class extends Component {
 
 <nav x-data="{ open: false }" x-init="$watch('open', value => {
     document.body.classList.toggle('no-scroll', value);
-})"
+});
+window.addEventListener('livewire:navigating', () => {
+    open = false;
+    document.body.style.overflow = '';
+});"
     class="sticky top-0 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border-b border-gray-300 dark:border-gray-700 shadow z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,7 +31,8 @@ new class extends Component {
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center w-48">
-                    <a href="{{ route('welcome') }}" wire:navigate class="focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <a href="{{ route('welcome') }}" wire:navigate
+                        class="focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                         <x-application-logo size="small" />
                     </a>
                 </div>
@@ -55,15 +60,15 @@ new class extends Component {
                 {{-- <div class="flex items-center ml-auto">
                     <x-theme-toggle />
                 </div> --}}
-                <div class="flex items-center ml-auto -mr-3">
-                    <livewire:admin-notification />
+                <div class="flex items-center ml-auto pt-1">
+                    <livewire:admin.admin-notification />
                 </div>
                 @auth
-                <x-dropdown align="right" width="48">
+                    <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button
-                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm tracking-wider leading-4 font-medium text-gray-500 dark:text-gray-400 bg-white/0 dark:bg-gray-800/0 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition ease-in-out duration-150">
-                                <div x-data="{{ json_encode(['name' => auth()->user()->first_name]) }}" x-text="name"
+                                class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm tracking-wider leading-5 font-medium text-gray-500 dark:text-gray-400 bg-white/0 dark:bg-gray-800/0 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:text-gray-700 dark:focus:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 transition ease-in-out duration-150">
+                                <div x-data="{ name: '{{ auth()->user()->first_name ?? '' }}' }" x-text="name"
                                     x-on:profile-updated.window="name = $event.detail.first_name"></div>
 
                                 <div class="ms-1">
@@ -81,7 +86,7 @@ new class extends Component {
                         <x-slot name="content">
                             <x-dropdown-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate
                                 class="flex justify-center items-center">
-                                <livewire:admin-notification />
+                                <livewire:admin.admin-notification />
                                 <span>{{ __('Dashboard') }}</span>
                             </x-dropdown-link>
                             <x-dropdown-link :href="route('profile')" :active="request()->routeIs('profile')" wire:navigate>
@@ -89,7 +94,8 @@ new class extends Component {
                             </x-dropdown-link>
 
                             <!-- Authentication -->
-                            <button wire:click="logout" class="w-full text-start focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            <button wire:click="logout"
+                                class="w-full text-start focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                 <x-dropdown-link>
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
@@ -140,7 +146,7 @@ new class extends Component {
 
             @auth
                 <div class="px-4">
-                    <div class="font-medium text-base text-gray-800 dark:text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->first_name]) }}"
+                    <div class="font-medium text-base text-gray-800 dark:text-gray-200" x-data="{ name: '{{ auth()->user()->first_name ?? '' }}' }"
                         x-text="name" x-on:profile-updated.window="name = $event.detail.first_name"></div>
                     <div class="font-medium text-sm text-gray-500">{{ auth()->user()->email }}</div>
                 </div>
@@ -171,7 +177,7 @@ new class extends Component {
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
-                <button wire:click="logout" class="w-full text-start">
+                <button wire:click="logout" class="w-full text-start focus:outline-none focus:text-gray-800 dark:focus:text-gray-200 focus:bg-gray-50 dark:focus:bg-gray-700 focus:border-gray-300 dark:focus:border-gray-600 transition">
                     <x-responsive-nav-link>
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>

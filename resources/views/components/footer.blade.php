@@ -6,15 +6,18 @@
                 <div class="space-y-1">
                     <div class="flex items-center justify-center space-x-2">
                         <x-application-logo size="medium" />
-                        <div>
+                        <div itemscope itemtype="https://schema.org/LocalBusiness">
                             <p class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tighter">
                                 {{ config('app.name', 'Bubba Camper') }}
                             </p>
                             <p class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tighter">
                                 di Stradiotto Stefano
                             </p>
-                            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-                                Via Chemin Palma 2/C, <br> 36065 Mussolente (VI)
+                            <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest"
+                                itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                                <span itemprop="streetAddress">Via Chemin Palma 2/C</span>, <br> <span
+                                    itemprop="postalCode">36065</span> <span itemprop="addressLocality">Mussolente
+                                    (VI)</span>
                             </p>
                             <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                                 P.IVA <span class="select-all">02403740240</span>
@@ -31,13 +34,13 @@
                     </h3>
                     <ul class="mt-4 space-y-4 text-center">
                         <li><a href="{{ route('welcome') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Home</a>
+                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Home</a>
                         </li>
                         <li><a href="{{ route('index') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Noleggio</a>
+                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Noleggio</a>
                         </li>
                         <li><a href="{{ route('prices') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Prezzi</a>
+                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Prezzi</a>
                         </li>
                     </ul>
                 </div>
@@ -47,13 +50,13 @@
                     </h3>
                     <ul class="mt-4 space-y-4 text-center">
                         <li><a href="{{ route('contacts') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Contatti</a>
+                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Contatti</a>
                         </li>
                         <li><a href="{{ route('faq') }}" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">FAQ</a>
+                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">FAQ</a>
                         </li>
                         <li><a href="#" wire:navigate
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">Privacy
+                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Privacy
                                 Policy</a></li>
                     </ul>
                 </div>
@@ -63,20 +66,22 @@
                     </h3>
                     <ul class="mt-4 space-y-4 text-base text-gray-500 dark:text-gray-400 text-center">
                         <li>
-                            <p class="text-base text-gray-500">
+                            <p class="text-base px-1 text-gray-500">
                                 <i class="fa-solid fa-clock text-amber-500"></i>
-                                <span class="font-bold text-gray-500 dark:text-gray-400">Lun - Dom:</span> 10-13 / 16-20
+                                <span class="font-bold text-gray-500 dark:text-gray-400">Lun - Dom:</span>
+                                <time datetime="10:00-13:00/16:00-20:00">10-13 / 16-20</time>
                             </p>
                         </li>
                         <li>
-                            <a href="https://wa.me/393347538083" target="_blank"
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            <a href="https://wa.me/393347538083" target="_blank" rel="noopener noreferrer"
+                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                 <i class="fa-solid fa-phone text-amber-500"></i>
-                                +39 334 753 8083</a>
+                                <span itemprop="telephone">+39 334 753 8083</span>
+                            </a>
                         </li>
                         <li>
                             <a href="mailto:{{ config('app.admin_email') }}" target="_blank"
-                                class="text-base text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                 <i class="fa-solid fa-envelope text-amber-500"></i>
                                 {{ config('app.admin_email') }}
                             </a>
@@ -93,4 +98,35 @@
             </p>
         </div>
     </div>
+
+    {{-- SEO --}}
+    @php
+        $localBusinessSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'LocalBusiness',
+            'name' => config('app.name', 'Bubba Camper'),
+            'image' => asset('logo.svg'),
+            'description' =>
+                'Noleggio camper curati nei dettagli. Prenota la tua avventura on-the-road con Bubba Camper e vivi la libertà in totale comfort.',
+            'url' => url('/'),
+            'telephone' => '+393347538083',
+            'address' => [
+                '@type' => 'PostalAddress',
+                'streetAddress' => 'Via Chemin Palma, 2/C',
+                'addressLocality' => 'Mussolente',
+                'postalCode' => '36065',
+                'addressCountry' => 'IT',
+            ],
+            'geo' => [
+                '@type' => 'GeoCoordinates',
+                'latitude' => 45.754548,
+                'longitude' => 11.809399,
+            ],
+            'openingHours' => 'Mo-Su 10:00-13:00, 16:00-20:00',
+        ];
+    @endphp
+
+    <script type="application/ld+json">
+        {!! json_encode($localBusinessSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
 </footer>

@@ -23,6 +23,16 @@ new class extends Component {
         $this->phone = Auth::user()->phone ?? '';
     }
 
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName, [
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore(Auth::user()->id)],
+            'phone' => ['required', 'string', 'min:8', 'max:20'],
+        ]);
+    }
+
     /**
      * Update the profile information for the currently authenticated user.
      */
@@ -78,39 +88,39 @@ new class extends Component {
         </p>
     </header>
 
-    <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
+    <form class="mt-6 space-y-6" novalidate>
 
         {{-- First Name and Last Name --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <x-input-label for="first_name" :value="__('Nome')" />
-                <x-text-input wire:model="first_name" id="first_name" name="first_name" type="text"
-                    class="mt-1 block w-full" required autofocus autocomplete="given-name" />
-                <x-input-error class="mt-2" :messages="$errors->get('first_name')" />
+                <x-text-input wire:model.blur="first_name" id="first_name" name="first_name" type="text"
+                    class="mt-1 block w-full" required autocomplete="given-name" />
+                <x-input-error class="mt-1 text-center" :messages="$errors->get('first_name')" />
             </div>
 
             <div>
                 <x-input-label for="name" :value="__('Cognome')" />
-                <x-text-input wire:model="last_name" id="last_name" name="last_name" type="text"
-                    class="mt-1 block w-full" required autofocus autocomplete="family-name" />
-                <x-input-error class="mt-2" :messages="$errors->get('last_name')" />
+                <x-text-input wire:model.blur="last_name" id="last_name" name="last_name" type="text"
+                    class="mt-1 block w-full" required autocomplete="family-name" />
+                <x-input-error class="mt-1 text-center" :messages="$errors->get('last_name')" />
             </div>
         </div>
 
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full"
+            <x-text-input wire:model.blur="email" id="email" name="email" type="email" class="mt-1 block w-full"
                 required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+            <x-input-error class="mt-1 text-center" :messages="$errors->get('email')" />
 
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !auth()->user()->hasVerifiedEmail())
                 <div>
                     <p class="text-sm my-2 text-gray-800 dark:text-amber-500 animate-pulse">
                         {{ __('Il tuo indirizzo email non è verificato.') }}
                     </p>
-                    <x-secondary-button wire:click.prevent="sendVerification">
-                        {{ __("Invia nuovamente email di verifica") }}
+                    <x-secondary-button wire:click.prevent="sendVerification" class="w-full justify-center">
+                        {{ __('Invia nuovamente email di verifica') }}
                     </x-secondary-button>
 
                     @if (session('status') === 'verification-link-sent')
@@ -171,13 +181,24 @@ new class extends Component {
                     class="block w-full text-start" />
             </div>
 
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+            <x-input-error :messages="$errors->get('phone')" class="mt-1 text-center" />
         </div>
 
-        <div class="flex justify-center items-center gap-4">
-            <x-primary-button>{{ __('Salva') }}</x-primary-button>
+        <div>
+            <x-primary-button type="button" wire:click="updateProfileInformation" wire:loading.attr="disabled"
+                wire:target="updateProfileInformation"
+                class="w-full justify-center disabled:opacity-50 disabled:cursor-wait">
 
-            <x-action-message class="me-3" on="profile-updated">
+                <span wire:loading.remove wire:target="updateProfileInformation">
+                    {{ __('Salva') }}
+                </span>
+
+                <span wire:loading wire:target="updateProfileInformation">
+                    {{ __('Salvataggio...') }}
+                </span>
+            </x-primary-button>
+
+            <x-action-message class="mt-1 text-center" on="profile-updated" role="status" aria-live="polite">
                 {{ __('Modifiche salvate.') }}
             </x-action-message>
         </div>

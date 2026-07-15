@@ -25,6 +25,7 @@ class Camper extends Model
         'prices' => 'array',
         'images' => 'array',
         'attributes' => 'array',
+        'is_active' => 'boolean',
     ];
 
     protected static function boot()
@@ -40,18 +41,13 @@ class Camper extends Model
 
     public function getPriceForDate($date = null)
     {
-        $date = $date ? Carbon::parse($date) : now();
-        $month = $date->month;
+        $month = Carbon::parse($date ?? now())->month;
 
-        if (in_array($month, [7, 8])) {
-            return $this->prices['high'] ?? $this->prices['low'] ?? 0;
-        }
-
-        if (in_array($month, [4, 5, 6, 9, 10])) {
-            return $this->prices['mid'] ?? $this->prices['low'] ?? 0;
-        }
-
-        return $this->prices['low'] ?? 0;
+        return match (true) {
+            in_array($month, [7, 8]) => $this->prices['high'] ?? 0,
+            in_array($month, [4, 5, 6, 9, 10]) => $this->prices['mid'] ?? $this->prices['low'] ?? 0,
+            default => $this->prices['low'] ?? 0,
+        };
     }
 
     public function getRouteKeyName()

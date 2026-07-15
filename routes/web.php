@@ -12,8 +12,8 @@ use App\Livewire\Admin\BookingEdit;
 use App\Livewire\Admin\BookingManager;
 use App\Livewire\Admin\CamperManager;
 use App\Livewire\Admin\MaintenanceManager;
-use App\Livewire\DamageIndex;
-use App\Livewire\DamageManager;
+use App\Livewire\Admin\DamageIndex;
+use App\Livewire\Admin\DamageManager;
 use Illuminate\Support\Facades\Route;
 
 // HOME

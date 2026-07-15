@@ -1,7 +1,7 @@
 <div x-data="{ uploading: false }" x-on:livewire-upload-start="uploading = true" x-on:livewire-upload-finish="uploading = false"
     x-on:livewire-upload-error="uploading = false" class="space-y-4">
 
-    <form wire:submit.prevent="uploadDocuments" class="space-y-4">
+    <form class="space-y-4">
         <input type="hidden" wire:model="bookingId">
 
         {{-- Driver License --}}
@@ -17,12 +17,12 @@
                     <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Fronte</span>
 
                     <input type="file" id="driver_license_front" wire:model="driver_license_front"
-                        wire:change="$refresh" accept=".jpg,.jpeg,.png,.pdf" class="hidden"
+                        wire:change="$refresh" accept=".png,.jpg,.jpeg,application/pdf" class="hidden"
                         {{ $existingFiles['driver_license_front'] ?? false ? 'disabled' : '' }} />
 
                     <button type="button" onclick="document.getElementById('driver_license_front').click()"
                         {{ $existingFiles['driver_license_front'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden focus:outline-none focus:outline-amber-500
                         {{ $existingFiles['driver_license_front'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['driver_license_front'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -42,8 +42,15 @@
 
                     <div class="h-20 flex items-center justify-center mt-2">
                         @if ($driver_license_front)
-                            <img src="{{ $driver_license_front->temporaryUrl() }}"
-                                class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700">
+                            @if (in_array($driver_license_front->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
+                                <img src="{{ $driver_license_front->temporaryUrl() }}"
+                                    class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                            @else
+                                <div
+                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
+                                </div>
+                            @endif
                         @endif
                     </div>
 
@@ -55,12 +62,12 @@
                     <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Retro</span>
 
                     <input type="file" id="driver_license_back" wire:model="driver_license_back"
-                        wire:change="$refresh" accept=".jpg,.jpeg,.png,.pdf" class="hidden"
+                        wire:change="$refresh" accept=".png,.jpg,.jpeg,application/pdf" class="hidden"
                         {{ $existingFiles['driver_license_back'] ?? false ? 'disabled' : '' }} />
 
                     <button type="button" onclick="document.getElementById('driver_license_back').click()"
                         {{ $existingFiles['driver_license_back'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden focus:outline-none focus:outline-amber-500
                         {{ $existingFiles['driver_license_back'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['driver_license_back'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -80,8 +87,15 @@
 
                     <div class="h-20 flex items-center justify-center mt-2">
                         @if ($driver_license_back)
-                            <img src="{{ $driver_license_back->temporaryUrl() }}"
-                                class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700">
+                            @if (in_array($driver_license_back->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
+                                <img src="{{ $driver_license_back->temporaryUrl() }}"
+                                    class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                            @else
+                                <div
+                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
+                                </div>
+                            @endif
                         @endif
                     </div>
 
@@ -103,12 +117,12 @@
                     <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Fronte</span>
 
                     <input type="file" id="id_card_front" wire:model="id_card_front" wire:change="$refresh"
-                        accept=".jpg,.jpeg,.png,.pdf" class="hidden"
+                        accept=".png,.jpg,.jpeg,application/pdf" class="hidden"
                         {{ $existingFiles['id_card_front'] ?? false ? 'disabled' : '' }} />
 
                     <button type="button" onclick="document.getElementById('id_card_front').click()"
                         {{ $existingFiles['id_card_front'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden focus:outline-none focus:outline-amber-500
                         {{ $existingFiles['id_card_front'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['id_card_front'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -128,8 +142,15 @@
 
                     <div class="h-20 flex items-center justify-center mt-2">
                         @if ($id_card_front)
-                            <img src="{{ $id_card_front->temporaryUrl() }}"
-                                class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700">
+                            @if (in_array($id_card_front->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
+                                <img src="{{ $id_card_front->temporaryUrl() }}"
+                                    class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                            @else
+                                <div
+                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
+                                </div>
+                            @endif
                         @endif
                     </div>
 
@@ -141,12 +162,12 @@
                     <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Retro</span>
 
                     <input type="file" id="id_card_back" wire:model="id_card_back" wire:change="$refresh"
-                        accept=".jpg,.jpeg,.png,.pdf" class="hidden"
+                        accept=".png,.jpg,.jpeg,application/pdf" class="hidden"
                         {{ $existingFiles['id_card_back'] ?? false ? 'disabled' : '' }} />
 
                     <button type="button" onclick="document.getElementById('id_card_back').click()"
                         {{ $existingFiles['id_card_back'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden focus:outline-none focus:outline-amber-500
                         {{ $existingFiles['id_card_back'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['id_card_back'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -166,8 +187,15 @@
 
                     <div class="h-20 flex items-center justify-center mt-2">
                         @if ($id_card_back)
-                            <img src="{{ $id_card_back->temporaryUrl() }}"
-                                class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700">
+                            @if (in_array($id_card_back->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
+                                <img src="{{ $id_card_back->temporaryUrl() }}"
+                                    class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                            @else
+                                <div
+                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
+                                </div>
+                            @endif
                         @endif
                     </div>
 
@@ -180,11 +208,11 @@
             <p>
                 Il caricamento dei documenti implica l'accettazione del trattamento dei dati ai fini
                 della verifica identità, in conformità con la nostra
-                <a href="#" class="text-amber-500 hover:underline">Privacy Policy</a>.
+                <a href="#" class="text-amber-500 focus:outline-none focus:outline-amber-500 hover:underline">Privacy Policy</a>.
             </p>
         </div>
 
-        <x-primary-button type="submit" wire:loading.attr="disabled"
+        <x-primary-button type="button" wire:click="uploadDocuments" wire:loading.attr="disabled"
             wire:target="uploadDocuments, driver_license_front, driver_license_back, id_card_front, id_card_back"
             class="w-full mt-4 flex justify-center items-center disabled:opacity-50">
 

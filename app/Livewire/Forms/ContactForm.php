@@ -31,6 +31,29 @@ class ContactForm extends Component
         $this->loadTime = microtime(true);
     }
 
+    // RULES
+    protected function rules()
+    {
+        return [
+            'name' => 'required|string|min:2|max:60',
+            'email' => 'required|email:rfc,dns',
+            'date_range' => 'nullable',
+            'start_date' => [
+                'nullable',
+                'date',
+                'after_or_equal:today',
+                'before:' . now()->addMonths(12)->addDay()->format('Y-m-d')
+            ],
+            'end_date' => [
+                'nullable',
+                'date',
+                'after:start_date',
+                'before:' . now()->addMonths(13)->format('Y-m-d')
+            ],
+            'message' => 'required|string|min:10|max:2000',
+        ];
+    }
+
     public function updatedDateRange($value)
     {
         // RESET EMPTY DATES
@@ -65,6 +88,9 @@ class ContactForm extends Component
                 $this->end_date = null;
             }
         }
+
+        $this->validateOnly('start_date');
+        $this->validateOnly('end_date');
     }
 
     public function getBookedDatesProperty()
@@ -119,12 +145,12 @@ class ContactForm extends Component
         }
 
         // SPEED CHECK
-        if (microtime(true) - $this->loadTime < 3) {
+        if (microtime(true) - $this->loadTime < 1) {
             logger()->warning('Invio troppo rapido del form della sezione contatti', [
                 'ip' => request()->ip(),
             ]);
 
-            session()->flash('error', 'Invio troppo rapido.');
+            $this->dispatch('swal-error', ['message' => 'Invio troppo rapido.']);
 
             return;
         }
@@ -137,7 +163,7 @@ class ContactForm extends Component
                 'ip' => request()->ip(),
             ]);
 
-            session()->flash('error', 'Troppi tentativi, riprova più tardi.');
+            $this->dispatch('swal-error', ['message' => 'Troppi tentativi, riprova più tardi.']);
 
             return;
         }
@@ -145,25 +171,7 @@ class ContactForm extends Component
         RateLimiter::hit($key, 60);
 
         // VALIDATION
-        $validated = $this->validate([
-            'website' => 'nullable',
-            'name' => 'required|string|min:2|max:60',
-            'email' => 'required|email:rfc,dns',
-            'date_range' => 'nullable',
-            'start_date' => [
-                'required',
-                'date',
-                'after_or_equal:today',
-                'before:' . now()->addMonths(12)->addDay()->format('Y-m-d')
-            ],
-            'end_date' => [
-                'required',
-                'date',
-                'after:start_date',
-                'before:' . now()->addMonths(13)->format('Y-m-d')
-            ],
-            'message' => 'required|string|min:10|max:2000',
-        ]);
+        $validated = $this->validate();
 
         // SEND EMAIL
         try {
@@ -184,13 +192,19 @@ class ContactForm extends Component
 
             $this->loadTime = microtime(true);
 
-            session()->flash('success', 'Messaggio inviato con successo!');
+            $this->dispatch('swal-success', ['message' => 'Messaggio inviato con successo!']);
         } catch (\Exception $e) {
 
             // LOGGER + ERRORS
             logger()->error('Errore invio mail contatti: ' . $e->getMessage());
 
-            session()->flash('error', 'Errore durante l\'invio. Riprova più tardi.');
+            $this->dispatch('swal-error', ['message' => 'Errore durante l\'invio. Riprova più tardi.']);
         }
+    }
+
+    // UPDATE ERRORS
+    public function updated($propertyName)
+    {
+        $this->validateOnly($propertyName);
     }
 }

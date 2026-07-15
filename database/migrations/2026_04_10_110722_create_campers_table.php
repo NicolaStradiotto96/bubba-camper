@@ -20,7 +20,7 @@ return new class extends Migration
             $table->json('prices');
 
             $table->string("image_path");
-            $table->json("images");
+            $table->json("images")->nullable();
 
             $table->json('attributes')->nullable();
 

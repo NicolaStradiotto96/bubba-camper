@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="Prezzi">
 
     <div class="min-h-[calc(100vh-160px)]">
         {{-- TITLE --}}
@@ -22,9 +22,12 @@
                 <div
                     class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-b-6 border-blue-400 p-14 text-center">
                     <h3 class="text-xl font-bold uppercase tracking-wider text-blue-400">Bassa Stagione</h3>
-                    <div class="my-4">
+                    <div class="my-4" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                         <span class="text-gray-500">da</span>
-                        <span class="text-5xl font-extrabold dark:text-white">{{ $minLow }}€</span>
+                        <span class="text-5xl font-extrabold dark:text-white">
+                            <meta itemprop="priceCurrency" content="EUR" />
+                            <span itemprop="price" content="{{ $minLow }}">{{ $minLow }}€</span>
+                        </span>
                         <span class="text-gray-500">/gg</span>
                     </div>
                     <p class="text-sm text-gray-600 dark:text-gray-400 font-bold uppercase">1 Gen - 31 Mar<br>1 Nov - 31
@@ -34,9 +37,12 @@
                 <div
                     class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-xl border-2 border-b-6 border-yellow-500 p-14 text-center">
                     <h3 class="text-xl font-bold uppercase tracking-wider text-yellow-500">Media Stagione</h3>
-                    <div class="my-4">
+                    <div class="my-4" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                         <span class="text-gray-500">da</span>
-                        <span class="text-5xl font-extrabold dark:text-white">{{ $minMid }}€</span>
+                        <span class="text-5xl font-extrabold dark:text-white">
+                            <meta itemprop="priceCurrency" content="EUR" />
+                            <span itemprop="price" content="{{ $minMid }}">{{ $minMid }}€</span>
+                        </span>
                         <span class="text-gray-500">/gg</span>
                     </div>
                     <p class="text-sm text-gray-600 dark:text-gray-400 font-bold uppercase">1 Apr - 30 Giu<br>1 Set - 31
@@ -46,9 +52,12 @@
                 <div
                     class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-b-6 border-red-500 p-14 text-center">
                     <h3 class="text-xl font-bold uppercase tracking-wider text-red-500">Alta Stagione</h3>
-                    <div class="my-4">
+                    <div class="my-4" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                         <span class="text-gray-500">da</span>
-                        <span class="text-5xl font-extrabold dark:text-white">{{ $minHigh }}€</span>
+                        <span class="text-5xl font-extrabold dark:text-white">
+                            <meta itemprop="priceCurrency" content="EUR" />
+                            <span itemprop="price" content="{{ $minHigh }}">{{ $minHigh }}€</span>
+                        </span>
                         <span class="text-gray-500">/gg</span>
                     </div>
                     <p class="text-sm text-gray-600 dark:text-gray-400 font-bold uppercase">1 Luglio - 31 Agosto</p>
@@ -78,5 +87,27 @@
         </section>
 
     </div>
+
+    {{-- SEO --}}
+    @php
+        $priceSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Service',
+            'name' => 'Prezzi Noleggio Camper Bubba Camper',
+            'provider' => [
+                '@type' => 'LocalBusiness',
+                'name' => config('app.name'),
+            ],
+            'offers' => [
+                ['@type' => 'Offer', 'name' => 'Bassa Stagione', 'price' => $minLow, 'priceCurrency' => 'EUR'],
+                ['@type' => 'Offer', 'name' => 'Media Stagione', 'price' => $minMid, 'priceCurrency' => 'EUR'],
+                ['@type' => 'Offer', 'name' => 'Alta Stagione', 'price' => $minHigh, 'priceCurrency' => 'EUR'],
+            ],
+        ];
+    @endphp
+
+    <script type="application/ld+json">
+    {!! json_encode($priceSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
 
 </x-app-layout>

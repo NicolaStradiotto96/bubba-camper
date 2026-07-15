@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Log;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -33,12 +34,30 @@ class LoginForm extends Form
         if (! Auth::attempt($this->only(['email', 'password']), $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
+            Log::create([
+                'type' => 'login_failed',
+                'message' => "Tentativo di login fallito per l'email: {$this->email}",
+                'context' => [
+                    'ip_address' => request()->ip(),
+                    'email' => $this->email,
+                ],
+            ]);
+
             throw ValidationException::withMessages([
                 'form.email' => trans('auth.failed'),
             ]);
         }
 
         RateLimiter::clear($this->throttleKey());
+
+        Log::create([
+            'type' => 'login_success',
+            'message' => "Accesso effettuato con successo: " . Auth::user()->name,
+            'context' => [
+                'user_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+            ],
+        ]);
     }
 
     /**
@@ -67,6 +86,6 @@ class LoginForm extends Form
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
     }
 }

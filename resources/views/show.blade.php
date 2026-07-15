@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="{{ $camper->name }}">
     <div x-data="{
         openSpecs: false,
         openEquipment: false,
@@ -12,7 +12,7 @@
             {{-- BACK --}}
             <div class="flex items-center justify-center lg:justify-start">
                 <a href="{{ route('index') }}" wire:navigate
-                    class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 ">
+                    class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i
                         class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
                     {{ __('Torna indietro') }}
@@ -62,7 +62,8 @@
 
                                     <a :href="'/storage/' + slide" class="glightbox w-full h-full block">
                                         <img :src="'/storage/' + slide"
-                                            class="w-full h-full object-cover cursor-zoom-in" alt="Dettaglio Camper">
+                                            class="w-full h-full object-cover cursor-zoom-in"
+                                            alt="Noleggio camper {{ $camper->name }}">
                                     </a>
                                 </div>
                             </template>
@@ -71,11 +72,11 @@
                         <template x-if="slides.length > 1">
                             <div>
                                 <button @click="prev()"
-                                    class="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-300/50 dark:bg-gray-900/75 p-2 rounded-full text-amber-500 hover:bg-gray-400/50 hover:dark:bg-gray-900 transition opacity-50 group-hover:opacity-100">
+                                    class="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-300/50 dark:bg-gray-900/75 p-2 rounded-full text-amber-500 hover:bg-gray-400/50 hover:dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500 transition opacity-50 group-hover:opacity-100">
                                     <i class="fa-solid fa-chevron-left text-lg"></i>
                                 </button>
                                 <button @click="next()"
-                                    class="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-300/50 dark:bg-gray-900/75 p-2 rounded-full text-amber-500 hover:bg-gray-400/50 hover:dark:bg-gray-900 transition opacity-50 group-hover:opacity-100">
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-300/50 dark:bg-gray-900/75 p-2 rounded-full text-amber-500 hover:bg-gray-400/50 hover:dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500 transition opacity-50 group-hover:opacity-100">
                                     <i class="fa-solid fa-chevron-right text-lg"></i>
                                 </button>
                             </div>
@@ -85,7 +86,7 @@
                             <template x-for="(slide, index) in slides" :key="index">
                                 <button @click="activeSlide = index"
                                     :class="activeSlide === index ? 'bg-amber-500 w-6' : 'bg-gray-600/50 dark:bg-white/50 w-2'"
-                                    class="border border-gray-300 dark:border-gray-700 h-2 rounded-full transition-all duration-300"></button>
+                                    class="border border-gray-300 dark:border-gray-700 h-2 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 transition"></button>
                             </template>
                         </div>
                     </div>
@@ -96,7 +97,7 @@
 
                     {{-- Name --}}
                     <div class="text-center lg:text-left">
-                        <h1
+                        <h1 itemprop="name"
                             class="text-4xl font-extrabold text-gray-900 dark:text-white uppercase tracking-tighter text-center">
                             {{ $camper->name }}
                         </h1>
@@ -133,7 +134,7 @@
                         </div>
 
                         {{-- Price --}}
-                        <div
+                        <div itemprop="offers" itemscope itemtype="https://schema.org/Offer"
                             class="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
                             <span class="block text-sm text-gray-400 uppercase font-semibold tracking-wider">
                                 Tariffa Attuale
@@ -141,7 +142,9 @@
                             <div class="flex items-center mt-1">
                                 <i class="fa-solid fa-money-bill-wave text-amber-500 mr-1.5 text-sm sm:text-lg"></i>
                                 <span class="text-sm sm:text-lg font-bold text-gray-900 dark:text-white">
-                                    {{ $camper->getPriceForDate() }}€/gg
+                                    <meta itemprop="priceCurrency" content="EUR" />
+                                    <span itemprop="price"
+                                        content="{{ $camper->getPriceForDate() }}">{{ $camper->getPriceForDate() }}</span>€/gg
                                     <span class="font-normal text-gray-400">*</span>
                                 </span>
                             </div>
@@ -215,25 +218,25 @@
 
                     <div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                            <div class="flex w-full overflow-hidden">
+                            <div class="flex w-full">
                                 <button @click="openSpecs = true" type="button"
-                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all duration-300 group">
+                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
                                     <i class="fa-solid fa-gears text-green-500 text-lg"></i>
                                     {{ __('Caratteristiche tecniche') }}
                                 </button>
                             </div>
 
-                            <div class="flex w-full overflow-hidden">
+                            <div class="flex w-full">
                                 <button @click="openEquipment = true" type="button"
-                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all duration-300 group">
+                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
                                     <i class="fa-solid fa-toolbox text-green-500 text-lg"></i>
                                     {{ __('Equipaggiamento') }}
                                 </button>
                             </div>
 
-                            <div class="flex w-full overflow-hidden">
+                            <div class="flex w-full">
                                 <button @click="openPolicies = true" type="button"
-                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all duration-300 group">
+                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
                                     <i class="fa-solid fa-hand-holding-dollar text-green-500 text-lg"></i>
                                     {{ __('Cauzione e annullamento') }}
                                 </button>
@@ -248,6 +251,8 @@
 
                     <div class="mt-8">
                         <x-primary-anchor href="{{ route('booking.show', $camper->slug) }}" wire:navigate
+                            x-data="{ loading: false }" @click="loading = true"
+                            x-bind:class="loading ? 'opacity-50 cursor-wait' : ''"
                             class="w-full py-4 text-lg flex justify-center uppercase tracking-widest font-bold">
                             {{ __('Prenota questo camper') }}
                         </x-primary-anchor>
@@ -257,7 +262,8 @@
         </div>
 
         {{-- SPECS MODAL --}}
-        <div x-show="openSpecs" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        <div x-show="openSpecs" x-cloak
+            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -283,7 +289,8 @@
                             class="text-4xl text-gray-900 dark:text-white uppercase tracking-tighter text-center mb-3 mt-2">
                             {{ $camper->name }}</h2>
                         <div class="text-base leading-relaxed px-1 py-3 border-b border-gray-100 dark:border-gray-700">
-                            <p class="text-amber-600 dark:text-amber-500 text-center font-medium">
+                            <p class="text-amber-600 dark:text-amber-500 text-center font-medium"
+                                itemprop="description">
                                 {{ $camper->description }}</p>
                         </div>
                     </div>
@@ -456,108 +463,120 @@
                             </h4>
                             <div
                                 class="grid grid-cols-1 justify-center items-center text-gray-600 dark:text-gray-400 font-medium">
-                                <div class="py-2">Lun - Ven <span class="text-white ml-1 font-bold">10:00 - 13:00 /
-                                        16:00 - 20:00</span></div>
-                            </div>
-                            <p
-                                class="text-[11px] text-gray-400 dark:text-gray-500 font-medium mt-1 text-center italic w-full block">
-                                * Eventuali variazioni di orario vanno concordate preventivamente.
-                            </p>
-                        </div>
-
-                        {{-- Penalty --}}
-                        <div class="py-3 last:border-0">
-                            <h4
-                                class="text-lg text-gray-900 dark:text-gray-100 uppercase tracking-widest mb-3 gap-2 font-black">
-                                <i class="fa-solid fa-calendar-xmark text-lg text-amber-500 mr-1"></i> Condizioni di
-                                annullamento
-                            </h4>
-
-                            <div class="w-full font-sans p-3 text-left block">
-                                <div class="relative px-4 my-3">
-                                    <div
-                                        class="absolute top-1/2 left-8 right-8 h-1 bg-gray-300 dark:bg-gray-700 rounded-full block z-0 -translate-y-1/2">
-                                    </div>
-                                    <div class="relative flex justify-between items-center z-10 w-full">
-                                        <div class="flex flex-col items-center text-center w-1/4">
-                                            <span
-                                                class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider block h-8 mb-2 px-1">Oltre
-                                                61 gg</span>
-                                            <div
-                                                class="w-5 h-5 rounded-full border-4 border-white dark:border-gray-900 shadow bg-green-500">
-                                            </div>
-                                            <span class="text-xs font-bold text-green-500 mt-2 block h-8 px-1">Penale
-                                                10%</span>
-                                        </div>
-                                        <div class="flex flex-col items-center text-center w-1/4">
-                                            <span
-                                                class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider block h-8 mb-2 px-1">Da
-                                                60 a 31 gg</span>
-                                            <div
-                                                class="w-5 h-5 rounded-full border-4 border-white dark:border-gray-900 shadow bg-yellow-500">
-                                            </div>
-                                            <span class="text-xs font-bold text-yellow-500 mt-2 block h-8 px-1">Penale
-                                                50%</span>
-                                        </div>
-                                        <div class="flex flex-col items-center text-center w-1/4">
-                                            <span
-                                                class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider block h-8 mb-2 px-1">Da
-                                                30 a 11 gg</span>
-                                            <div
-                                                class="w-5 h-5 rounded-full border-4 border-white dark:border-gray-900 shadow bg-amber-500">
-                                            </div>
-                                            <span class="text-xs font-bold text-amber-500 mt-2 block h-8 px-1">Penale
-                                                80%</span>
-                                        </div>
-                                        <div class="flex flex-col items-center text-center w-1/4">
-                                            <span
-                                                class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider block h-8 mb-2 px-1">Meno
-                                                di 10 gg</span>
-                                            <div
-                                                class="w-5 h-5 rounded-full border-4 border-white dark:border-gray-900 shadow bg-red-500">
-                                            </div>
-                                            <span class="text-xs font-bold text-red-500 mt-2 block h-8 px-1">Penale
-                                                100%</span>
-                                        </div>
-                                    </div>
+                                <div class="py-2">
+                                    Lun - Ven
+                                    <time datetime="10:00-13:00/16:00-20:00" class="text-white ml-1 font-bold">
+                                        10:00 - 13:00 / 16:00 - 20:00
+                                    </time>
                                 </div>
+                                <p
+                                    class="text-[11px] text-gray-400 dark:text-gray-500 font-medium mt-1 text-center italic w-full block">
+                                    * Eventuali variazioni di orario vanno concordate preventivamente.
+                                </p>
+                            </div>
 
-                                <div
-                                    class="grid grid-cols-1 md:grid-cols-4 gap-3 pt-4 text-xs md:text-sm text-center font-sans font-medium">
-                                    <div
-                                        class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-green-500">
-                                        <h5 class="font-black uppercase tracking-wider text-xs text-green-500 mb-1">
-                                            Preavviso sopra i 61 giorni</h5>
-                                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Trattenuta del
-                                            <span class="font-black text-gray-900 dark:text-white">10%</span>
-                                            dell'importo.
-                                        </p>
+                            {{-- Penalty --}}
+                            <div class="py-3 last:border-0">
+                                <h4
+                                    class="text-lg text-gray-900 dark:text-gray-100 uppercase tracking-widest mb-3 gap-2 font-black">
+                                    <i class="fa-solid fa-calendar-xmark text-lg text-amber-500 mr-1"></i> Condizioni
+                                    di
+                                    annullamento
+                                </h4>
+
+                                <div class="w-full font-sans p-3 text-left block">
+                                    <div class="relative px-4 my-3">
+                                        <div
+                                            class="absolute top-1/2 left-8 right-8 h-1 bg-gray-300 dark:bg-gray-700 rounded-full block z-0 -translate-y-1/2">
+                                        </div>
+                                        <div class="relative flex justify-between items-center z-10 w-full">
+                                            <div class="flex flex-col items-center text-center w-1/4">
+                                                <span
+                                                    class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider block h-8 mb-2 px-1">Oltre
+                                                    61 gg</span>
+                                                <div
+                                                    class="w-5 h-5 rounded-full border-4 border-white dark:border-gray-900 shadow bg-green-500">
+                                                </div>
+                                                <span
+                                                    class="text-xs font-bold text-green-500 mt-2 block h-8 px-1">Penale
+                                                    10%</span>
+                                            </div>
+                                            <div class="flex flex-col items-center text-center w-1/4">
+                                                <span
+                                                    class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider block h-8 mb-2 px-1">Da
+                                                    60 a 31 gg</span>
+                                                <div
+                                                    class="w-5 h-5 rounded-full border-4 border-white dark:border-gray-900 shadow bg-yellow-500">
+                                                </div>
+                                                <span
+                                                    class="text-xs font-bold text-yellow-500 mt-2 block h-8 px-1">Penale
+                                                    50%</span>
+                                            </div>
+                                            <div class="flex flex-col items-center text-center w-1/4">
+                                                <span
+                                                    class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider block h-8 mb-2 px-1">Da
+                                                    30 a 11 gg</span>
+                                                <div
+                                                    class="w-5 h-5 rounded-full border-4 border-white dark:border-gray-900 shadow bg-amber-500">
+                                                </div>
+                                                <span
+                                                    class="text-xs font-bold text-amber-500 mt-2 block h-8 px-1">Penale
+                                                    80%</span>
+                                            </div>
+                                            <div class="flex flex-col items-center text-center w-1/4">
+                                                <span
+                                                    class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider block h-8 mb-2 px-1">Meno
+                                                    di 10 gg</span>
+                                                <div
+                                                    class="w-5 h-5 rounded-full border-4 border-white dark:border-gray-900 shadow bg-red-500">
+                                                </div>
+                                                <span class="text-xs font-bold text-red-500 mt-2 block h-8 px-1">Penale
+                                                    100%</span>
+                                            </div>
+                                        </div>
                                     </div>
+
                                     <div
-                                        class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-yellow-500">
-                                        <h5 class="font-black uppercase tracking-wider text-xs text-yellow-500 mb-1">
-                                            Preavviso tra 60 e 31 giorni</h5>
-                                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Trattenuta del
-                                            <span class="font-black text-gray-900 dark:text-white">50%</span>
-                                            dell'importo.
-                                        </p>
-                                    </div>
-                                    <div
-                                        class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-amber-500">
-                                        <h5 class="font-black uppercase tracking-wider text-xs text-amber-500 mb-1">
-                                            Preavviso tra 30 e 11 giorni</h5>
-                                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Trattenuta del
-                                            <span class="font-black text-gray-900 dark:text-white">80%</span>
-                                            dell'importo.
-                                        </p>
-                                    </div>
-                                    <div class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-red-500">
-                                        <h5 class="font-black uppercase tracking-wider text-xs text-red-500 mb-1">
-                                            Preavviso sotto i 10 giorni</h5>
-                                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Trattenuta del
-                                            <span class="font-black text-gray-900 dark:text-white">100%</span>
-                                            dell'importo.
-                                        </p>
+                                        class="grid grid-cols-1 md:grid-cols-4 gap-3 pt-4 text-xs md:text-sm text-center font-sans font-medium">
+                                        <div
+                                            class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-green-500">
+                                            <h5
+                                                class="font-black uppercase tracking-wider text-xs text-green-500 mb-1">
+                                                Preavviso sopra i 61 giorni</h5>
+                                            <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Trattenuta del
+                                                <span class="font-black text-gray-900 dark:text-white">10%</span>
+                                                dell'importo.
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-yellow-500">
+                                            <h5
+                                                class="font-black uppercase tracking-wider text-xs text-yellow-500 mb-1">
+                                                Preavviso tra 60 e 31 giorni</h5>
+                                            <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Trattenuta del
+                                                <span class="font-black text-gray-900 dark:text-white">50%</span>
+                                                dell'importo.
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-amber-500">
+                                            <h5
+                                                class="font-black uppercase tracking-wider text-xs text-amber-500 mb-1">
+                                                Preavviso tra 30 e 11 giorni</h5>
+                                            <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Trattenuta del
+                                                <span class="font-black text-gray-900 dark:text-white">80%</span>
+                                                dell'importo.
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-red-500">
+                                            <h5 class="font-black uppercase tracking-wider text-xs text-red-500 mb-1">
+                                                Preavviso sotto i 10 giorni</h5>
+                                            <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Trattenuta del
+                                                <span class="font-black text-gray-900 dark:text-white">100%</span>
+                                                dell'importo.
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -565,7 +584,31 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
-    </div>
+        {{-- SEO --}}
+        @php
+            $productSchema = [
+                '@context' => 'https://schema.org',
+                '@type' => 'Product',
+                'name' => $camper->name,
+                'image' => asset('storage/' . ($camper->images[0] ?? $camper->image_path)),
+                'description' => $camper->description,
+                'brand' => ['@type' => 'Brand', 'name' => config('app.name')],
+                'offers' => [
+                    '@type' => 'Offer',
+                    'priceCurrency' => 'EUR',
+                    'price' => $camper->getPriceForDate(), // Assicurati che ritorni solo il numero
+                    'availability' => $camper->is_active
+                        ? 'https://schema.org/InStock'
+                        : 'https://schema.org/OutOfStock',
+                    'url' => url()->current(),
+                ],
+            ];
+        @endphp
+
+        <script type="application/ld+json">
+    {!! json_encode($productSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
 </x-app-layout>

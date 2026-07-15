@@ -9,56 +9,57 @@
         <div wire:ignore wire:key="calendar-{{ count($this->bookedDates) }}">
 
             <div class="relative" x-data="{ booked: @js($this->bookedDates) }">
-                <input type="text" id="date_range" name="date_range" autocomplete="off" x-init="if ($el._flatpickr) { $el._flatpickr.destroy(); }
-                
-                $el._flatpickr = flatpickr($el, {
-                    mode: 'range',
-                    minDate: 'today',
-                    maxDate: new Date().fp_incr(365),
-                    dateFormat: 'd-m-Y',
-                    locale: {
-                        rangeSeparator: ' al ',
-                        firstDayOfWeek: 1
-                    },
-                    minRange: 1,
-                    disable: booked,
-                    position: 'below center',
-                    onOpen: function() {
-                        $wire.$refresh();
-                    },
-                    onChange: function(selectedDates, dateStr) {
-                        $wire.set('terms_accepted', false);
-                        $wire.set('privacy_accepted', false);
-                
-                        if (selectedDates.length === 1) {
-                            $wire.set('days_count', 0);
-                            $wire.set('total_price', 0);
-                            return;
+                <input type="text" id="date_range" name="date_range"
+                    aria-label="Seleziona le date di inizio e fine noleggio" autocomplete="off" x-init="if ($el._flatpickr) { $el._flatpickr.destroy(); }
+                    
+                    $el._flatpickr = flatpickr($el, {
+                        mode: 'range',
+                        minDate: 'today',
+                        maxDate: new Date().fp_incr(365),
+                        dateFormat: 'd-m-Y',
+                        locale: {
+                            rangeSeparator: ' al ',
+                            firstDayOfWeek: 1
+                        },
+                        minRange: 1,
+                        disable: booked,
+                        position: 'below center',
+                        onOpen: function() {
+                            $wire.$refresh();
+                        },
+                        onChange: function(selectedDates, dateStr) {
+                            $wire.set('terms_accepted', false);
+                            $wire.set('privacy_accepted', false);
+                    
+                            if (selectedDates.length === 1) {
+                                $wire.set('days_count', 0);
+                                $wire.set('total_price', 0);
+                                return;
+                            }
+                    
+                            if (selectedDates.length === 2 && selectedDates[0].getTime() === selectedDates[1].getTime()) {
+                                $el._flatpickr.clear();
+                                $wire.set('date_range', '');
+                                $wire.set('days_count', 0);
+                                return;
+                            }
+                    
+                            if (selectedDates.length === 2) {
+                                $wire.set('date_range', dateStr);
+                            }
                         }
-                
-                        if (selectedDates.length === 2 && selectedDates[0].getTime() === selectedDates[1].getTime()) {
+                    });
+                    
+                    window.addEventListener('clear-calendar', () => {
+                        if ($el._flatpickr) { $el._flatpickr.clear(); }
+                    });
+                    
+                    $watch('$wire.date_range', newVal => {
+                        if (!newVal && $el._flatpickr) {
                             $el._flatpickr.clear();
-                            $wire.set('date_range', '');
-                            $wire.set('days_count', 0);
-                            return;
                         }
-                
-                        if (selectedDates.length === 2) {
-                            $wire.set('date_range', dateStr);
-                        }
-                    }
-                });
-                
-                window.addEventListener('clear-calendar', () => {
-                    if ($el._flatpickr) { $el._flatpickr.clear(); }
-                });
-                
-                $watch('$wire.date_range', newVal => {
-                    if (!newVal && $el._flatpickr) {
-                        $el._flatpickr.clear();
-                    }
-                });"
-                    class="w-full p-2 mt-3 border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-xl focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 text-gray-900 dark:text-white flatpickr-animation text-center"
+                    });"
+                    class="w-full p-2 mt-3 border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-xl focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 text-gray-900 dark:text-white flatpickr-animation text-center"
                     placeholder="Scegli quando partire...">
                 <p class="mt-1 text-xs text-gray-400 italic text-center">Minimo 2 giorni di noleggio</p>
             </div>
@@ -79,26 +80,27 @@
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 transform scale-100"
                 x-transition:leave-end="opacity-0 transform scale-95"
-                class="col-start-1 row-start-1 bg-white dark:bg-gray-900 p-5 rounded-xl border-2 border-amber-600 z-10 h-full flex flex-col justify-between">
+                class="col-start-1 row-start-1 bg-white dark:bg-gray-900 p-5 rounded-xl border-2 border-amber-500 z-10 h-full flex flex-col justify-between">
 
                 <div>
                     <div class="space-y-2">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600 dark:text-gray-400 font-black uppercase">Giorni totali:</span>
-                            <span class="font-bold text-gray-900 dark:text-white" x-text="$wire.days_count"></span>
+                            <span class="font-bold text-gray-900 dark:text-white" x-text="$wire.days_count"
+                                aria-live="polite"></span>
                         </div>
 
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600 dark:text-gray-400 font-black uppercase">Costo totale:</span>
-                            <span class="font-bold text-gray-900 dark:text-white"
-                                x-text="$wire.total_price + '€'"></span>
+                            <span class="font-bold text-gray-900 dark:text-white" x-text="$wire.total_price + '€'"
+                                aria-live="polite"></span>
                         </div>
 
                         <div class="space-y-1 border-t border-gray-100 dark:border-gray-700 pt-2">
                             <div class="flex justify-between">
-                                <span class="text-amber-600 dark:text-amber-500 font-black uppercase">Acconto
+                                <span class="text-amber-500 dark:text-amber-500 font-black uppercase">Acconto
                                     oggi:</span>
-                                <span class="font-extrabold text-amber-600 dark:text-amber-500"
+                                <span class="font-extrabold text-amber-500 dark:text-amber-500"
                                     x-text="($wire.total_price * 0.3).toFixed(2) + '€'"></span>
                             </div>
                             <div class="flex justify-between">
@@ -119,13 +121,13 @@
 
                         <div class="relative">
                             <button type="button" @click="showContract = true"
-                                class="absolute top-3 right-3 flex items-center justify-center z-10 p-2 bg-gray-200 dark:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-amber-500 dark:hover:bg-amber-500 hover:text-white dark:hover:text-black transition-colors"
+                                class="absolute top-3 right-3 flex items-center justify-center z-10 p-2 bg-gray-200 dark:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-amber-500 dark:hover:bg-amber-500 hover:text-white dark:hover:text-black focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
                                 title="Ingrandisci Contratto">
                                 <i class="fa-solid fa-expand text-xs"></i>
                             </button>
 
                             <div
-                                class="w-full h-32 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-[11px] text-gray-600 dark:text-gray-400 font-sans space-y-3 shadow-inner">
+                                class="w-full h-32 overflow-y-auto p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 text-[11px] text-gray-600 dark:text-gray-400 font-sans space-y-3 shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                 <x-contract />
                             </div>
                         </div>
@@ -134,13 +136,13 @@
                         <div class="flex items-start gap-3 mt-2">
                             <div class="flex items-center h-5 mt-1.5">
                                 <input id="terms_accepted" wire:model="terms_accepted" type="checkbox"
-                                    class="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500 dark:focus:ring-amber-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer">
+                                    class="w-4 h-4 text-amber-500 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500 transition dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer">
                             </div>
                             <div class="text-xs">
                                 <label for="terms_accepted"
                                     class="font-bold text-gray-700 dark:text-gray-300 select-none cursor-pointer">
                                     Accetto il <button type="button" @click="showContract = true"
-                                        class="text-amber-500 hover:underline font-bold focus:outline-none">Contratto di
+                                        class="text-amber-500 hover:underline focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Contratto di
                                         Noleggio</button> e i termini di cancellazione.
                                 </label>
                                 <p class="text-[10px] text-gray-500 dark:text-gray-400">Dichiaro di approvare il
@@ -155,13 +157,13 @@
                         <div class="flex items-start gap-3 mt-1">
                             <div class="flex items-center h-5 mt-1.5">
                                 <input id="privacy_accepted" wire:model="privacy_accepted" type="checkbox"
-                                    class="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500 dark:focus:ring-amber-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer">
+                                    class="w-4 h-4 text-amber-500 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-500 transition dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 cursor-pointer">
                             </div>
                             <div class="text-xs">
                                 <label for="privacy_accepted"
                                     class="font-bold text-gray-700 dark:text-gray-300 select-none cursor-pointer">
                                     Ho letto e accetto l'<a href="{{ route('faq') }}#privacy" target="_blank"
-                                        class="text-amber-500 hover:underline">Informativa sulla Privacy</a>.
+                                        class="text-amber-500 hover:underline focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Informativa sulla Privacy</a>.
                                 </label>
                                 <p class="text-[10px] text-gray-500 dark:text-gray-400">Consento al trattamento dei dati
                                     per la gestione della prenotazione e dei documenti di guida.</p>
@@ -173,9 +175,9 @@
                     </div>
                 </div>
 
-                <x-primary-button wire:click="saveBooking" wire:loading.attr="disabled" class="w-full mt-3 flex justify-center items-center">
-                    <span wire:loading.remove wire:target="saveBooking">Vai al pagamento</span>
-                    <span wire:loading wire:target="saveBooking" class="flex items-center">Caricamento...</span>
+                <x-primary-button wire:click="saveBooking" wire:loading.attr="disabled" wire:target="saveBooking"
+                    class="w-full mt-3 flex justify-center items-center disabled:opacity-50 disabled:cursor-wait">
+                    {{ __('Vai al pagamento') }}
                 </x-primary-button>
             </div>
 
@@ -211,10 +213,10 @@
                 <x-contract />
             </div>
 
-            <div class="p-4 border-t border-gray-200 dark:border-gray-700 text-right">
-                <button @click="showContract = false"
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 text-center">
+                <button @click="showContract = false; $wire.set('terms_accepted', true)"
                     class="px-6 py-2 bg-amber-600 text-white rounded-lg font-bold uppercase text-xs hover:bg-amber-700">
-                    chiudi
+                    Accetto
                 </button>
             </div>
         </div>

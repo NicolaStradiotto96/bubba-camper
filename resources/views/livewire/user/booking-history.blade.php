@@ -1171,7 +1171,7 @@
             </div>
 
             <div x-init="$watch('showDocModal', value => { if (value) $dispatch('setBookingId', { id: selectedBookingId }) })">
-                @livewire('document-uploader', key('doc-uploader-static'))
+                @livewire('user.document-uploader', key('doc-uploader-static'))
             </div>
 
             <x-secondary-button @click="showDocModal = false; $dispatch('reset-uploader')"

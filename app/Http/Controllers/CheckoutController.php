@@ -12,6 +12,12 @@ use Stripe\Stripe;
 
 class CheckoutController extends Controller
 {
+    public function __construct()
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
+    }
+
+    // SHOW BOOKING INFO
     public function show(Booking $booking)
     {
         if ($booking->user_id !== auth()->id()) {
@@ -23,11 +29,7 @@ class CheckoutController extends Controller
         }
 
         if ($booking->created_at->lt(now()->subMinutes(15))) {
-            if ($booking->status !== 'expired') {
-                $booking->status = 'expired';
-                $booking->save();
-            }
-
+            $booking->update(['status' => 'expired']);
             return redirect()->route('dashboard')->with('error', 'Il tempo per il pagamento è scaduto.');
         }
 
@@ -35,8 +37,25 @@ class CheckoutController extends Controller
             return redirect()->route('dashboard')->with('info', 'L\'acconto per questa prenotazione è già stato pagato.');
         }
 
-        Stripe::setApiKey(config('services.stripe.secret'));
+        if ($booking->stripe_session_id) {
+            try {
+                $session = Session::retrieve($booking->stripe_session_id);
+                if ($session->status === 'expired' || $session->payment_status === 'paid') {
+                    throw new \Exception("Sessione non più utilizzabile");
+                }
+            } catch (\Exception $e) {
+                $session = $this->createNewStripeSession($booking);
+            }
+        } else {
+            $session = $this->createNewStripeSession($booking);
+        }
 
+        return redirect($session->url);
+    }
+
+    // STRIPE
+    private function createNewStripeSession(Booking $booking)
+    {
         $session = Session::create([
             'payment_method_types' => ['card'],
             'mode' => 'payment',
@@ -49,7 +68,7 @@ class CheckoutController extends Controller
                     'currency' => 'eur',
                     'product_data' => [
                         'name' => "Acconto (30%) - Camper: " . $booking->camper->name,
-                        'description' => "Il restante 70% (€" . number_format($booking->balance_payment, 2, ',', '') . ") verrà pagato al ritiro del mezzo.",
+                        'description' => "Il restante 70% verrà pagato al ritiro.",
                     ],
                     'unit_amount' => (int) round($booking->down_payment * 100),
                 ],
@@ -59,37 +78,17 @@ class CheckoutController extends Controller
             'cancel_url' => route('checkout.cancel', $booking),
         ]);
 
-        return redirect($session->url);
+        $booking->update(['stripe_session_id' => $session->id]);
+        return $session;
     }
 
-    public function success(Request $request, Booking $booking)
+    // PAID
+    public function success(Booking $booking)
     {
-        if ($booking->user_id !== auth()->id()) {
-            abort(403, 'Azione non autorizzata.');
-        }
-
-        $sessionId = $request->query('session_id');
-
-        if ($sessionId) {
-            try {
-                Stripe::setApiKey(config('services.stripe.secret'));
-                $session = Session::retrieve($sessionId);
-
-                if ($session->payment_status === 'paid' && !$booking->down_paid) {
-                    $booking->down_paid = true;
-                    $booking->payment_status = 'paid';
-                    $booking->save();
-                }
-            } catch (\Exception $e) {
-                Log::error("Errore verifica Stripe: " . $e->getMessage());
-            }
-
-            return redirect()->route('checkout.success', $booking);
-        }
-
         return view('checkout.success', compact('booking'));
     }
 
+    // NOT PAID
     public function cancel(Request $request, Booking $booking)
     {
         if (!$request->session()->has('reminder_sent_' . $booking->id)) {

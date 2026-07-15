@@ -3,10 +3,12 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Booking;
+use App\Models\Log;
 use App\Models\Maintenance;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class BookingEdit extends Component
@@ -52,6 +54,8 @@ class BookingEdit extends Component
 
         $newTotal = $this->calculateNewTotal() ?? $this->new_total_price;
 
+        $oldPrice = $this->booking->total_price;
+
         $this->booking->update([
             'start_date'      => $start,
             'end_date'        => $end,
@@ -60,6 +64,8 @@ class BookingEdit extends Component
             'balance_paid'    => false,
             'payment_status'  => 'paid',
         ]);
+
+        $this->logBooking('booking_dates_updated', "Date e prezzo aggiornati per la prenotazione #{$this->booking->id}", $this->booking, $oldPrice);
 
         session()->flash('swal-success', "Prenotazione #{$this->booking->id} aggiornata con successo!");
         return $this->redirect(route('dashboard'), navigate: true);
@@ -174,8 +180,28 @@ class BookingEdit extends Component
 
     // RENDER
     #[Layout('layouts.app')]
+    #[Title('Modifica Prenotazione')]
     public function render()
     {
         return view('livewire.admin.booking-edit');
+    }
+
+    // LOG
+    private function logBooking(string $type, string $message, Booking $booking, $oldPrice)
+    {
+        Log::create([
+            'type'    => $type,
+            'message' => $message,
+            'context' => [
+                'user_id'    => auth()->id(),
+                'ip_address' => request()->ip(),
+                'booking_id' => $booking->id,
+                'camper_id'  => $booking->camper_id,
+                'old_dates'  => $this->booking->start_date->format('d-m-Y') . ' - ' . $this->booking->end_date->format('d-m-Y'),
+                'new_dates'  => $this->start_date . ' - ' . $this->end_date,
+                'old_price'  => $oldPrice,
+                'new_price'  => $this->new_total_price,
+            ],
+        ]);
     }
 }

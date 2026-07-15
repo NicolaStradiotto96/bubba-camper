@@ -167,6 +167,33 @@
     z-index: 10 !important;
 }
 
+[wire\:click*="page"],
+.pagination a, 
+.pagination span {
+    transition: all 0.2s ease;
+}
+
+[aria-current="page"] span,
+nav[aria-label="Pagination Navigation"] span[aria-current="page"] {
+    background-color: var(--accent) !important;
+    color: white !important;
+    border-color: var(--accent) !important;
+    font-weight: 900 !important;
+}
+
+.pagination a:hover,
+[wire\:click*="page"]:hover {
+    background-color: transparent !important;
+    border-color: var(--accent2) !important;
+    color: var(--accent2) !important;
+    z-index: 10 !important;
+}
+
+.pagination a:focus {
+    border-color: var(--accent2) !important;
+    --tw-ring-color: var(--accent2) !important;
+}
+
 /* FLATPICKR */
 .flatpickr-calendar {
     background: var(--fp-bg) !important;

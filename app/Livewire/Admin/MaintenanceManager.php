@@ -9,6 +9,7 @@ use App\Models\Maintenance;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -246,6 +247,7 @@ class MaintenanceManager extends Component
 
     // RENDER
     #[Layout('layouts.app')]
+    #[Title('Gestione Indisponibilità')]
     public function render()
     {
         $query = Maintenance::with('camper')->latest();

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="I Nostri Camper">
 
     <div class="min-h-[calc(100vh-160px)]">
 
@@ -27,9 +27,34 @@
                         </div>
                     @endforeach
                 </div>
+
+                <div class="mt-6 px-4 pagination">
+                    {{ $campers->links() }}
+                </div>
             </div>
         </section>
 
     </div>
 
+    {{-- SEO --}}
+    @php
+        $itemList = [
+            '@context' => 'https://schema.org',
+            '@type' => 'ItemList',
+            'itemListElement' => $campers
+                ->map(function ($camper, $index) {
+                    return [
+                        '@type' => 'ListItem',
+                        'position' => $index + 1,
+                        'name' => $camper->name,
+                        'url' => route('show', $camper),
+                    ];
+                })
+                ->toArray(),
+        ];
+    @endphp
+
+    <script type="application/ld+json">
+    {!! json_encode($itemList, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
 </x-app-layout>

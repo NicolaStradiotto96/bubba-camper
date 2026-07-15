@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Admin;
 
-use App\Models\Booking;
 use App\Models\Damage;
 use App\Models\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -25,6 +25,7 @@ class DamageIndex extends Component
         if (!auth()->user()?->is_admin) {
         abort(403);
     }
+
     }
 
     // OPEN MODAL
@@ -63,6 +64,7 @@ class DamageIndex extends Component
 
     // RENDER
     #[Layout('layouts.app')]
+    #[Title('Gestione Danni')]
     public function render()
     {
         $query = Damage::query()->with(['booking', 'photos'])->latest();
@@ -78,7 +80,7 @@ class DamageIndex extends Component
             });
         }
 
-        return view('livewire.damage-index', [
+        return view('livewire.admin.damage-index', [
             'damages' => $query->paginate(7),
             'selectedDamage' => $this->selectedDamage,
         ]);
@@ -88,14 +90,15 @@ class DamageIndex extends Component
     private function logDamage(string $type, string $message, Damage $damage)
     {
         Log::create([
-            'booking_id' => $damage->booking_id,
             'type'       => $type,
             'message'    => $message,
             'context'    => [
                 'user_id'    => auth()->id(),
                 'ip_address' => request()->ip(),
                 'damage_id'  => $damage->id,
-                'camper_id'  => $this->booking->camper_id,
+                'booking_id' => $damage->booking_id,
+                'camper_id'  => $damage->camper_id,
+                'amount'     => $damage->amount,
             ],
         ]);
     }
