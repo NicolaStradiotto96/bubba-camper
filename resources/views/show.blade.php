@@ -262,7 +262,7 @@
         </div>
 
         {{-- SPECS MODAL --}}
-        <div x-show="openSpecs" x-cloak
+        <div x-show="openSpecs" x-trap="openSpecs" x-cloak
             class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
@@ -278,15 +278,15 @@
                 class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-xl border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
 
                 <button @click="openSpecs = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50">
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
 
                 <div class="w-full font-black text-center flex flex-col h-full overflow-hidden">
                     <div class="flex-shrink-0 pt-2">
                         <i class="fa-solid fa-van-shuttle text-amber-500" style="font-size: 5rem;"></i>
-                        <h2
-                            class="text-4xl text-gray-900 dark:text-white uppercase tracking-tighter text-center mb-3 mt-2">
+                        <h2 tabindex="1"
+                            class="text-4xl text-gray-900 dark:text-white uppercase tracking-tighter text-center mb-3 mt-2 focus:outline-none">
                             {{ $camper->name }}</h2>
                         <div class="text-base leading-relaxed px-1 py-3 border-b border-gray-100 dark:border-gray-700">
                             <p class="text-amber-600 dark:text-amber-500 text-center font-medium"
@@ -295,7 +295,7 @@
                         </div>
                     </div>
 
-                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 mt-2">
+                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 mt-2 focus:outline-none focus:outline-amber-500">
                         @php
                             $specsOrder = [
                                 'Caratteristiche tecniche' => 'fa-gears',
@@ -334,7 +334,7 @@
         </div>
 
         {{-- EQUIPMENT MODAL --}}
-        <div x-show="openEquipment" x-cloak
+        <div x-show="openEquipment" x-trap="openEquipment" x-cloak
             class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
@@ -350,15 +350,15 @@
                 class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-xl border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
 
                 <button @click="openEquipment = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50">
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
 
                 <div class="w-full font-black text-center flex flex-col h-full overflow-hidden">
                     <div class="flex-shrink-0 pt-2">
                         <i class="fa-solid fa-van-shuttle text-amber-500" style="font-size: 5rem;"></i>
-                        <h2
-                            class="text-4xl text-gray-900 dark:text-white uppercase tracking-tighter text-center mb-3 mt-2">
+                        <h2 tabindex="1"
+                            class="text-4xl text-gray-900 dark:text-white uppercase tracking-tighter text-center mb-3 mt-2 focus:outline-none">
                             {{ $camper->name }}</h2>
                         <div class="text-base leading-relaxed px-1 py-3 border-b border-gray-100 dark:border-gray-700">
                             <p class="text-amber-600 dark:text-amber-500 text-center font-medium">
@@ -366,7 +366,7 @@
                         </div>
                     </div>
 
-                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 mt-2">
+                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 mt-2 focus:outline-none focus:outline-amber-500">
                         @php
                             $eqOrder = [
                                 'Alla guida' => 'fa-map-location-dot',
@@ -405,7 +405,7 @@
         </div>
 
         {{-- POLICIES MODAL --}}
-        <div x-show="openPolicies" x-cloak
+        <div x-show="openPolicies" x-trap="openPolicies" x-cloak
             class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
@@ -421,15 +421,15 @@
                 class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-xl border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
 
                 <button @click="openPolicies = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50">
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
 
                 <div class="w-full font-black text-center flex flex-col h-full overflow-hidden">
                     <div class="flex-shrink-0 pt-2">
                         <i class="fa-solid fa-van-shuttle text-amber-500" style="font-size: 5rem;"></i>
-                        <h2
-                            class="text-4xl text-gray-900 dark:text-white uppercase tracking-tighter text-center mb-3 mt-2">
+                        <h2 tabindex="1"
+                            class="text-4xl text-gray-900 dark:text-white uppercase tracking-tighter text-center mb-3 mt-2 focus:outline-none">
                             {{ $camper->name }}</h2>
                         <div class="text-base leading-relaxed px-1 py-3 border-b border-gray-100 dark:border-gray-700">
                             <p class="text-amber-600 dark:text-amber-500 text-center font-medium">
@@ -437,7 +437,7 @@
                         </div>
                     </div>
 
-                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1">
+                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 focus:outline-none focus:outline-amber-500">
 
                         {{-- Deposit --}}
                         <div class="py-3 border-b border-gray-100 dark:border-gray-700">

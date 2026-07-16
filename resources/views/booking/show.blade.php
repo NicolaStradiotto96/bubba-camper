@@ -1,3 +1,7 @@
+@push('meta')
+    <meta name="robots" content="noindex, nofollow">
+@endpush
+
 <x-app-layout title="Completa Prenotazione">
 
     <div class="bg-gray-50 dark:bg-gray-900 flex items-center justify-center min-h-[calc(100vh-160px)]">

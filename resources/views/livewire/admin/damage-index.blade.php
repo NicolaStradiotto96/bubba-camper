@@ -1,3 +1,7 @@
+@push('meta')
+    <meta name="robots" content="noindex, nofollow">
+@endpush
+
 <div class="min-h-[calc(100vh-160px)] mx-4" x-data="{ open: false }" @open-modal.window="open = true" x-effect="open ? document.body.classList.add('no-scroll') : document.body.classList.remove('no-scroll')">>
 
     <div class="max-w-5xl flex items-center justify-center lg:justify-start mx-auto">
@@ -233,7 +237,7 @@
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
             class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="open = false"></div>
 
-        <div x-show="open" x-transition:enter="transition ease-out duration-300 transform"
+        <div x-show="open" x-trap="open" x-transition:enter="transition ease-out duration-300 transform"
             x-transition:enter-start="translate-y-4 sm:translate-y-0 sm:scale-95 opacity-0"
             x-transition:enter-end="translate-y-0 sm:scale-100 opacity-100"
             x-transition:leave="transition ease-in duration-200 transform"
@@ -246,12 +250,12 @@
                 <div
                     class="bg-gray-50 dark:bg-gray-700/50 font-black p-4 border-b border-gray-100 dark:border-gray-700">
                     <div class=" flex justify-between items-center">
-                        <h3 class="text-xl text-gray-900 dark:text-white uppercase tracking-wider">
+                        <h3 tabindex="1" class="text-xl text-gray-900 dark:text-white uppercase tracking-wider focus:outline-none">
                             Danno
                             <span class="damage-id">#{{ $selectedDamage->id }}</span>
                         </h3>
                         <button @click="open = false"
-                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none">
+                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                             <i class="fa-solid fa-xmark text-xl"></i>
                         </button>
                     </div>

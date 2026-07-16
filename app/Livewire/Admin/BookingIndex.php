@@ -200,31 +200,6 @@ class BookingIndex extends Component
         return $this->redirect(route('dashboard'), navigate: true);
     }
 
-    public function getStatsProperty()
-    {
-        $data = Booking::selectRaw("
-            COUNT(*) as total,
-            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-            SUM(CASE WHEN status = 'cancellation_pending' THEN 1 ELSE 0 END) as cancellation_pending,
-            SUM(CASE WHEN payment_status = 'penalty_pending' THEN 1 ELSE 0 END) as penalty_pending,
-            SUM(CASE WHEN payment_status = 'penalty_verification' THEN 1 ELSE 0 END) as penalty_verification,
-            SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
-            SUM(CASE WHEN status = 'confirmed' THEN total_price ELSE 0 END) as earnings
-        ")->first();
-
-        $totalPending = $data->pending + $data->cancellation_pending + $data->penalty_verification;
-
-        return [
-            'counts' => $data->toArray(),
-            'totalPending' => $totalPending,
-            'style' => [
-                'border' => $totalPending > 0 ? 'border-amber-500' : 'border-green-500',
-                'bg'     => $totalPending > 0 ? 'bg-amber-50 dark:bg-amber-900/20' : 'bg-green-50 dark:bg-green-900/20',
-                'text'   => $totalPending > 0 ? 'text-amber-500' : 'text-green-500',
-            ]
-        ];
-    }
-
     public function openBookingDetails($bookingId)
     {
         $booking = Booking::with(['camper', 'damages'])->findOrFail($bookingId);

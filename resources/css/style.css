@@ -73,6 +73,7 @@
 .gclose {
     border-radius: 50% !important;
     transition: all 0.3s ease !important;
+    opacity: 1 !important;
 }
 
 .gclose:hover {
@@ -91,6 +92,10 @@
 .gnext:hover {
     background: var(--accent2) !important;
     transform: scale(1.1);
+}
+
+.gbtn.focused {
+    outline: 2px solid var(--accent2) !important;
 }
 
 /* SWEET ALERT 2 */
@@ -168,7 +173,7 @@
 }
 
 [wire\:click*="page"],
-.pagination a, 
+.pagination a,
 .pagination span {
     transition: all 0.2s ease;
 }

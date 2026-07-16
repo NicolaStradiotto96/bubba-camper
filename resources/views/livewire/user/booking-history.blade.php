@@ -1157,13 +1157,13 @@
         </div>
 
         <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-6 w-full sm:max-w-lg border-2 border-gray-200 dark:border-gray-700 shadow-2xl z-10 my-auto"
-            x-show="showDocModal" x-transition:enter="transition ease-out duration-300 transform"
+            x-show="showDocModal" x-trap="showDocModal" x-transition:enter="transition ease-out duration-300 transform"
             x-transition:enter-start="opacity-0 translate-y-4 scale-95"
             x-transition:enter-end="opacity-100 translate-y-0 scale-100">
 
             <div class="font-black flex flex-col justify-center items-center mb-6">
                 <i class="fa-solid fa-id-card text-amber-500 text-5xl mb-3"></i>
-                <h3 class="text-gray-900 dark:text-white uppercase text-center text-2xl">Carica Documenti</h3>
+                <h3 tabindex="1" class="text-gray-900 dark:text-white uppercase text-center text-2xl focus:outline-none">Carica Documenti</h3>
                 <p class="text-md text-gray-400 mt-1 uppercase">Prenotazione
                     <span class="text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-0.5 px-1 rounded"
                         x-text="'#' + selectedBookingId"></span>

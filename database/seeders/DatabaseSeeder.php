@@ -6,6 +6,7 @@ use App\Models\Camper;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
@@ -25,29 +26,34 @@ class DatabaseSeeder extends Seeder
             'is_admin' => false,
         ]);
 
-        User::factory()->create([
-            'first_name' => 'Stefano',
-            'last_name' => 'Test',
-            'email' => config('app.admin_email'),
-            'phone' => '+393331234567',
-            'is_admin' => true,
-        ]);
+        User::firstOrCreate(
+            ['email' => config('app.admin_email')],
+            [
+                'first_name' => 'Stefano',
+                'last_name' => 'Stradiotto',
+                'phone' => '+393331234567',
+                'is_admin' => true,
+                'password' => Hash::make(env('ADMIN_PASSWORD', 'password')),
+            ]
+        );
 
-        Camper::create([
-            'name' => 'McLouis Glamys 226',
-            'slug' => Str::slug('McLouis Glamys 226'),
-            'description' => 'Il 6 posti perfetto: mansardato, doppio matrimoniale e garage di grande dimensioni.',
-            'prices' => [
-                'low' => 100,
-                'mid' => 120,
-                'high' => 140,
-            ],
-            'image_path' => 'campers/1.webp',
-            'images' => [
-                'campers/1.webp',
-                'campers/2.webp',
-                'campers/3.webp',
-            ],
-        ]);
+        if (Camper::count() === 0) {
+            Camper::create([
+                'name' => 'McLouis Glamys 226',
+                'slug' => Str::slug('McLouis Glamys 226'),
+                'description' => 'Il 6 posti perfetto: mansardato, doppio matrimoniale e garage di grande dimensioni.',
+                'prices' => [
+                    'low' => 100,
+                    'mid' => 120,
+                    'high' => 140,
+                ],
+                'image_path' => 'campers/1.webp',
+                'images' => [
+                    'campers/1.webp',
+                    'campers/2.webp',
+                    'campers/3.webp',
+                ],
+            ]);
+        }
     }
 }

@@ -22,7 +22,7 @@
 
                     <button type="button" onclick="document.getElementById('driver_license_front').click()"
                         {{ $existingFiles['driver_license_front'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden focus:outline-none focus:outline-amber-500
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition
                         {{ $existingFiles['driver_license_front'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['driver_license_front'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -67,7 +67,7 @@
 
                     <button type="button" onclick="document.getElementById('driver_license_back').click()"
                         {{ $existingFiles['driver_license_back'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden focus:outline-none focus:outline-amber-500
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition
                         {{ $existingFiles['driver_license_back'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['driver_license_back'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -122,7 +122,7 @@
 
                     <button type="button" onclick="document.getElementById('id_card_front').click()"
                         {{ $existingFiles['id_card_front'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden focus:outline-none focus:outline-amber-500
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition
                         {{ $existingFiles['id_card_front'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['id_card_front'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -167,7 +167,7 @@
 
                     <button type="button" onclick="document.getElementById('id_card_back').click()"
                         {{ $existingFiles['id_card_back'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl transition shadow-md overflow-hidden focus:outline-none focus:outline-amber-500
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition
                         {{ $existingFiles['id_card_back'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['id_card_back'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -208,7 +208,7 @@
             <p>
                 Il caricamento dei documenti implica l'accettazione del trattamento dei dati ai fini
                 della verifica identità, in conformità con la nostra
-                <a href="#" class="text-amber-500 focus:outline-none focus:outline-amber-500 hover:underline">Privacy Policy</a>.
+                <a href="#" class="text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition hover:underline">Privacy Policy</a>.
             </p>
         </div>
 

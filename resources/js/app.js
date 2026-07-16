@@ -48,7 +48,6 @@ window.itiUtils = utils;
 window.itiI18nIt = it.default || it;
 
 // SWEET ALERT 2
-import './bootstrap';
 import Swal from 'sweetalert2';
 window.Swal = Swal;
 

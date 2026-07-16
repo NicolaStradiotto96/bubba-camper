@@ -1,48 +1,4 @@
 <div class="max-w-7xl mx-auto">
-
-    {{-- STATS --}}
-    <div class="px-4 sm:px-0 mb-8">
-        <h2 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white uppercase tracking-tight text-center">
-            Statistiche
-        </h2>
-    </div>
-
-    {{-- CARDS --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 mx-4">
-        @foreach ([
-        ['label' => 'Incasso', 'value' => number_format($this->stats['counts']['earnings'], 0, ',', '') . '€', 'icon' => 'fa-solid fa-coins', 'border' => 'border-green-500', 'bg' => 'bg-green-50 dark:bg-green-900/20', 'text' => 'text-green-500'],
-        ['label' => 'Totali', 'value' => $this->stats['counts']['total'], 'icon' => 'fa-solid fa-boxes-stacked', 'border' => 'border-green-500', 'bg' => 'bg-green-50 dark:bg-green-900/20', 'text' => 'text-green-500'],
-        ['label' => 'Confermate', 'value' => $this->stats['counts']['confirmed'], 'icon' => 'fa-solid fa-circle-check', 'border' => 'border-green-500', 'bg' => 'bg-green-50 dark:bg-green-900/20', 'text' => 'text-green-500'],
-        [
-            'label' => 'In Attesa',
-            'value' => $this->stats['totalPending'],
-            'icon' => 'fa-solid fa-clock',
-            'border' => $this->stats['style']['border'],
-            'bg' => $this->stats['style']['bg'],
-            'text' => $this->stats['style']['text'],
-        ],
-    ] as $stat)
-            <div
-                class="bg-white dark:bg-gray-800 py-5 px-3 flex rounded-xl shadow-sm border border-l-4 {{ $stat['border'] }} overflow-hidden">
-                <div class="flex items-center">
-                    <div class="p-3 {{ $stat['bg'] }} rounded-lg relative">
-                        <i class="{{ $stat['icon'] }} {{ $stat['text'] }} text-xl"></i>
-                        @if ($stat['label'] === 'In Attesa' && $this->stats['totalPending'] > 0)
-                            <span
-                                class="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-amber-500 animate-ping"></span>
-                        @endif
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-xs xl:text-base font-black text-gray-400 uppercase tracking-widest">
-                            {{ $stat['label'] }}</h3>
-                        <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $stat['value'] }}</p>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
-
-
     <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mx-4">
 
         {{-- BOOKINGS --}}
@@ -1435,13 +1391,16 @@
         </div>
 
         <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-6 w-full sm:max-w-lg border-2 border-gray-200 dark:border-gray-700 shadow-2xl z-10 my-auto"
-            x-show="showDocModal" x-transition:enter="transition ease-out duration-300 transform"
+            x-show="showDocModal" x-trap="showDocModal"
+            x-transition:enter="transition ease-out duration-300 transform"
             x-transition:enter-start="opacity-0 translate-y-4 scale-95"
             x-transition:enter-end="opacity-100 translate-y-0 scale-100">
 
             <div class="font-black flex flex-col justify-center items-center mb-6">
                 <i class="fa-solid fa-id-card text-amber-500 text-5xl mb-3"></i>
-                <h3 class="text-gray-900 dark:text-white uppercase text-center text-2xl">Carica Documenti</h3>
+                <h3 tabindex="1"
+                    class="text-gray-900 dark:text-white uppercase text-center text-2xl focus:outline-none">Carica
+                    Documenti</h3>
                 <p class="text-md text-gray-400 mt-1 uppercase">Prenotazione
                     <span class="text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-0.5 px-1 rounded"
                         x-text="'#' + selectedBookingId"></span>

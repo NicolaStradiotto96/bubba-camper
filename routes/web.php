@@ -35,7 +35,7 @@ Route::get('/prenota/{camper:slug}', [BookingController::class, 'show'])
 
 // CHECKOUT
 Route::get('/prenotazione/{booking}', [CheckoutController::class, 'show'])
-    ->middleware(['auth', 'verified', 'throttle:5,5'])
+    ->middleware(['auth', 'verified', 'throttle:10,1'])
     ->name('checkout');
 
 Route::get('/prenotazione/{booking}/confermata', [CheckoutController::class, 'success'])
@@ -47,11 +47,12 @@ Route::get('/prenotazione/{booking}/non-confermata', [CheckoutController::class,
     ->name('checkout.cancel');
 
 // STRIPE WEBHOOK
-Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])
+    ->middleware('throttle:60,1');
 
 // PENALTY
 Route::post('/prenotazione/carica-contabile', [PenaltyController::class, 'uploadPenaltyReceipt'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'throttle:10,1'])
     ->name('bookings.upload-receipt');
 
 Route::post('/prenotazione/rifiuta-contabile', [PenaltyController::class, 'rejectReceipt'])
@@ -119,7 +120,7 @@ Route::get('/admin/prenotazione/{booking}/danni/{damage_id?}/modifica', DamageMa
 
 // VIEW DOCUMENTS
 Route::get('/documento/view/{bookingId}/{filename}', [DocumentController::class, 'view'])
-    ->middleware(['auth', 'admin'])
+    ->middleware(['auth', 'admin', 'throttle:30,1'])
     ->where(['bookingId' => '[0-9]+', 'filename' => '.*'])
     ->name('admin.view-doc');
 

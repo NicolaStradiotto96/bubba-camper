@@ -6,7 +6,7 @@
             <div class="absolute inset-0 bg-cover bg-top bg-no-repeat shadow-inner"
                 style="background-image: url('{{ asset('images/bg.webp') }}')">
             </div>
-            <div class="absolute inset-0 bg-black/40 dark:bg-black/60"></div>
+            <div class="absolute inset-0 bg-black/60"></div>
             <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100 dark:to-gray-900">
             </div>
         </div>
@@ -127,7 +127,9 @@
             </div>
 
             <div class="text-center mt-10">
-                <x-primary-anchor href="{{ route('index') }}">
+                <x-primary-anchor href="{{ route('index') }}" wire:navigate x-data="{ loading: false }"
+                    @click="if(loading) { $event.preventDefault(); } else { loading = true; }"
+                    x-bind:class="loading ? 'opacity-50 cursor-wait' : ''">
                     Vedi tutti i nostri camper
                 </x-primary-anchor>
             </div>

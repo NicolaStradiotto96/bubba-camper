@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
 #[Signature('app:cleanup-unpaid-bookings')]
-#[Description('Command description')]
+#[Description('Mark unpaid pending bookings as expired and notify customers')]
 class CleanupUnpaidBookings extends Command
 {
     /**
@@ -20,24 +20,39 @@ class CleanupUnpaidBookings extends Command
     {
         $expiryTime = now()->subMinutes(15);
 
-        $expiredBookings = Booking::where('payment_status', 'unpaid')
+        $query = Booking::where('payment_status', 'unpaid')
             ->where('status', 'pending')
-            ->where('created_at', '<', $expiryTime)
-            ->get();
+            ->where('created_at', '<', $expiryTime);
 
-        foreach ($expiredBookings as $booking) {
-            $booking->status = 'expired';
-            $booking->documents_status = 'not_required';
-            $booking->save();
+        $count = $query->count();
 
-            try {
-                Mail::to($booking->customer_email)->send(new BookingExpired($booking));
-                $this->info("Booking {$booking->id} scaduta. Email inviata a {$booking->customer_email}.");
-            } catch (\Exception $e) {
-                $this->error("Impossibile inviare mail per booking {$booking->id}: " . $e->getMessage());
-            }
+        if ($count === 0) {
+            $this->info("Nessuna prenotazione scaduta da processare.");
+            return;
         }
 
-        $this->info("Operazione di cleanup completata.");
+        $this->info("Trovate {$count} prenotazioni scadute. Elaborazione in corso...");
+
+        $processed = 0;
+
+        $query->chunkById(100, function ($bookings) use (&$processed) {
+            foreach ($bookings as $booking) {
+                try {
+                    $booking->update([
+                        'status' => 'expired',
+                        'documents_status' => 'not_required',
+                    ]);
+
+                    Mail::to($booking->customer_email)->queue(new BookingExpired($booking));
+
+                    $processed++;
+                    $this->info("Booking {$booking->id} scaduta. Email in coda per {$booking->customer_email}.");
+                } catch (\Exception $e) {
+                    $this->error("Errore processando booking {$booking->id}: " . $e->getMessage());
+                }
+            }
+        });
+
+        $this->info("Operazione completata. Processate {$processed} prenotazioni.");
     }
 }

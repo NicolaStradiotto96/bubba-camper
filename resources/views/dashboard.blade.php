@@ -1,4 +1,8 @@
-<x-app-layout>
+@push('meta')
+    <meta name="robots" content="noindex, nofollow">
+@endpush
+
+<x-app-layout title="Dashboard">
     <x-slot name="header">
         <h1 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Dashboard') }}
@@ -9,40 +13,9 @@
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             @if (auth()->user()->is_admin)
                 {{-- ADMIN DASHBOARD --}}
-                <div class="mb-6 flex flex-col justify-center items-center gap-4 px-4 sm:px-0">
+                <livewire:admin.booking-stats />
 
-                    <div>
-                        <x-primary-anchor href="{{ route('camper.create') }}" wire:navigate
-                            class="inline-flex items-center gap-2 !p-4 text-xs sm:text-base group">
-                            <i class="fa-solid fa-van-shuttle transition-transform group-hover:scale-150"></i>
-                            Crea Nuovo Camper
-                        </x-primary-anchor>
-                    </div>
-
-                    <div>
-                        <x-primary-anchor href="{{ route('booking.create') }}" wire:navigate
-                            class="inline-flex items-center gap-2 !p-4 text-xs sm:text-base group">
-                            <i class="fa-solid fa-calendar-plus transition-transform group-hover:scale-150"></i>
-                            Crea Nuova Prenotazione
-                        </x-primary-anchor>
-                    </div>
-
-                    <div>
-                        <x-primary-anchor href="{{ route('maintenance') }}" wire:navigate
-                            class="inline-flex items-center gap-2 !p-4 text-xs sm:text-base group">
-                            <i class="fa-solid fa-screwdriver-wrench transition-transform group-hover:scale-150"></i>
-                            Gestione Indisponibilità
-                        </x-primary-anchor>
-                    </div>
-
-                    <div>
-                        <x-primary-anchor href="{{ route('damage.index') }}" wire:navigate
-                            class="inline-flex items-center gap-2 !p-4 text-xs sm:text-base group">
-                            <i class="fa-solid fa-exclamation-triangle transition-transform group-hover:scale-150"></i>
-                            Gestione Danni
-                        </x-primary-anchor>
-                    </div>
-                </div>
+                <x-booking-actions />
 
                 <livewire:admin.booking-index />
             @else
@@ -61,7 +34,9 @@
                             <div class="w-full md:w-1/2">
                                 <p class="text-black dark:text-white font-black uppercase">Scegli le
                                     date e parti!</p>
-                                <x-primary-anchor class="mt-3" href="{{ route('index') }}" wire:navigate>
+                                <x-primary-anchor class="mt-3" href="{{ route('index') }}" wire:navigate
+                                    x-data="{ loading: false }" @click="loading = true"
+                                    x-bind:class="loading ? 'opacity-50 cursor-wait' : ''" x-bind:disabled="loading">
                                     {{ __('Prenota ora') }}
                                 </x-primary-anchor>
                             </div>

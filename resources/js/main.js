@@ -1,4 +1,4 @@
-/* TRANSITION DARK/LIGHT MODE */
+// TRANSITION DARK/LIGHT MODE
 const updateTheme = () => {
     if (localStorage.getItem('color-theme') === 'light') {
         document.documentElement.classList.remove('dark');
@@ -11,7 +11,29 @@ updateTheme();
 
 document.addEventListener('livewire:navigated', updateTheme);
 
-// Theme Toggler
+// ALPINE CUSTOM CLASSES
+document.addEventListener('alpine:init', () => {
+    Alpine.directive('numbers', (el) => {
+        el.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+    });
+
+    Alpine.directive('price', (el) => {
+        el.addEventListener('input', (e) => {
+            let val = e.target.value;
+            val = val.replace(/[^0-9.,]/g, '');
+            val = val.replace(',', '.');
+            const parts = val.split('.');
+            if (parts.length > 2) {
+                val = parts[0] + '.' + parts.slice(1).join('');
+            }
+            e.target.value = val;
+        });
+    });
+});
+
+// THEME TOGGLER
 function getSwalTheme() {
     const isDark = document.documentElement.classList.contains('dark');
     return {
@@ -23,14 +45,45 @@ function getSwalTheme() {
     };
 }
 
-// Pay Penalty
+// CUSTOM THEME
+const getBaseSwal = () => {
+    const theme = getSwalTheme();
+    return {
+        background: theme.background,
+        color: theme.color,
+        didOpen: (popup) => { popup.style.border = `2px solid ${theme.border}`; },
+        customClass: { popup: 'rounded-[2rem]', confirmButton: 'text-md rounded-[2rem] font-black uppercase tracking-widest px-3 py-2', denyButton: 'text-md rounded-[2rem] font-black uppercase tracking-widest px-3 py-2', cancelButton: 'text-md rounded-[2rem] font-black uppercase tracking-widest px-3 py-2' }
+    };
+};
+
+// FETCH
+async function safeFetch(url, options = {}) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    const headers = options.body instanceof FormData
+        ? { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': csrfToken }
+        : { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': csrfToken };
+
+    const response = await fetch(url, {
+        ...options,
+        headers: { ...headers, ...options.headers }
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Errore HTTP: ${response.status}`);
+    }
+
+    return await response.json();
+}
+
+// PAY PENALTY
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const bookingId = urlParams.get('pay_penalty');
 
     if (bookingId) {
-        fetch(`/prenotazione/${bookingId}/pagamento-penale`)
-            .then(response => response.json())
+        safeFetch(`/prenotazione/${bookingId}/pagamento-penale`)
             .then(data => {
                 if (data.status === 'penalty_pending') {
                     window.payPenaltyAction(bookingId, data.amount);
@@ -44,88 +97,118 @@ document.addEventListener('DOMContentLoaded', function () {
                         text: 'Nessuna penale trovata per la prenotazione selezionata.',
                         confirmButtonText: 'CHIUDI',
                         confirmButtonColor: '#d97706',
-                        background: theme.background,
-                        color: theme.color,
-                        didOpen: (popup) => {
-                            popup.style.border = `2px solid ${theme.border}`;
-                        },
-                        customClass: {
-                            popup: 'rounded-xl',
-                            confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
-                        }
+                        ...getBaseSwal(),
                     });
                 }
-                window.history.replaceState({}, document.title, window.location.pathname);
             })
-            .catch(error => console.error('Errore:', error));
+            .catch(err => {
+                console.error('Errore durante il recupero penale:', err);
+            })
+            .finally(() => {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            });
     }
 });
 
 // SWEETALERT 2
 document.addEventListener('livewire:init', () => {
 
-    // Booking Not Found
-    window.addEventListener('swal-error', event => {
-        const data = event.detail[0];
-        window.showErrorSwal();
+    // UTILITIES
+    window.triggerError = function (message) {
+        window.dispatchEvent(new CustomEvent('swal-error', {
+            detail: [{ message: message }]
+        }));
+    };
+
+    window.triggerSuccess = function (message) {
+        window.dispatchEvent(new CustomEvent('swal-success', {
+            detail: [{ message: message }]
+        }));
+    };
+
+    // SUCCESS MESSAGE
+    window.addEventListener('swal-success', event => {
+        const theme = getSwalTheme();
+        const data = Array.isArray(event.detail) ? event.detail[0] : event.detail;
+
+        Swal.fire({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 6000,
+            timerProgressBar: true,
+            icon: 'success',
+            iconColor: '#1fae53',
+            title: 'OPERAZIONE COMPLETATA',
+            text: data.message,
+            background: theme.background,
+            color: theme.color,
+            didOpen: (toast) => {
+                toast.style.marginTop = '80px';
+                toast.style.border = `2px solid #1fae53`;
+            },
+            customClass: {
+                popup: 'rounded-[2rem]'
+            }
+        });
     });
+
+    // ERROR MESSAGE
+    window.addEventListener('swal-error', event => {
+        const theme = getSwalTheme();
+        const data = Array.isArray(event.detail) ? event.detail[0] : event.detail;
+
+        Swal.fire({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 6000,
+            timerProgressBar: true,
+            icon: 'error',
+            iconColor: '#ef4444',
+            title: 'ERRORE',
+            text: data.message,
+            background: theme.background,
+            color: theme.color,
+            didOpen: (toast) => {
+                toast.style.marginTop = '80px';
+                toast.style.border = `2px solid #ef4444`;
+            },
+            customClass: {
+                popup: 'rounded-[2rem]'
+            }
+        });
+    });
+
+    // BOOKING NOT FOUND
+    window.addEventListener('swal-modal-error', () => window.showErrorSwal());
+    window.showErrorSwal = () => window.showSwalError('Prenotazione non trovata.');
+    window.docsErrorSwal = () => window.showSwalError('Documenti già caricati.');
+
+    window.showSwalError = function (message) {
+        const theme = getSwalTheme();
+
+        Swal.fire({
+            icon: 'error',
+            iconColor: '#ef4444',
+            title: 'ERRORE',
+            text: message,
+            confirmButtonText: 'CHIUDI',
+            confirmButtonColor: '#d97706',
+            ...getBaseSwal(),
+        });
+    };
 
     window.openBookingModal = function (id, $wire, $dispatch) {
         $wire.checkBookingAccess(id).then(response => {
-            if (response.authorized) {
-                if (response.needsDocs) {
-                    $dispatch('open-doc-modal', { id: id });
-                } else {
-                    window.docsErrorSwal();
-                }
-            } else {
+            if (!response.authorized) {
                 window.showErrorSwal();
+            } else if (!response.needsDocs) {
+                window.docsErrorSwal();
+            } else {
+                $dispatch('open-doc-modal', { id: id });
             }
             window.history.replaceState({}, document.title, window.location.pathname);
-        });
-    };
-
-    window.showErrorSwal = function (text, title = '') {
-        const theme = getSwalTheme();
-
-        Swal.fire({
-            icon: 'error',
-            iconColor: '#ef4444',
-            title: 'ERRORE',
-            text: 'Prenotazione non trovata.',
-            confirmButtonText: 'CHIUDI',
-            confirmButtonColor: '#d97706',
-            background: theme.background,
-            color: theme.color,
-            didOpen: (popup) => {
-                popup.style.border = `2px solid ${theme.border}`;
-            },
-            customClass: {
-                popup: 'rounded-xl',
-                confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
-            }
-        });
-    };
-
-    window.docsErrorSwal = function (text, title = '') {
-        const theme = getSwalTheme();
-
-        Swal.fire({
-            icon: 'error',
-            iconColor: '#ef4444',
-            title: 'ERRORE',
-            text: 'Documenti già caricati.',
-            confirmButtonText: 'CHIUDI',
-            confirmButtonColor: '#d97706',
-            background: theme.background,
-            color: theme.color,
-            didOpen: (popup) => {
-                popup.style.border = `2px solid ${theme.border}`;
-            },
-            customClass: {
-                popup: 'rounded-xl',
-                confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
-            }
         });
     };
 
@@ -347,13 +430,22 @@ document.addEventListener('livewire:init', () => {
                                 formData.append('booking_id', id);
                                 formData.append('type', 'refund');
 
-                                fetch('/prenotazione/carica-contabile', {
+                                safeFetch('/prenotazione/carica-contabile', {
                                     method: 'POST',
-                                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
                                     body: formData
-                                }).then(() => {
-                                    Livewire.dispatch('cancelBooking', { bookingId: id, applyPenalty: applyPenalty, byAdmin: byAdmin, useStripe: false });
-                                });
+                                })
+                                    .then(() => {
+                                        Livewire.dispatch('cancelBooking', {
+                                            bookingId: id,
+                                            applyPenalty: applyPenalty,
+                                            byAdmin: byAdmin,
+                                            useStripe: false
+                                        });
+                                    })
+                                    .catch(err => {
+                                        console.error('Errore caricamento contabile:', err);
+                                        window.triggerError(err.message || 'Si è verificato un errore imprevisto.');
+                                    });
                             }
                         });
                     }
@@ -885,12 +977,8 @@ document.addEventListener('livewire:init', () => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch('/prenotazione/rifiuta-contabile', {
+                safeFetch('/prenotazione/rifiuta-contabile', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
                     body: JSON.stringify({
                         booking_id: bookingId,
                         type: type,
@@ -899,6 +987,8 @@ document.addEventListener('livewire:init', () => {
                     })
                 }).then(() => {
                     Livewire.dispatch('refresh-page');
+                }).catch(err => {
+                    console.error('Errore durante il rifiuto contabile:', err);
                 });
             }
         });
@@ -917,95 +1007,11 @@ document.addEventListener('livewire:init', () => {
             confirmButtonColor: '#ef4444',
             confirmButtonText: 'PROCEDI',
             cancelButtonText: 'CHIUDI',
-            background: theme.background,
-            color: theme.color,
-            didOpen: (popup) => {
-                popup.style.border = `2px solid ${theme.border}`;
-            },
-            customClass: {
-                popup: 'rounded-xl',
-                confirmButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2',
-                cancelButton: 'text-md rounded-xl font-black uppercase tracking-widest px-3 py-2'
-            }
+            ...getBaseSwal(),
         }).then((result) => {
             if (result.isConfirmed) {
                 Livewire.dispatch(eventName, { id: id });
             }
         });
     }
-
-    // SUCCESS MESSAGE
-    window.addEventListener('swal-success', event => {
-        const theme = getSwalTheme();
-        const data = Array.isArray(event.detail) ? event.detail[0] : event.detail;
-
-        Swal.fire({
-            toast: true,
-            position: 'top',
-            showConfirmButton: false,
-            timer: 6000,
-            timerProgressBar: true,
-            icon: 'success',
-            iconColor: '#1fae53',
-            title: 'OPERAZIONE COMPLETATA',
-            text: data.message,
-            background: theme.background,
-            color: theme.color,
-            didOpen: (toast) => {
-                toast.style.marginTop = '80px';
-                toast.style.border = `2px solid #1fae53`;
-            },
-            customClass: {
-                popup: 'rounded-xl'
-            }
-        });
-    });
-
-    // ERROR MESSAGE
-    window.addEventListener('swal-error', event => {
-        const theme = getSwalTheme();
-        const data = Array.isArray(event.detail) ? event.detail[0] : event.detail;
-
-        Swal.fire({
-            toast: true,
-            position: 'top',
-            showConfirmButton: false,
-            timer: 6000,
-            timerProgressBar: true,
-            icon: 'error',
-            iconColor: '#ef4444',
-            title: 'ERRORE',
-            text: data.message,
-            background: theme.background,
-            color: theme.color,
-            didOpen: (toast) => {
-                toast.style.marginTop = '80px';
-                toast.style.border = `2px solid #ef4444`;
-            },
-            customClass: {
-                popup: 'rounded-xl'
-            }
-        });
-    });
-});
-
-document.addEventListener('alpine:init', () => {
-    Alpine.directive('numbers', (el) => {
-        el.addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        });
-    });
-
-    Alpine.directive('price', (el) => {
-        el.addEventListener('input', (e) => {
-            let val = e.target.value;
-            val = val.replace(/[^0-9.,]/g, '');
-            val = val.replace(',', '.');
-            const parts = val.split('.');
-            if (parts.length > 2) {
-                val = parts[0] + '.' + parts.slice(1).join('');
-            }
-            e.target.value = val;
-        });
-    });
 });

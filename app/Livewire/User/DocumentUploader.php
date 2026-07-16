@@ -45,7 +45,7 @@ class DocumentUploader extends Component
 
         if (!$booking) {
             $this->dispatch('close-doc-modal');
-            $this->dispatch('swal-error');
+            $this->dispatch('swal-modal-error');
             return;
         }
 

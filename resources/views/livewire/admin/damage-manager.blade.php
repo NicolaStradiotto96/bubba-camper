@@ -1,3 +1,7 @@
+@push('meta')
+    <meta name="robots" content="noindex, nofollow">
+@endpush
+
 <div class="min-h-[calc(100vh-160px)] mx-4">
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
@@ -150,9 +154,7 @@
                 <x-primary-button type="button" wire:click="saveDamage" wire:loading.attr="disabled"
                     wire:target="photos, temporary_photos, saveDamage"
                     class="w-full sm:w-auto justify-center disabled:opacity-50 disabled:cursor-wait">
-
                     {{ $damageId ? 'Aggiorna Danno' : 'Notifica Danno' }}
-
                 </x-primary-button>
             </div>
 

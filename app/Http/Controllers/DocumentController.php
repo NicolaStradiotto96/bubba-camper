@@ -10,13 +10,15 @@ class DocumentController extends Controller
     public function view($bookingId, $filename)
     {
         if (!auth()->user()->is_admin) {
-            abort(403);
+            abort(403, 'Accesso non autorizzato.');
         }
 
-        $path = "documents/{$bookingId}/{$filename}";
+        $safeFilename = basename($filename);
 
-        if (!Storage::disk('local')->exists($path) || str_contains($filename, '..')) {
-            abort(404);
+        $path = "documents/{$bookingId}/{$safeFilename}";
+
+        if (!Storage::disk('local')->exists($path)) {
+            abort(404, 'Documento non trovato.');
         }
 
         return Storage::disk('local')->response($path);

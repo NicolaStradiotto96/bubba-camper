@@ -10,8 +10,10 @@ Artisan::command('inspire', function () {
 
 Schedule::command('app:cleanup-unpaid-bookings')->everyMinute();
 
-Schedule::command('documents:cleanup')->daily();
+Schedule::command('app:cleanup-old-documents')->daily();
 
-Schedule::command('livewire:cleanup')->daily();
+Schedule::command('app:send-review-reminders')->dailyAt('09:00');
 
-Schedule::command('emails:send-review-reminders')->dailyAt('09:00');
+Schedule::command('cache:prune')->daily();
+
+Schedule::command('queue:prune-failed --hours=168')->weekly();

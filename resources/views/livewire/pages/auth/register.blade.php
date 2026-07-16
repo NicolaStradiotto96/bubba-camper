@@ -10,7 +10,8 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component {
+new #[Layout('layouts.guest')] class extends Component
+{
     public ?string $first_name = null;
     public ?string $last_name = null;
     public ?string $email = null;
@@ -67,6 +68,10 @@ new #[Layout('layouts.guest')] class extends Component {
         ]);
     }
 }; ?>
+
+@push('meta')
+    <meta name="robots" content="noindex, nofollow">
+@endpush
 
 <div>
     <div class="mb-6 text-center">
@@ -173,7 +178,7 @@ new #[Layout('layouts.guest')] class extends Component {
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 dark:focus:ring-offset-gray-800"
+            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 dark:focus:ring-offset-gray-800 transition"
                 href="{{ route('login') }}" wire:navigate>
                 {{ __('Sei già registrato?') }}
             </a>
