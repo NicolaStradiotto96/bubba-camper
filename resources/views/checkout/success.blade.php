@@ -4,12 +4,12 @@
 
 <x-app-layout title="Prenotazione Confermata">
     <div
-        class="bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-160px)] flex items-center transition-all duration-500 ease-in-out">
+        class="bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-160px)] flex items-center transition duration-500 ease-in-out">
 
         @if ($booking->payment_status === 'paid')
             <div class="w-full md:w-[48rem] max-w-3xl mx-auto px-4 text-center">
                 <div
-                    class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-3xl shadow-xl border border-green-100 dark:border-gray-700 min-w-full">
+                    class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-[2rem] shadow-xl border border-green-100 dark:border-gray-700 min-w-full">
 
                     <div
                         class="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -28,7 +28,7 @@
                     </p>
 
                     <div
-                        class="bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 mb-2 inline-block w-full">
+                        class="bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-[2rem] p-6 mb-2 inline-block w-full">
                         <div>
                             <!-- Booked Dates -->
                             <div class="border-b border-gray-200 dark:border-gray-600 pb-4">
@@ -58,7 +58,7 @@
                                 </div>
                             </div>
 
-                            <div class="px-4 pt-4 rounded-lg text-center">
+                            <div class="px-4 pt-4 text-center">
                                 <p class="text-gray-900 dark:text-white text-xs font-bold uppercase">
                                     Prezzo Totale
                                 </p>
@@ -80,7 +80,7 @@
                                 !$booking->id_card_front_path ||
                                 !$booking->id_card_back_path))
                         <div
-                            class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl p-4 mb-6">
+                            class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-[2rem] p-4 mb-6">
 
                             <h3
                                 class="text-lg font-bold text-amber-800 dark:text-amber-500 mb-2 uppercase animate-pulse">
@@ -103,12 +103,12 @@
 
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
                         <a href="{{ route('dashboard') }}" wire:navigate
-                            class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm uppercase">
+                            class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-[2rem] hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm uppercase">
                             Vai alla tua Dashboard
                         </a>
 
                         <a href="{{ route('welcome') }}" wire:navigate
-                            class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm uppercase">
+                            class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-[2rem] hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm uppercase">
                             Torna alla Home
                         </a>
                     </div>
@@ -117,7 +117,7 @@
         @else
             <div class="w-full md:w-[48rem] max-w-3xl mx-auto px-4 text-center">
                 <div
-                    class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-blue-100 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-xl border border-blue-100 dark:border-gray-700">
                     <div class="animate-spin text-4xl text-amber-500 mb-4">
                         <i class="fa-solid fa-spinner"></i>
                     </div>

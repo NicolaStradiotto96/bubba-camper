@@ -11,8 +11,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
 use App\Models\Log;
 
-new #[Layout('layouts.guest')] class extends Component
-{
+new #[Layout('layouts.guest')] class extends Component {
     #[Locked]
     public string $token = '';
     public string $email = '';
@@ -43,39 +42,38 @@ new #[Layout('layouts.guest')] class extends Component
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $this->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) {
-                $user->forceFill([
+        $status = Password::reset($this->only('email', 'password', 'password_confirmation', 'token'), function ($user) {
+            $user
+                ->forceFill([
                     'password' => Hash::make($this->password),
                     'remember_token' => Str::random(60),
-                ])->save();
+                ])
+                ->save();
 
-                event(new PasswordReset($user));
+            event(new PasswordReset($user));
 
-                Log::create([
-                    'type'       => 'password_reset_success',
-                    'message'    => "Password reimpostata con successo per l'utente: {$user->email}.",
-                    'context'    => [
-                        'user_id'    => $user->id,
-                        'ip_address' => request()->ip(),
-                        'email'      => $user->email,
-                    ],
-                ]);
-            }
-        );
+            Log::create([
+                'type' => 'password_reset_success',
+                'message' => "Password reimpostata con successo per l'utente: {$user->email}.",
+                'context' => [
+                    'user_id' => $user->id,
+                    'ip_address' => request()->ip(),
+                    'email' => $user->email,
+                ],
+            ]);
+        });
 
         // If the password was successfully reset, we will redirect the user back to
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         if ($status != Password::PASSWORD_RESET) {
             Log::create([
-                'type'       => 'password_reset_failed',
-                'message'    => "Tentativo fallito di reset password per l'email: {$this->email}.",
-                'context'    => [
+                'type' => 'password_reset_failed',
+                'message' => "Tentativo fallito di reset password per l'email: {$this->email}.",
+                'context' => [
                     'ip_address' => request()->ip(),
-                    'email'      => $this->email,
-                    'status'     => __($status),
+                    'email' => $this->email,
+                    'status' => __($status),
                 ],
             ]);
 
@@ -95,29 +93,36 @@ new #[Layout('layouts.guest')] class extends Component
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required
+                autofocus autocomplete="username" />
+            <div class="min-h-5 text-center mt-1">
+                <x-input-error :messages="$errors->get('email')" />
+            </div>
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
+        <div class="mt-2">
             <x-input-label for="password" :value="__('Password')" />
-            <x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password"
+                required autocomplete="new-password" />
+            <div class="min-h-5 text-center mt-1">
+                <x-input-error :messages="$errors->get('password')" />
+            </div>
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
+        <div class="mt-2">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
 
             <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full"
-                          type="password"
-                          name="password_confirmation" required autocomplete="new-password" />
+                type="password" name="password_confirmation" required autocomplete="new-password" />
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+            <div class="min-h-5 text-center mt-1">
+                <x-input-error :messages="$errors->get('password_confirmation')" />
+            </div>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex items-center justify-end mt-2">
             <x-primary-button>
                 {{ __('Reset Password') }}
             </x-primary-button>

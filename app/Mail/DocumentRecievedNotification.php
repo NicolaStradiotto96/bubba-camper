@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class DocumentRecievedNotification extends Mailable
+class DocumentRecievedNotification extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

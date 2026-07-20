@@ -18,7 +18,7 @@
                     onclick="if (history.length > 1) { event.preventDefault(); history.back(); }"
                     class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i
-                        class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
+                        class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
                     {{ __('Torna indietro') }}
                 </a>
             </div>
@@ -31,10 +31,10 @@
 
                 <div class="lg:col-span-1 w-full flex flex-col">
                     <div
-                        class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 w-full flex flex-col">
+                        class="bg-white dark:bg-gray-800 p-4 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 w-full flex flex-col">
 
                         <div
-                            class="w-full h-64 rounded-xl overflow-hidden mb-4 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 flex-shrink-0">
+                            class="w-full h-64 rounded-[2rem] overflow-hidden mb-4 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 flex-shrink-0">
                             <img src="{{ asset('storage/' . $camper->image_path) }}"
                                 alt="Foto del camper {{ $camper->name }}" loading="lazy"
                                 class="w-full h-full object-cover object-center block">

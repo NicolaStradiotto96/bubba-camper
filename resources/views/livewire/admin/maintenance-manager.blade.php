@@ -7,21 +7,21 @@
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
-            <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
+            <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
     </div>
 
     <div
-        class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+        class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-700">
 
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase mb-8 text-center">
             Gestione Indisponibilità
         </h2>
 
-        <form class="space-y-6" novalidate>
+        <form class="space-y-2" novalidate>
             <section
-                class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-700 space-y-4">
+                class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-[2rem] border border-gray-100 dark:border-gray-700 space-y-2">
                 <h3
                     class="text-lg font-bold text-amber-500 uppercase tracking-widest flex items-center justify-center gap-2">
                     <i class="fa-solid fa-screwdriver-wrench"></i> Dettagli Blocco
@@ -33,13 +33,15 @@
                     <div>
                         <x-input-label for="camper_id" value="Veicolo" />
                         <select wire:model.live="camper_id" id="camper_id"
-                            class="block mt-1 w-full rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-700 focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500 dark:text-white text-center">
+                            class="block mt-1 w-full rounded-2xl border-gray-300 dark:bg-gray-900 dark:border-gray-600 focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500 dark:text-white text-center">
                             <option value="">Seleziona camper...</option>
                             @foreach ($campers as $camper)
                                 <option value="{{ $camper->id }}">{{ $camper->name }}</option>
                             @endforeach
                         </select>
-                        <x-input-error :messages="$errors->get('camper_id')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('camper_id')" />
+                        </div>
                     </div>
 
                     {{-- Calendar --}}
@@ -94,11 +96,10 @@
                             instance.clear();
                             updateDisabledDates();
                         });"
-                            class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-md shadow-sm text-center disabled:cursor-wait"
+                            class="w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-2xl shadow-sm text-center disabled:cursor-wait"
                             placeholder="Seleziona date...">
-                        <div class="flex flex-col">
-                            <x-input-error :messages="$errors->get('start_date')" class="text-center mt-1" />
-                            <x-input-error :messages="$errors->get('end_date')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('start_date')" />
                         </div>
                     </div>
 
@@ -110,15 +111,19 @@
                     <x-input-label for="reason" value="Motivazione" />
                     <x-text-input wire:model.live="reason" id="reason" class="block mt-1 w-full" type="text"
                         placeholder="Dettagli sull'indisponbilità..." />
-                    <x-input-error :messages="$errors->get('reason')" class="text-center mt-1" />
+                    <div class="min-h-5 text-center mt-1">
+                        <x-input-error :messages="$errors->get('reason')" />
+                    </div>
                 </div>
             </section>
 
             <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-3">
-                <x-secondary-button type="button" wire:click="cancelEdit" class="w-full sm:w-auto justify-center text-gray-500 hover:text-gray-700">
+                <x-secondary-button type="button" wire:click="cancelEdit"
+                    class="w-full sm:w-auto justify-center text-gray-500 hover:text-gray-700">
                     Annulla
                 </x-secondary-button>
-                <x-primary-button type="button" wire:click="saveBlock" wire:loading.attr="disabled" wire:target="saveBlock"
+                <x-primary-button type="button" wire:click="saveBlock" wire:loading.attr="disabled"
+                    wire:target="saveBlock"
                     class="w-full sm:w-auto justify-center disabled:opacity-50 disabled:cursor-wait">
                     {{ $editingId ? 'Aggiorna' : 'Blocca Date' }}
                 </x-primary-button>
@@ -136,7 +141,7 @@
 
             <div class="space-y-2">
                 @forelse ($blocks as $block)
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 rounded-[2rem]">
                         <span class="text-gray-700 dark:text-gray-300">
                             <i class="fa-solid fa-screwdriver-wrench text-amber-500 mr-2"></i>
                             <strong>{{ $block->camper->name }}</strong>:

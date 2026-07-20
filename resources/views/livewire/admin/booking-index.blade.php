@@ -1,5 +1,5 @@
 <div class="max-w-7xl mx-auto">
-    <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mx-4">
+    <div class="p-6 bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-700 mx-4">
 
         {{-- BOOKINGS --}}
         <div class="px-4 sm:px-0 mb-6">
@@ -14,7 +14,7 @@
             <div class="relative">
                 <input type="text" id="searchId" wire:model.live.debounce.300ms="searchId"
                     placeholder="Cerca per ID Prenotazione..."
-                    class="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition">
+                    class="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-[2rem] text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition">
 
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
@@ -27,7 +27,7 @@
 
         @if ($bookings->isEmpty())
             <div
-                class="mx-4 bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-6 text-center shadow-sm flex flex-col items-center justify-center">
+                class="mx-4 bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-[2rem] p-6 text-center shadow-sm flex flex-col items-center justify-center">
                 <div
                     class="w-20 h-20 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-full flex items-center justify-center mb-4">
                     <i class="fa-solid fa-van-shuttle text-3xl"></i>
@@ -39,7 +39,7 @@
         @else
             {{-- DESKTOP VIEW --}}
             <div
-                class="hidden lg:block bg-white dark:bg-gray-900/30 shadow-xl rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                class="hidden lg:block bg-white dark:bg-gray-900/30 shadow-xl rounded-[2rem] border border-gray-200 dark:border-gray-700 overflow-hidden">
                 <table class="w-full text-center">
 
                     {{-- TABLE COLUMNS --}}
@@ -321,7 +321,7 @@
                                                 $booking->payment_status !== 'fully_paid')
                                             <button type="button"
                                                 onclick="event.stopPropagation(); confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
-                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs p-2 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600 transition">
                                                 Completa
                                             </button>
                                         @endif
@@ -331,7 +331,7 @@
                                             @if ($damage->status === 'verification')
                                                 <button type="button"
                                                     onclick="event.stopPropagation(); confirmDamageResolution('{{ $damage->id }}', '{{ number_format($damage->amount, 2, ',', '') }}€')"
-                                                    class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                                                    class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs p-2 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600 transition">
                                                     Completa Danno #{{ $damage->id }}
                                                 </button>
                                             @endif
@@ -341,7 +341,7 @@
                                         @if ($booking->status === 'confirmed' && $booking->payment_status === 'fully_paid')
                                             <button type="button"
                                                 onclick="event.stopPropagation(); confirmInvoice('{{ $booking->id }}')"
-                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs p-2 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600 transition">
                                                 Fattura
                                             </button>
                                         @endif
@@ -350,7 +350,7 @@
                                         @if ($booking->status === 'pending' && $booking->payment_status === 'paid')
                                             <button type="button"
                                                 onclick="event.stopPropagation(); confirmHostAction('{{ $booking->id }}', '{{ $booking->customer_first_name }}', '{{ $booking->customer_last_name }}', '{{ $booking->start_date->format('d/m/Y') }}', '{{ $booking->end_date->format('d/m/Y') }}')"
-                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs p-2 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                                 Conferma
                                             </button>
                                         @endif
@@ -365,7 +365,7 @@
                                                     !$booking->id_card_back_path))
                                             <button type="button"
                                                 @click.stop="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
-                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs p-2 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                                 Carica Documenti
                                             </button>
                                         @endif
@@ -376,7 +376,7 @@
                                                 ($booking->payment_status === 'paid' || $booking->payment_status === 'fully_paid'))
                                             <button type="button"
                                                 onclick="event.stopPropagation(); confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['total_paid'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->calculateExpectedRefund()['penalty_amount'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
-                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs p-2 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
+                                                class="bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs p-2 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition">
                                                 Annulla
                                             </button>
                                         @endif
@@ -394,7 +394,7 @@
             {{-- MOBILE VIEW --}}
             <div class="lg:hidden space-y-4">
                 @foreach ($bookings as $booking)
-                    <div class="bg-white dark:bg-gray-900/30 font-black p-5 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
+                    <div class="bg-white dark:bg-gray-900/30 font-black p-5 rounded-[2rem] shadow-lg border border-gray-200 dark:border-gray-700"
                         wire:click="openBookingDetails('{{ $booking->id }}')">
 
                         <div class="text-center">
@@ -407,7 +407,7 @@
 
                             {{-- BOOKING DATES --}}
                             <div
-                                class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl space-y-2">
+                                class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl space-y-2">
                                 <div class="flex flex-col justify-center items-center">
                                     <p class="text-amber-500">{{ $booking->camper->name }}
                                     </p>
@@ -422,7 +422,7 @@
                         </div>
 
                         <div
-                            class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl space-y-2 text-xs uppercase">
+                            class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl space-y-2 text-xs uppercase">
 
                             {{-- PAYMENT STATUS --}}
                             <div class="flex justify-between items-center">
@@ -553,7 +553,7 @@
 
                         {{-- BALANCE --}}
                         <div
-                            class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl space-y-2 text-xs uppercase">
+                            class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl space-y-2 text-xs uppercase">
 
                             {{-- Total --}}
                             <div class="flex justify-between">
@@ -670,7 +670,7 @@
                                     $booking->payment_status !== 'fully_paid')
                                 <button type="button"
                                     onclick="event.stopPropagation(); confirmPayment('{{ $booking->id }}', {{ $booking->status === 'cancelled' ? max(0, $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment) : $booking->balance_payment }})"
-                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600 transition">
                                     Completa
                                 </button>
                             @endif
@@ -680,7 +680,7 @@
                                 @if ($damage->status === 'verification')
                                     <button type="button"
                                         onclick="event.stopPropagation(); confirmDamageResolution('{{ $damage->id }}', '{{ number_format($damage->amount, 2, ',', '') }}€')"
-                                        class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                                        class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600 transition">
                                         Completa
                                     </button>
                                 @endif
@@ -690,7 +690,7 @@
                             @if ($booking->status === 'confirmed' && $booking->payment_status === 'fully_paid')
                                 <button type="button"
                                     onclick="event.stopPropagation(); confirmInvoice('{{ $booking->id }}')"
-                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-green-600 border border-green-600 text-black dark:text-white text-xs py-3 px-6 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600 transition">
                                     Fattura
                                 </button>
                             @endif
@@ -699,7 +699,7 @@
                             @if ($booking->status === 'pending' && $booking->payment_status === 'paid')
                                 <button type="button"
                                     onclick="event.stopPropagation(); confirmHostAction('{{ $booking->id }}', '{{ $booking->customer_first_name }}', '{{ $booking->customer_last_name }}', '{{ $booking->start_date->format('d/m/Y') }}', '{{ $booking->end_date->format('d/m/Y') }}')"
-                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                     Conferma
                                 </button>
                             @endif
@@ -714,7 +714,7 @@
                                         !$booking->id_card_back_path))
                                 <button type="button"
                                     @click.stop="$dispatch('open-doc-modal', { id: '{{ $booking->id }}' })"
-                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-amber-500 dark:hover:bg-amber-500 border border-amber-500 text-black dark:text-white text-xs py-3 px-6 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                     Carica Documenti
                                 </button>
                             @endif
@@ -723,7 +723,7 @@
                             @if ($booking->status !== 'cancelled' && $booking->payment_status === 'paid')
                                 <button type="button"
                                     onclick="event.stopPropagation(); confirmRefundAction('{{ $booking->id }}', {{ $booking->calculateExpectedRefund()['total_paid'] }}, {{ $booking->calculateExpectedRefund()['penalty_percent'] }}, {{ $booking->calculateExpectedRefund()['penalty_amount'] }}, {{ $booking->stripe_payment_id ? 1 : 0 }})"
-                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-3 px-6 rounded-xl uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600">
+                                    class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 border border-red-600 text-black dark:text-white text-xs py-3 px-6 rounded-[2rem] uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition">
                                     Annulla
                                 </button>
                             @endif
@@ -779,7 +779,7 @@
             $nextTick(() => initLightbox());
         }
         document.body.classList.toggle('no-scroll', open || value?.status === 'open');
-    });"
+    });" x-trap="open"
         @open-booking-modal.window="open = true; b = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.detail ? $event.detail.detail : $event.detail)"
         @close-booking-modal.window="closeAll()"
         @keydown.escape.window="if (!document.querySelector('.glightbox-container') && !viewingDocs?.status) { open = false; }"
@@ -798,7 +798,7 @@
                 x-transition:leave="transition ease-in duration-200 transform"
                 x-transition:leave-start="translate-y-0 sm:scale-100 opacity-100"
                 x-transition:leave-end="translate-y-full sm:translate-y-0 sm:scale-95 opacity-0"
-                class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-2xl sm:my-3 w-full sm:max-w-2xl border-2 border-gray-200 dark:border-gray-700">
+                class="relative transform overflow-hidden rounded-[2rem] bg-white dark:bg-gray-800 text-left shadow-2xl sm:my-3 w-full sm:max-w-2xl border-2 border-gray-200 dark:border-gray-700">
 
                 {{-- Header --}}
                 <div
@@ -806,7 +806,7 @@
 
                     {{-- ID --}}
                     <div class="flex justify-between items-center">
-                        <h3 class="text-xl text-gray-900 dark:text-white uppercase tracking-wider">
+                        <h3 tabindex="1" class="text-xl text-gray-900 dark:text-white uppercase tracking-wider focus:outline-none">
                             Prenotazione
                             <span class="id">#<span x-text="b.id"></span></span>
                         </h3>
@@ -816,19 +816,19 @@
 
                             {{-- Damage --}}
                             <a :href="b.damage_url"
-                                class="text-amber-600 hover:text-amber-700 dark:hover:text-amber-500 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none">
+                                class="text-amber-600 hover:text-amber-700 dark:hover:text-amber-500 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-xl transition focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <i class="fa-solid fa-exclamation-triangle text-xl"></i>
                             </a>
 
                             <!-- Edit -->
                             <a :href="b.edit_url"
-                                class="text-amber-600 hover:text-amber-700 dark:hover:text-amber-500 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none">
+                                class="text-amber-600 hover:text-amber-700 dark:hover:text-amber-500 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-xl transition focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <i class="fa-solid fa-pen-to-square text-xl"></i>
                             </a>
 
                             <!-- Close -->
                             <button @click="closeAll()" type="button"
-                                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none">
+                                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-xl transition focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <i class="fa-solid fa-xmark text-xl"></i>
                             </button>
                         </div>
@@ -862,7 +862,7 @@
                                     Cliente
                                 </h4>
                                 <div
-                                    class="bg-gray-50 dark:bg-gray-900 font-black rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
+                                    class="bg-gray-50 dark:bg-gray-900 font-black rounded-[2rem] border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
 
                                     {{-- Name --}}
                                     <div class="p-2">
@@ -878,7 +878,7 @@
                                         <p class="text-gray-400 uppercase tracking-wider mb-0.5">Email:
                                         </p>
                                         <a :href="'mailto:' + b.email"
-                                            class="px-3 py-0.5 font-black italic text-gray-900 dark:text-white hover:underline block border border-transparent"
+                                            class="px-3 py-0.5 font-black italic text-gray-900 dark:text-white hover:underline block border border-transparent transition focus:outline-none focus:ring-2 focus:ring-amber-500"
                                             x-text="b.email"></a>
                                     </div>
 
@@ -897,7 +897,7 @@
                                 <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Stato
                                 </h4>
                                 <div
-                                    class="bg-gray-50 dark:bg-gray-900 font-black rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
+                                    class="bg-gray-50 dark:bg-gray-900 font-black rounded-[2rem] border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
 
                                     {{-- Payment --}}
                                     <div class="p-2">
@@ -1039,7 +1039,7 @@
                         </h4>
 
                         <div
-                            class="bg-gray-50 dark:bg-gray-900 font-black rounded-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
+                            class="bg-gray-50 dark:bg-gray-900 font-black rounded-[2rem] border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
 
                             {{-- Camper --}}
                             <div class="p-2">
@@ -1067,7 +1067,7 @@
                         <h4 class="text-lg font-black text-gray-400 uppercase tracking-widest mb-2">Bilancio</h4>
 
                         <div
-                            class="bg-gray-50 dark:bg-gray-900 font-black p-4 rounded-xl space-y-2.5 border border-gray-100 dark:border-gray-700">
+                            class="bg-gray-50 dark:bg-gray-900 font-black p-4 rounded-[2rem] space-y-2.5 border border-gray-100 dark:border-gray-700">
 
                             {{-- Total --}}
                             <div class="flex justify-between text-sm">
@@ -1179,17 +1179,17 @@
                                     <div class="text-center pt-2">
 
                                         <div
-                                            class="group relative flex items-center justify-center w-full border border-green-500 rounded-xl overflow-hidden shadow-sm bg-green-50 dark:bg-green-900/20">
+                                            class="group relative flex items-center justify-center w-full border border-green-500 rounded-[2rem] overflow-hidden shadow-sm bg-green-50 dark:bg-green-900/20">
 
                                             <a :href="damage.receipt_url" target="_blank"
-                                                class="flex items-center justify-center gap-2 w-full uppercase tracking-widest text-green-600 dark:text-green-500 font-black text-xs py-3 px-4 transition-colors hover:bg-green-100 dark:hover:bg-green-900/40">
+                                                class="flex items-center justify-center gap-2 w-full uppercase tracking-widest text-green-600 dark:text-green-500 font-black text-xs py-3 px-4 transition hover:bg-green-100 dark:hover:bg-green-900/40 focus:outline-none focus:ring-2 focus:ring-amber-500">
                                                 <i class="fa-solid fa-file-lines text-base"></i>
                                                 <span x-text="'Contabile Danno #' + damage.id"></span>
                                             </a>
 
                                             <button type="button"
                                                 @click="rejectReceiptAction(b.id, 'damages', damage.id)"
-                                                class="absolute right-0 top-0 bottom-0 w-12 opacity-100 md:w-0 md:opacity-0 group-hover:md:w-12 group-hover:md:opacity-100 bg-red-500 hover:bg-red-600 text-white transition-all duration-300 ease-in-out flex items-center justify-center overflow-hidden whitespace-nowrap">
+                                                class="absolute right-0 top-0 bottom-0 w-12 opacity-100 md:w-0 md:opacity-0 group-hover:md:w-12 group-hover:md:opacity-100 bg-red-500 hover:bg-red-600 text-white transition duration-300 ease-in-out flex items-center justify-center overflow-hidden whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500">
                                                 <span class="text-lg font-bold">&times;</span>
                                             </button>
                                         </div>
@@ -1203,16 +1203,16 @@
                                 <div class="text-center pt-2">
 
                                     <div
-                                        class="group relative flex items-center justify-center w-full border border-green-500 rounded-xl overflow-hidden shadow-sm bg-green-50 dark:bg-green-900/20">
+                                        class="group relative flex items-center justify-center w-full border border-green-500 rounded-[2rem] overflow-hidden shadow-sm bg-green-50 dark:bg-green-900/20">
 
                                         <a :href="b.penalty_receipt" target="_blank"
-                                            class="flex items-center justify-center gap-2 w-full uppercase tracking-widest text-green-600 dark:text-green-500 font-black text-xs py-3 px-4 transition-colors hover:bg-green-100 dark:hover:bg-green-900/40">
+                                            class="flex items-center justify-center gap-2 w-full uppercase tracking-widest text-green-600 dark:text-green-500 font-black text-xs py-3 px-4 transition hover:bg-green-100 dark:hover:bg-green-900/40 focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             <i class="fa-solid fa-file-lines text-base"></i>
                                             <span>Contabile Penale</span>
                                         </a>
 
                                         <button type="button" @click="rejectReceiptAction(b.id, 'penalty')"
-                                            class="absolute right-0 top-0 bottom-0 w-12 opacity-100 md:w-0 md:opacity-0 group-hover:md:w-12 group-hover:md:opacity-100 bg-red-500 hover:bg-red-600 text-white transition-all duration-300 ease-in-out flex items-center justify-center overflow-hidden whitespace-nowrap">
+                                            class="absolute right-0 top-0 bottom-0 w-12 opacity-100 md:w-0 md:opacity-0 group-hover:md:w-12 group-hover:md:opacity-100 bg-red-500 hover:bg-red-600 text-white transition duration-300 ease-in-out flex items-center justify-center overflow-hidden whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             <span class="text-lg font-bold">&times;</span>
                                         </button>
                                     </div>
@@ -1224,7 +1224,7 @@
                             <template x-if="b.refund_receipt">
                                 <div class="text-center pt-2">
                                     <a :href="b.refund_receipt" target="_blank"
-                                        class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40">
+                                        class="inline-flex items-center justify-center gap-2 w-full bg-green-50 dark:bg-green-900/20 border border-green-500 text-green-600 dark:text-green-500 font-black text-xs py-3 px-6 rounded-[2rem] uppercase tracking-widest transition shadow-sm hover:bg-green-100 dark:hover:bg-green-900/40 focus:outline-none focus:ring-2 focus:ring-amber-500">
                                         <i class="fa-solid fa-file-lines text-base"></i>
                                         Contabile Rimborso
                                     </a>
@@ -1238,7 +1238,7 @@
                                     <template x-if="b.dl_front || b.dl_back">
                                         <button
                                             @click="viewingDocs = { status: `open`, title: `Patente di Guida`, docs: [b.dl_front, b.dl_back], fields: ['driver_license_front', 'driver_license_back'] }"
-                                            class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
+                                            class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-[2rem] uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             <i class="fa-solid fa-id-card text-base"></i>
                                             Patente di Guida
                                         </button>
@@ -1248,7 +1248,7 @@
                                     <template x-if="b.id_front || b.id_back">
                                         <button
                                             @click="viewingDocs = { status: `open`, title: `Carta d'Identità`, docs: [b.id_front, b.id_back], fields: ['id_card_front', 'id_card_back'] }"
-                                            class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-xl uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40">
+                                            class="inline-flex items-center justify-center gap-2 w-full bg-amber-50 dark:bg-amber-900/20 border border-amber-500 text-amber-600 dark:text-amber-500 font-black text-xs py-3 px-6 rounded-[2rem] uppercase tracking-widest transition shadow-sm hover:bg-amber-100 dark:hover:bg-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-500">
                                             <i class="fa-solid fa-id-card text-base"></i>
                                             Carta d'Identità
                                         </button>
@@ -1271,7 +1271,7 @@
                         </div>
 
                         {{-- DL & ID MODAL --}}
-                        <div x-show="viewingDocs?.status === 'open'"
+                        <div x-show="viewingDocs?.status === 'open'" x-trap="viewingDocs"
                             @keydown.escape.window.stop="if (!document.querySelector('.glightbox-container') && viewingDocs?.status === 'open') viewingDocs.status = null"
                             class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
 
@@ -1283,7 +1283,7 @@
                                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                             </div>
 
-                            <div class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 p-4 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative z-10"
+                            <div class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 p-4 rounded-[2rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto relative z-10"
                                 @click.stop x-show="viewingDocs?.status === 'open'"
                                 x-transition:enter="transition ease-out duration-300 transform"
                                 x-transition:enter-start="opacity-0 translate-y-4 scale-95"
@@ -1293,10 +1293,10 @@
                                 x-transition:leave-end="opacity-0 translate-y-4 scale-95">
 
                                 <div class="flex justify-between items-center mb-4">
-                                    <h4 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider"
+                                    <h4 tabindex="1" class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider focus:outline-none"
                                         x-text="viewingDocs ? viewingDocs.title : ''"></h4>
                                     <button @click="viewingDocs.status = null"
-                                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none">
+                                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-xl transition focus:outline-none focus:ring-2 focus:ring-amber-500">
                                         <i class="fa-solid fa-xmark text-xl"></i>
                                     </button>
                                 </div>
@@ -1305,12 +1305,12 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <template x-for="(doc, index) in (viewingDocs ? viewingDocs.docs : [])">
                                         <template x-if="doc">
-                                            <div class="relative min-h-[300px] flex items-center justify-center border-2 rounded-lg overflow-hidden"
+                                            <div class="relative min-h-[300px] flex items-center justify-center border-2 rounded-[2rem] overflow-hidden"
                                                 :class="toReject.includes(viewingDocs.fields[index]) ? 'border-red-500' :
                                                     'border-gray-200 dark:border-gray-700'">
 
                                                 <button @click="toggleReject(viewingDocs.fields[index])"
-                                                    class="absolute top-2 right-2 z-20 p-1 rounded-full shadow-md transition"
+                                                    class="absolute top-2 right-2 z-20 p-1 rounded-full shadow-md transition focus:outline-none focus:ring-2 focus:ring-red-500"
                                                     :class="toReject.includes(viewingDocs.fields[index]) ?
                                                         'bg-red-600 text-white' :
                                                         'bg-white/80 text-gray-500 hover:bg-red-100'">
@@ -1319,7 +1319,7 @@
 
                                                 <a :href="doc" class="glightbox w-full h-full">
                                                     <img :src="doc"
-                                                        class="w-full h-full object-cover cursor-zoom-in hover:opacity-90 transition-opacity">
+                                                        class="w-full h-full object-cover cursor-zoom-in hover:opacity-90 transition">
                                                 </a>
                                             </div>
                                         </template>
@@ -1355,7 +1355,7 @@
             x-transition:enter-end="opacity-100" @click="showDocModal = false">
         </div>
 
-        <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-6 w-full sm:max-w-lg border-2 border-gray-200 dark:border-gray-700 shadow-2xl z-10 my-auto"
+        <div class="relative bg-white dark:bg-gray-800 rounded-[2rem] p-6 w-full sm:max-w-lg border-2 border-gray-200 dark:border-gray-700 shadow-2xl z-10 my-auto"
             x-show="showDocModal" x-trap="showDocModal"
             x-transition:enter="transition ease-out duration-300 transform"
             x-transition:enter-start="opacity-0 translate-y-4 scale-95"
@@ -1367,7 +1367,7 @@
                     class="text-gray-900 dark:text-white uppercase text-center text-2xl focus:outline-none">Carica
                     Documenti</h3>
                 <p class="text-md text-gray-400 mt-1 uppercase">Prenotazione
-                    <span class="text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-0.5 px-1 rounded"
+                    <span class="text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-900 py-0.5 px-1"
                         x-text="'#' + selectedBookingId"></span>
                 </p>
             </div>

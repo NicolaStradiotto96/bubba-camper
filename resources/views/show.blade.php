@@ -13,8 +13,7 @@
             <div class="flex items-center justify-center lg:justify-start">
                 <a href="{{ route('index') }}" wire:navigate
                     class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
-                    <i
-                        class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
+                    <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
                     {{ __('Torna indietro') }}
                 </a>
             </div>
@@ -25,7 +24,7 @@
 
                     {{-- AVAILABILITY --}}
                     <div
-                        class="w-full text-center py-3 px-4 rounded-xl mb-4 border transition-all duration-300 {{ $camper->is_active ? 'bg-green-950/20 border-green-500/50 text-green-500' : 'bg-red-950/20 border-red-500/50 text-red-500' }}">
+                        class="w-full text-center py-3 px-4 rounded-[2rem] mb-4 border transition duration-300 {{ $camper->is_active ? 'bg-green-950/20 border-green-500/50 text-green-500' : 'bg-red-950/20 border-red-500/50 text-red-500' }}">
                         <p class="text-sm font-black tracking-widest uppercase flex items-center justify-center gap-2">
                             <span
                                 class="w-2 h-2 rounded-full {{ $camper->is_active ? 'bg-green-500 animate-pulse' : 'bg-red-500 animate-pulse' }}"></span>
@@ -49,7 +48,7 @@
                         if (touchStart - touchEnd > 50) next();
                         if (touchStart - touchEnd < -50) prev();
                     "
-                        class="relative overflow-hidden bg-white dark:bg-gray-900 shadow-xl rounded-xl group border border-gray-300 dark:border-gray-700">
+                        class="relative overflow-hidden bg-white dark:bg-gray-900 shadow-xl rounded-[2rem] group border border-gray-300 dark:border-gray-700">
 
                         <div class="relative h-64 sm:h-80 md:h-[500px] w-full">
                             <template x-for="(slide, index) in slides" :key="index">
@@ -107,7 +106,7 @@
 
                         {{-- Seats --}}
                         <div
-                            class="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
+                            class="p-3 bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
                             <span class="block text-sm text-gray-400 uppercase font-semibold tracking-wider">
                                 Posti Viaggio
                             </span>
@@ -121,7 +120,7 @@
 
                         {{-- Beds --}}
                         <div
-                            class="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
+                            class="p-3 bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
                             <span class="block text-sm text-gray-400 uppercase font-semibold tracking-wider">
                                 Posti Letto
                             </span>
@@ -135,7 +134,7 @@
 
                         {{-- Price --}}
                         <div itemprop="offers" itemscope itemtype="https://schema.org/Offer"
-                            class="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
+                            class="p-3 bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
                             <span class="block text-sm text-gray-400 uppercase font-semibold tracking-wider">
                                 Tariffa Attuale
                             </span>
@@ -152,7 +151,7 @@
 
                         {{-- Driver License --}}
                         <div
-                            class="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
+                            class="p-3 bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
                             <span
                                 class="block text-sm text-gray-400 uppercase font-bold tracking-wider">Requisiti</span>
                             <div
@@ -164,7 +163,7 @@
 
                         {{-- Abroad --}}
                         <div
-                            class="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
+                            class="p-3 bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
                             <span class="block text-sm text-gray-400 uppercase font-bold tracking-wider">
                                 Viaggi all'Estero
                             </span>
@@ -177,7 +176,7 @@
 
                         {{-- Insurance --}}
                         <div
-                            class="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
+                            class="p-3 bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
                             <span class="block text-sm text-gray-400 uppercase font-bold tracking-wider">
                                 Copertura Danni
                             </span>
@@ -190,7 +189,7 @@
 
                         {{-- Animals --}}
                         <div
-                            class="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
+                            class="p-3 bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
                             <span class="block text-sm text-gray-400 uppercase font-bold tracking-wider">
                                 Animali a Bordo
                             </span>
@@ -203,7 +202,7 @@
 
                         {{-- Smokers --}}
                         <div
-                            class="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
+                            class="p-3 bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center overflow-hidden">
                             <span class="block text-sm text-gray-400 uppercase font-bold tracking-wider">
                                 Fumatori
                             </span>
@@ -219,24 +218,27 @@
                     <div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                             <div class="flex w-full">
-                                <button @click="openSpecs = true" type="button"
-                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
+                                <button @click="openSpecs = true" @keydown.escape.window="openSpecs = false"
+                                    type="button"
+                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-[2rem] shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
                                     <i class="fa-solid fa-gears text-green-500 text-lg"></i>
                                     {{ __('Caratteristiche tecniche') }}
                                 </button>
                             </div>
 
                             <div class="flex w-full">
-                                <button @click="openEquipment = true" type="button"
-                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
+                                <button @click="openEquipment = true" @keydown.escape.window="openEquipment = false"
+                                    type="button"
+                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-[2rem] shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
                                     <i class="fa-solid fa-toolbox text-green-500 text-lg"></i>
                                     {{ __('Equipaggiamento') }}
                                 </button>
                             </div>
 
                             <div class="flex w-full">
-                                <button @click="openPolicies = true" type="button"
-                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-xl shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
+                                <button @click="openPolicies = true" @keydown.escape.window="openPolicies = false"
+                                    type="button"
+                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-[2rem] shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
                                     <i class="fa-solid fa-hand-holding-dollar text-green-500 text-lg"></i>
                                     {{ __('Cauzione e annullamento') }}
                                 </button>
@@ -250,12 +252,19 @@
                     </p>
 
                     <div class="mt-8">
-                        <x-primary-anchor href="{{ route('booking.show', $camper->slug) }}" wire:navigate
-                            x-data="{ loading: false }" @click="loading = true"
-                            x-bind:class="loading ? 'opacity-50 cursor-wait' : ''"
-                            class="w-full py-4 text-lg flex justify-center uppercase tracking-widest font-bold">
-                            {{ __('Prenota questo camper') }}
-                        </x-primary-anchor>
+                        @if ($camper->is_active)
+                            <x-primary-anchor href="{{ route('booking.show', $camper->slug) }}" wire:navigate
+                                x-data="{ loading: false }" @click="loading = true"
+                                x-bind:class="loading ? 'opacity-50 cursor-wait' : ''"
+                                class="w-full py-4 flex justify-center uppercase tracking-widest font-bold">
+                                {{ __('Prenota questo camper') }}
+                            </x-primary-anchor>
+                        @else
+                            <div
+                                class="w-full py-4 text-sm flex justify-center uppercase tracking-widest font-bold bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-[2rem] cursor-not-allowed border border-gray-300 dark:border-gray-700">
+                                {{ __('Non Disponibile') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -275,10 +284,10 @@
                 x-transition:leave="transition ease-in duration-200 transform"
                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-xl border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+                class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-[2rem] border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
 
                 <button @click="openSpecs = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
 
@@ -295,7 +304,8 @@
                         </div>
                     </div>
 
-                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 mt-2 focus:outline-none focus:outline-amber-500">
+                    <div
+                        class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 mt-2 focus:outline-none focus:outline-amber-500">
                         @php
                             $specsOrder = [
                                 'Caratteristiche tecniche' => 'fa-gears',
@@ -347,10 +357,10 @@
                 x-transition:leave="transition ease-in duration-200 transform"
                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-xl border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+                class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-[2rem] border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
 
                 <button @click="openEquipment = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
 
@@ -366,7 +376,8 @@
                         </div>
                     </div>
 
-                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 mt-2 focus:outline-none focus:outline-amber-500">
+                    <div
+                        class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 mt-2 focus:outline-none focus:outline-amber-500">
                         @php
                             $eqOrder = [
                                 'Alla guida' => 'fa-map-location-dot',
@@ -418,10 +429,10 @@
                 x-transition:leave="transition ease-in duration-200 transform"
                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-xl border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+                class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-[2rem] border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
 
                 <button @click="openPolicies = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
 
@@ -437,7 +448,8 @@
                         </div>
                     </div>
 
-                    <div class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 focus:outline-none focus:outline-amber-500">
+                    <div
+                        class="text-sm text-gray-700 dark:text-gray-300 overflow-y-auto flex-grow pr-1 focus:outline-none focus:outline-amber-500">
 
                         {{-- Deposit --}}
                         <div class="py-3 border-b border-gray-100 dark:border-gray-700">
@@ -539,7 +551,7 @@
                                     <div
                                         class="grid grid-cols-1 md:grid-cols-4 gap-3 pt-4 text-xs md:text-sm text-center font-sans font-medium">
                                         <div
-                                            class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-green-500">
+                                            class="p-3 bg-white dark:bg-gray-800/75 rounded-[2rem] border-b-2 border-green-500">
                                             <h5
                                                 class="font-black uppercase tracking-wider text-xs text-green-500 mb-1">
                                                 Preavviso sopra i 61 giorni</h5>
@@ -549,7 +561,7 @@
                                             </p>
                                         </div>
                                         <div
-                                            class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-yellow-500">
+                                            class="p-3 bg-white dark:bg-gray-800/75 rounded-[2rem] border-b-2 border-yellow-500">
                                             <h5
                                                 class="font-black uppercase tracking-wider text-xs text-yellow-500 mb-1">
                                                 Preavviso tra 60 e 31 giorni</h5>
@@ -559,7 +571,7 @@
                                             </p>
                                         </div>
                                         <div
-                                            class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-amber-500">
+                                            class="p-3 bg-white dark:bg-gray-800/75 rounded-[2rem] border-b-2 border-amber-500">
                                             <h5
                                                 class="font-black uppercase tracking-wider text-xs text-amber-500 mb-1">
                                                 Preavviso tra 30 e 11 giorni</h5>
@@ -569,7 +581,7 @@
                                             </p>
                                         </div>
                                         <div
-                                            class="p-3 bg-white dark:bg-gray-800/40 rounded-xl border-b-2 border-red-500">
+                                            class="p-3 bg-white dark:bg-gray-800/75 rounded-[2rem] border-b-2 border-red-500">
                                             <h5 class="font-black uppercase tracking-wider text-xs text-red-500 mb-1">
                                                 Preavviso sotto i 10 giorni</h5>
                                             <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Trattenuta del

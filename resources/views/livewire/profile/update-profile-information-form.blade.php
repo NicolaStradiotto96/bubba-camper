@@ -88,7 +88,7 @@ new class extends Component {
         </p>
     </header>
 
-    <form class="mt-6 space-y-6" novalidate>
+    <form class="mt-6 space-y-2" novalidate>
 
         {{-- First Name and Last Name --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -96,14 +96,18 @@ new class extends Component {
                 <x-input-label for="first_name" :value="__('Nome')" />
                 <x-text-input wire:model.blur="first_name" id="first_name" name="first_name" type="text"
                     class="mt-1 block w-full" required autocomplete="given-name" />
-                <x-input-error class="mt-1 text-center" :messages="$errors->get('first_name')" />
+                <div class="min-h-5 text-center mt-1">
+                    <x-input-error :messages="$errors->get('first_name')" />
+                </div>
             </div>
 
             <div>
                 <x-input-label for="name" :value="__('Cognome')" />
                 <x-text-input wire:model.blur="last_name" id="last_name" name="last_name" type="text"
                     class="mt-1 block w-full" required autocomplete="family-name" />
-                <x-input-error class="mt-1 text-center" :messages="$errors->get('last_name')" />
+                <div class="min-h-5 text-center mt-1">
+                    <x-input-error :messages="$errors->get('last_name')" />
+                </div>
             </div>
         </div>
 
@@ -112,7 +116,9 @@ new class extends Component {
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input wire:model.blur="email" id="email" name="email" type="email" class="mt-1 block w-full"
                 required autocomplete="username" />
-            <x-input-error class="mt-1 text-center" :messages="$errors->get('email')" />
+            <div class="min-h-5 text-center mt-1">
+                <x-input-error :messages="$errors->get('email')" />
+            </div>
 
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !auth()->user()->hasVerifiedEmail())
                 <div>
@@ -133,7 +139,7 @@ new class extends Component {
         </div>
 
         <!-- Phone -->
-        <div class="mt-4" x-data="{
+        <div class="mt-2" x-data="{
             init() {
                 this.$nextTick(() => {
                     if (typeof window.intlTelInput !== 'function') return;
@@ -181,7 +187,9 @@ new class extends Component {
                     class="block w-full text-start" />
             </div>
 
-            <x-input-error :messages="$errors->get('phone')" class="mt-1 text-center" />
+            <div class="min-h-5 text-center mt-1">
+                <x-input-error :messages="$errors->get('phone')" />
+            </div>
         </div>
 
         <div>

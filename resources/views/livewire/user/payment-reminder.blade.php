@@ -17,7 +17,7 @@
         </div>
 
 
-        <div class="bg-amber-50 dark:bg-amber-900/10 p-6 rounded-2xl border-2 border-amber-500 mb-4">
+        <div class="bg-amber-50 dark:bg-amber-900/10 p-6 rounded-[2rem] border-2 border-amber-500 mb-4">
             <div class="relative flex items-center justify-center mb-4">
                 <i class="fa-solid fa-clock text-amber-500 opacity-20 animate-spin text-5xl"
                     style="animation-duration: 10s;"></i>
@@ -81,7 +81,7 @@
         </div>
 
         <div x-transition
-            class="bg-gray-50 dark:bg-gray-900/30 p-6 rounded-2xl border border-red-500 mb-4 transition-all text-center">
+            class="bg-gray-50 dark:bg-gray-900/30 p-6 rounded-[2rem] border border-red-500 mb-4 transition text-center">
             <p class="text-sm font-bold uppercase tracking-widest text-red-500">
                 Tempo scaduto
             </p>

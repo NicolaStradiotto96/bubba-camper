@@ -7,13 +7,13 @@
     <div class="max-w-5xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
-            <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
+            <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
     </div>
 
     <div
-        class="max-w-5xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+        class="max-w-5xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-700">
 
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase mb-6 text-center">
             Gestione Danni
@@ -24,7 +24,7 @@
             <div class="relative">
                 <input type="text" wire:model.live.debounce.300ms="search_id"
                     placeholder="Cerca per ID Danno o Prenotazione..."
-                    class="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition">
+                    class="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-[2rem] text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition">
 
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
@@ -37,7 +37,7 @@
 
         {{-- DESKTOP VIEW --}}
         <div
-            class="hidden md:block bg-white dark:bg-gray-900/30 shadow-xl rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            class="hidden md:block bg-white dark:bg-gray-900/30 shadow-xl rounded-[2rem] border border-gray-200 dark:border-gray-700 overflow-hidden">
             <table class="w-full text-center">
                 <thead class="font-black uppercase text-gray-400 bg-gray-50 dark:bg-gray-700/50">
                     <tr>
@@ -141,7 +141,7 @@
         {{-- MOBILE VIEW --}}
         <div class="md:hidden space-y-4">
             @forelse($damages as $d)
-                <div class="bg-white dark:bg-gray-900/30 p-5 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
+                <div class="bg-white dark:bg-gray-900/30 p-5 rounded-[2rem] shadow-lg border border-gray-200 dark:border-gray-700"
                     wire:click="showDamage({{ $d->id }})">
 
                     <div class="text-center font-black">
@@ -154,7 +154,7 @@
 
                         {{-- Camper --}}
                         <div
-                            class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl space-y-2">
+                            class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl space-y-2">
                             <div class="flex flex-col justify-center items-center">
                                 <p class="text-amber-500">{{ $d->booking->camper->name }}
                                 </p>
@@ -164,7 +164,7 @@
 
                     {{-- Description --}}
                     <div
-                        class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl space-y-2 text-center">
+                        class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl space-y-2 text-center">
                         <p class="text-sm font-black text-gray-400 uppercase tracking-widest mb-1">Descrizione:</p>
                         <p class="text-sm font-bold text-gray-800 dark:text-gray-200">
                             {{ Str::limit($d->description, 50) }}</p>
@@ -172,7 +172,7 @@
 
                     {{-- Costs --}}
                     <div
-                        class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl space-y-2 text-center">
+                        class="my-4 p-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl space-y-2 text-center">
                         @if ($d->status === 'paid')
                             <p class="text-lg font-black text-green-500">
                                 {{ number_format($d->amount, 2, ',', '') }}€</p>
@@ -243,7 +243,7 @@
             x-transition:leave="transition ease-in duration-200 transform"
             x-transition:leave-start="translate-y-0 sm:scale-100 opacity-100"
             x-transition:leave-end="translate-y-4 sm:translate-y-0 sm:scale-95 opacity-0"
-            class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-2xl sm:my-3 w-full sm:max-w-2xl border-2 border-gray-200 dark:border-gray-700"
+            class="relative transform overflow-hidden rounded-[2rem] bg-white dark:bg-gray-800 text-left shadow-2xl sm:my-3 w-full sm:max-w-2xl border-2 border-gray-200 dark:border-gray-700"
             @click.away="open = false">
 
             @if ($selectedDamage)
@@ -255,7 +255,7 @@
                             <span class="damage-id">#{{ $selectedDamage->id }}</span>
                         </h3>
                         <button @click="open = false"
-                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                             <i class="fa-solid fa-xmark text-xl"></i>
                         </button>
                     </div>
@@ -278,7 +278,7 @@
 
                 <div class="p-6 space-y-6 text-center">
                     <div
-                        class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        class="bg-gray-50 dark:bg-gray-900 p-4 rounded-[2rem] border border-gray-100 dark:border-gray-700">
                         <p class="text-lg font-black text-gray-400 uppercase tracking-widest mb-1">Stato:</p>
                         <p
                             class="inline-block font-black px-2 py-0.5 rounded-full border bg-white dark:bg-gray-900 {{ $selectedDamage->status === 'paid' ? 'border-green-500 text-green-500' : 'border-amber-500 text-amber-500 animate-pulse' }}">
@@ -287,7 +287,7 @@
                     </div>
 
                     <div
-                        class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        class="bg-gray-50 dark:bg-gray-900 p-4 rounded-[2rem] border border-gray-100 dark:border-gray-700">
                         <p class="text-lg font-black text-gray-400 uppercase tracking-widest mb-1">Camper:</p>
                         <p
                             class="font-black text-gray-700 dark:text-gray-300">
@@ -296,13 +296,13 @@
                     </div>
 
                     <div
-                        class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        class="bg-gray-50 dark:bg-gray-900 p-4 rounded-[2rem] border border-gray-100 dark:border-gray-700">
                         <p class="text-lg font-black text-gray-400 uppercase tracking-widest mb-1">Descrizione:</p>
                         <p class="font-black text-gray-900 dark:text-white">{{ $selectedDamage->description }}</p>
                     </div>
 
                     <div
-                        class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        class="bg-gray-50 dark:bg-gray-900 p-4 rounded-[2rem] border border-gray-100 dark:border-gray-700">
                         <p class="text-lg font-black text-gray-400 uppercase tracking-widest mb-1">Importo:</p>
                         @if ($selectedDamage->status === 'paid')
                             <p class="font-black text-2xl text-green-500">
@@ -323,7 +323,7 @@
                                     <div class="w-24 sm:w-32 cursor-pointer">
                                         <a href="{{ asset('storage/' . $photo->path) }}" class="glightbox">
                                             <img src="{{ asset('storage/' . $photo->path) }}"
-                                                class="w-full rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:scale-105 transition-transform duration-200">
+                                                class="w-full rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:scale-105 transition duration-200">
                                         </a>
                                     </div>
                                 @endforeach

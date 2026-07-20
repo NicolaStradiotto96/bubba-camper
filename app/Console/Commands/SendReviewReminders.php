@@ -38,7 +38,7 @@ class SendReviewReminders extends Command
         $bookingsQuery->chunkById(100, function ($bookings) {
             foreach ($bookings as $booking) {
                 try {
-                    Mail::to($booking->customer_email)->queue(new BookingReview($booking));
+                    Mail::to($booking->customer_email)->send(new BookingReview($booking));
 
                     Log::create([
                         'booking_id' => $booking->id,

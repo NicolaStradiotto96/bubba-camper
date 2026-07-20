@@ -5,9 +5,9 @@
         <input type="hidden" wire:model="bookingId">
 
         {{-- Driver License --}}
-        <div class="bg-gray-200/50 dark:bg-gray-900/20 p-5 rounded-2xl border border-gray-200 dark:border-gray-700">
+        <div class="bg-gray-200/50 dark:bg-gray-900/20 p-3 rounded-[2rem] border border-gray-200 dark:border-gray-700">
 
-            <label class="block text-xl font-black text-gray-900 dark:text-gray-100 uppercase mb-4 text-center">Patente
+            <label class="block text-xl font-black text-gray-900 dark:text-gray-100 uppercase mb-3 text-center">Patente
                 di Guida</label>
 
             <div class="grid grid-cols-2 gap-4">
@@ -22,7 +22,7 @@
 
                     <button type="button" onclick="document.getElementById('driver_license_front').click()"
                         {{ $existingFiles['driver_license_front'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-[2rem] shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition focus:ring-offset-2 dark:focus:ring-offset-gray-800
                         {{ $existingFiles['driver_license_front'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['driver_license_front'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -44,17 +44,19 @@
                         @if ($driver_license_front)
                             @if (in_array($driver_license_front->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
                                 <img src="{{ $driver_license_front->temporaryUrl() }}"
-                                    class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                                    class="h-20 w-full object-cover rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
                             @else
                                 <div
-                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700">
                                     <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
                                 </div>
                             @endif
                         @endif
                     </div>
 
-                    <x-input-error :messages="$errors->get('driver_license_front')" class="text-xs mt-1" />
+                    <div class="min-h-5 text-center mt-1">
+                        <x-input-error :messages="$errors->get('driver_license_front')" />
+                    </div>
                 </div>
 
                 {{-- Back --}}
@@ -67,7 +69,7 @@
 
                     <button type="button" onclick="document.getElementById('driver_license_back').click()"
                         {{ $existingFiles['driver_license_back'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-[2rem] shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition focus:ring-offset-2 dark:focus:ring-offset-gray-800
                         {{ $existingFiles['driver_license_back'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['driver_license_back'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -89,25 +91,27 @@
                         @if ($driver_license_back)
                             @if (in_array($driver_license_back->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
                                 <img src="{{ $driver_license_back->temporaryUrl() }}"
-                                    class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                                    class="h-20 w-full object-cover rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
                             @else
                                 <div
-                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700">
                                     <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
                                 </div>
                             @endif
                         @endif
                     </div>
 
-                    <x-input-error :messages="$errors->get('driver_license_back')" class="text-xs mt-1" />
+                    <div class="min-h-5 text-center mt-1">
+                        <x-input-error :messages="$errors->get('driver_license_back')" />
+                    </div>
                 </div>
             </div>
         </div>
 
         {{-- ID Card --}}
-        <div class="bg-gray-200/50 dark:bg-gray-900/20 p-5 rounded-2xl border border-gray-200 dark:border-gray-700">
+        <div class="bg-gray-200/50 dark:bg-gray-900/20 p-3 rounded-[2rem] border border-gray-200 dark:border-gray-700">
 
-            <label class="block text-xl font-black text-gray-900 dark:text-gray-100 uppercase mb-4 text-center">Carta
+            <label class="block text-xl font-black text-gray-900 dark:text-gray-100 uppercase mb-3 text-center">Carta
                 d'Identità</label>
 
             <div class="grid grid-cols-2 gap-4">
@@ -122,7 +126,7 @@
 
                     <button type="button" onclick="document.getElementById('id_card_front').click()"
                         {{ $existingFiles['id_card_front'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-[2rem] shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition focus:ring-offset-2 dark:focus:ring-offset-gray-800
                         {{ $existingFiles['id_card_front'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['id_card_front'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -144,17 +148,19 @@
                         @if ($id_card_front)
                             @if (in_array($id_card_front->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
                                 <img src="{{ $id_card_front->temporaryUrl() }}"
-                                    class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                                    class="h-20 w-full object-cover rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
                             @else
                                 <div
-                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700">
                                     <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
                                 </div>
                             @endif
                         @endif
                     </div>
 
-                    <x-input-error :messages="$errors->get('id_card_front')" class="text-xs mt-1" />
+                    <div class="min-h-5 text-center mt-1">
+                        <x-input-error :messages="$errors->get('id_card_front')" />
+                    </div>
                 </div>
 
                 {{-- Back --}}
@@ -167,7 +173,7 @@
 
                     <button type="button" onclick="document.getElementById('id_card_back').click()"
                         {{ $existingFiles['id_card_back'] ?? false ? 'disabled' : '' }}
-                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-xl shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition
+                        class="w-full inline-flex justify-center items-center gap-2 text-white text-xs font-black uppercase tracking-widest py-2 rounded-[2rem] shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-amber-500 transition focus:ring-offset-2 dark:focus:ring-offset-gray-800
                         {{ $existingFiles['id_card_back'] ?? false ? 'bg-gray-400 cursor-not-allowed opacity-60' : 'bg-amber-600 hover:bg-amber-700' }}">
                         <i
                             class="fa-solid {{ $existingFiles['id_card_back'] ?? false ? 'fa-check' : 'fa-cloud-arrow-up' }}"></i>
@@ -189,17 +195,19 @@
                         @if ($id_card_back)
                             @if (in_array($id_card_back->getClientOriginalExtension(), ['jpg', 'jpeg', 'png']))
                                 <img src="{{ $id_card_back->temporaryUrl() }}"
-                                    class="h-20 w-full object-cover rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                                    class="h-20 w-full object-cover rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
                             @else
                                 <div
-                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    class="h-20 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700">
                                     <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
                                 </div>
                             @endif
                         @endif
                     </div>
 
-                    <x-input-error :messages="$errors->get('id_card_back')" class="text-xs mt-1" />
+                    <div class="min-h-5 text-center mt-1">
+                        <x-input-error :messages="$errors->get('id_card_back')" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -208,7 +216,9 @@
             <p>
                 Il caricamento dei documenti implica l'accettazione del trattamento dei dati ai fini
                 della verifica identità, in conformità con la nostra
-                <a href="#" class="text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition hover:underline">Privacy Policy</a>.
+                <a href="#"
+                    class="text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition hover:underline">Privacy
+                    Policy</a>.
             </p>
         </div>
 

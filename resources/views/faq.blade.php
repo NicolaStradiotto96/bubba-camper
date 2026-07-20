@@ -18,12 +18,12 @@
         <div class="max-w-3xl mx-auto px-4 space-y-4 pt-16">
             @foreach ($faqs as $faq)
                 <div x-data="{ open: false }"
-                    class="group border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm transition-all duration-300 focus-within:ring-2 focus-within:ring-amber-500">
+                    class="group border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm transition duration-300 focus-within:ring-2 focus-within:ring-amber-500">
 
                     <button @click="open = !open"
                         class="w-full text-left p-6 flex justify-between items-center focus:outline-none">
                         <span class="font-bold text-gray-900 dark:text-white pr-4">{{ $faq['q'] }}</span>
-                        <i class="fa-solid fa-chevron-down text-amber-500 transition-transform duration-300"
+                        <i class="fa-solid fa-chevron-down text-amber-500 transition duration-300"
                             :class="open ? 'rotate-180' : ''"></i>
                     </button>
 

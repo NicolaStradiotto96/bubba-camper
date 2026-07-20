@@ -78,7 +78,7 @@ new #[Layout('layouts.guest')] class extends Component {
         </x-primary-button>
 
         <button wire:click="logout" type="submit"
-            class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 dark:focus:ring-offset-gray-800 transition">
+            class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 dark:focus:ring-offset-gray-800 transition">
             {{ __('Log Out') }}
         </button>
     </div>

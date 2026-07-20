@@ -249,12 +249,12 @@ class CamperManager extends Component
         return [
             'name.required'        => 'Il nome del camper è obbligatorio.',
             'name.min'             => 'Il nome deve avere almeno 3 caratteri.',
-            'prices_low.required'  => 'Il prezzo per la bassa stagione è obbligatorio.',
-            'prices_low.numeric'   => 'Il prezzo della bassa stagione deve essere un numero.',
-            'prices_mid.required'  => 'Il prezzo per la media stagione è obbligatorio.',
-            'prices_mid.numeric'   => 'Il prezzo della media stagione deve essere un numero.',
-            'prices_high.required' => 'Il prezzo per l\'alta stagione è obbligatorio.',
-            'prices_high.numeric'  => 'Il prezzo dell\'alta stagione deve essere un numero.',
+            'prices_low.required'  => 'Il prezzo è obbligatorio.',
+            'prices_low.numeric'   => 'Il prezzo deve essere un numero.',
+            'prices_mid.required'  => 'Il prezzo è obbligatorio.',
+            'prices_mid.numeric'   => 'Il prezzo deve essere un numero.',
+            'prices_high.required' => 'Il prezzo è obbligatorio.',
+            'prices_high.numeric'  => 'Il prezzo deve essere un numero.',
             'description.required' => 'La descrizione è obbligatoria.',
             'main_image.required'  => 'È necessario caricare un\'immagine principale.',
             'main_image.mimes'     => 'Solo i file di tipo png, jpg o jpeg sono permessi.',
@@ -301,8 +301,6 @@ class CamperManager extends Component
             unset($this->old_images[$index]);
 
             $this->old_images = array_values($this->old_images);
-
-            session()->flash('swal-success', "Foto rimossa dall\'anteprima. Ricorda di salvare le modifiche.");
         }
     }
 

@@ -7,13 +7,13 @@
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
-            <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
+            <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
     </div>
 
     <div
-        class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+        class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-700">
 
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase mb-8 text-center">
             Nuova Prenotazione
@@ -23,20 +23,22 @@
 
             {{-- CUSTOMER INFOS --}}
             <section
-                class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-700 space-y-3">
+                class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-[2rem] border border-gray-100 dark:border-gray-700">
                 <h3
                     class="text-lg font-bold text-amber-500 uppercase tracking-widest flex items-center justify-center gap-2">
                     <i class="fa-solid fa-user"></i> Dati Cliente
                 </h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
 
                     {{-- Email --}}
                     <div>
                         <x-input-label for="customer_email" value="Email" />
                         <x-text-input wire:model.live="customer_email" id="customer_email" class="block mt-1 w-full"
                             type="email" />
-                        <x-input-error :messages="$errors->get('customer_email')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('customer_email')" />
+                        </div>
                     </div>
 
                     {{-- Phone --}}
@@ -89,15 +91,22 @@
                                 autocomplete="tel" class="block w-full text-start" />
                         </div>
 
-                        <x-input-error :messages="$errors->get('customer_phone')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('customer_phone')" />
+                        </div>
                     </div>
+                </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                     {{-- First Name --}}
                     <div>
                         <x-input-label for="customer_first_name" value="Nome" />
                         <x-text-input wire:model.live="customer_first_name" id="customer_first_name"
                             class="block mt-1 w-full" type="text" />
-                        <x-input-error :messages="$errors->get('customer_first_name')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('customer_first_name')" />
+                        </div>
+
                     </div>
 
                     {{-- Last Name --}}
@@ -105,32 +114,36 @@
                         <x-input-label for="customer_last_name" value="Cognome" />
                         <x-text-input wire:model.live="customer_last_name" id="customer_last_name"
                             class="block mt-1 w-full" type="text" />
-                        <x-input-error :messages="$errors->get('customer_last_name')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('customer_last_name')" />
+                        </div>
                     </div>
                 </div>
             </section>
 
             {{-- BOOKING INFOS --}}
             <section
-                class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-700 space-y-3">
+                class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-[2rem] border border-gray-100 dark:border-gray-700">
                 <h3
                     class="text-lg font-bold text-amber-500 uppercase tracking-widest flex items-center justify-center gap-2">
                     <i class="fa-solid fa-calendar-days"></i> Dettagli Noleggio
                 </h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
 
                     {{-- Camper --}}
                     <div>
                         <x-input-label for="camper_id" value="Veicolo" />
                         <select wire:model.live="camper_id" id="camper_id"
-                            class="block mt-1 w-full rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500 dark:text-white text-center">
+                            class="block mt-1 w-full rounded-2xl border-gray-300 dark:bg-gray-900 dark:border-gray-600 focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500 dark:text-white text-center">
                             <option value="">Seleziona un camper...</option>
                             @foreach ($campers as $camper)
                                 <option value="{{ $camper->id }}">{{ $camper->name }}</option>
                             @endforeach
                         </select>
-                        <x-input-error :messages="$errors->get('camper_id')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('camper_id')" />
+                        </div>
                     </div>
 
                     {{-- Price --}}
@@ -138,12 +151,14 @@
                         <x-input-label for="total_price" value="Prezzo Totale (€)" />
                         <x-text-input x-price wire:model.blur="total_price" id="total_price" class="block mt-1 w-full"
                             type="text" step="0.01" />
-                        <x-input-error :messages="$errors->get('total_price')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('total_price')" />
+                        </div>
                     </div>
                 </div>
 
                 {{-- Calendar --}}
-                <div wire:ignore.self wire:key="calendar-container-{{ $camper_id }}">
+                <div wire:ignore.self wire:key="calendar-container-{{ $camper_id }}" class="mt-2">
                     <x-input-label value="Intervallo Noleggio" />
 
                     <input type="text" id="date_range" name="date_range" autocomplete="off" x-data="{ instance: null }"
@@ -182,10 +197,12 @@
                             instance.clear();
                             updateDisabledDates();
                         });"
-                        class="w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-md shadow-sm text-center disabled:cursor-wait disabled:opacity-50"
+                        class="w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-2xl shadow-sm text-center disabled:cursor-wait disabled:opacity-50"
                         placeholder="Seleziona date...">
 
-                    <x-input-error :messages="$errors->get('date_range')" class="text-center mt-1" />
+                    <div class="min-h-5 text-center mt-1">
+                        <x-input-error :messages="$errors->get('date_range')" />
+                    </div>
                 </div>
             </section>
 

@@ -43,7 +43,7 @@ class CleanupUnpaidBookings extends Command
                         'documents_status' => 'not_required',
                     ]);
 
-                    Mail::to($booking->customer_email)->queue(new BookingExpired($booking));
+                    Mail::to($booking->customer_email)->send(new BookingExpired($booking));
 
                     $processed++;
                     $this->info("Booking {$booking->id} scaduta. Email in coda per {$booking->customer_email}.");

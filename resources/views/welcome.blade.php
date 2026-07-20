@@ -41,7 +41,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <article
-                    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 relative">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 relative">
                     <div class="flex mb-4">
                         @for ($i = 0; $i < 5; $i++)
                             <i class="fa-solid fa-star text-amber-400 text-md"></i>
@@ -64,7 +64,7 @@
                 </article>
 
                 <article
-                    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700">
                     <div class="flex text-amber-400 mb-4">
                         @for ($i = 0; $i < 5; $i++)
                             <i class="fa-solid fa-star text-amber-400 text-md"></i>
@@ -87,7 +87,7 @@
                 </article>
 
                 <article
-                    class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700">
                     <div class="flex text-amber-400 mb-4">
                         @for ($i = 0; $i < 5; $i++)
                             <i class="fa-solid fa-star text-amber-400 text-md"></i>

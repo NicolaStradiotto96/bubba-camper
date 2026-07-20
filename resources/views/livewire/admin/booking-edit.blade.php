@@ -7,13 +7,13 @@
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
-            <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
+            <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
     </div>
 
     <div
-        class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+        class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-700">
 
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase text-center mb-3">
             Modifica Prenotazione <strong class="id">#{{ $booking->id }}</strong>
@@ -30,7 +30,7 @@
             </p>
         </div>
 
-        <form class="space-y-6" novalidate>
+        <form novalidate>
 
             {{-- Calendar --}}
             <div wire:ignore wire:key="calendar-container-{{ $camper_id }}">
@@ -62,16 +62,21 @@
                     instance.set('disable', booked);
                     instance.redraw();
                 });"
-                    class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-md shadow-sm text-center"
+                    class="w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-2xl shadow-sm text-center"
                     placeholder="Seleziona date...">
             </div>
-            @error('start_date')
-                <div class="text-red-500 text-sm font-bold mt-2">{{ $message }}</div>
-            @enderror
-            <x-input-error :messages="$errors->get('new_dates_range')" class="mt-1" />
+
+            <div class="min-h-5 text-center mt-1">
+                @error('start_date')
+                    <div class="text-red-500 text-sm font-bold mt-2">{{ $message }}</div>
+                @enderror
+                <x-input-error :messages="$errors->get('new_dates_range')" />
+            </div>
+
 
             {{-- Price --}}
-            <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-700">
+            <div
+                class="mt-2 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-[2rem] border border-gray-100 dark:border-gray-600">
                 <div class="flex justify-between items-center text-lg font-bold">
                     <span class="text-gray-500">Prezzo Originale:</span>
                     <span class="text-gray-400 line-through">€ {{ number_format($booking->total_price, 2) }}</span>

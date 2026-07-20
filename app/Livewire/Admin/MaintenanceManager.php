@@ -53,8 +53,8 @@ class MaintenanceManager extends Component
         ], [
             'camper_id.required'  => 'Devi selezionare un camper',
             'camper_id.exists'    => 'Il camper selezionato non è valido',
-            'start_date.required' => 'Devi selezionare una data di inizio',
-            'end_date.required'   => 'Devi selezionare una data di fine',
+            'start_date.required' => 'Devi selezionare una data',
+            'end_date.required'   => 'Devi selezionare una data',
             'end_date.after_or_equal' => 'La data di fine non può essere precedente a quella di inizio',
         ]);
 

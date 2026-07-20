@@ -62,16 +62,18 @@ new #[Layout('layouts.guest')] class extends Component {
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form wire:submit="sendPasswordResetLink">
+    <form wire:submit="sendPasswordResetLink" novalidate>
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required
                 autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <div class="min-h-5 text-center mt-1">
+                <x-input-error :messages="$errors->get('email')" />
+            </div>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex items-center justify-center mt-2">
             <x-primary-button>
                 {{ __('Invia link via email') }}
             </x-primary-button>

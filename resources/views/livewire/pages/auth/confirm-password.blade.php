@@ -57,7 +57,7 @@ new #[Layout('layouts.guest')] class extends Component {
         {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
     </div>
 
-    <form wire:submit="confirmPassword">
+    <form wire:submit="confirmPassword" novalidate>
         <!-- Password -->
         <div>
             <x-input-label for="password" :value="__('Password')" />
@@ -65,10 +65,12 @@ new #[Layout('layouts.guest')] class extends Component {
             <x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password"
                 required autocomplete="current-password" />
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <div class="min-h-5 text-center mt-1">
+                <x-input-error :messages="$errors->get('password')" />
+            </div>
         </div>
 
-        <div class="flex justify-end mt-4">
+        <div class="flex items-center justify-center mt-2">
             <x-primary-button>
                 {{ __('Confirm') }}
             </x-primary-button>

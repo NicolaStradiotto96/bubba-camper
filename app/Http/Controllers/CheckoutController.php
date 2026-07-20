@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Mail\PaymentReminder;
 use App\Models\Booking;
+use App\Models\Log;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -118,7 +118,7 @@ class CheckoutController extends Controller
                     ['email' => $booking->customer_email]
                 );
             } catch (\Exception $e) {
-                Log::error("Errore invio promemoria pagamento [Booking #{$booking->id}]:" . $e->getMessage());
+                \Log::error("Errore invio promemoria pagamento [Booking #{$booking->id}]:" . $e->getMessage());
             }
 
             $request->session()->put('reminder_sent_' . $booking->id, true);

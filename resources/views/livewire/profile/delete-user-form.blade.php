@@ -60,10 +60,12 @@ new class extends Component {
                 <x-text-input wire:model="password" id="password" name="password" type="password"
                     class="mt-1 block max-w-sm w-full" placeholder="{{ __('Password') }}" />
 
-                <x-input-error :messages="$errors->get('password')" class="mt-1 text-center" />
+                <div class="min-h-5 text-center mt-1">
+                    <x-input-error :messages="$errors->get('password')" />
+                </div>
             </div>
 
-            <div class="mt-6 flex flex-col-reverse sm:flex-row items-center gap-3 w-full sm:w-auto justify-center">
+            <div class="mt-4 flex flex-col-reverse sm:flex-row items-center gap-3 w-full sm:w-auto justify-center">
                 <x-secondary-button x-on:click="$dispatch('close')" wire:click="$set('password', '')"
                     class="w-full sm:w-auto justify-center">
                     {{ __('Annulla') }}

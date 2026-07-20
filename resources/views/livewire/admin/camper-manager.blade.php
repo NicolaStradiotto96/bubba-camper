@@ -7,13 +7,13 @@
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
         <a href="{{ route('dashboard') }}" wire:navigate
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
-            <i class="fa-solid fa-arrow-left mr-1.5 transition-transform duration-300 group-hover:-translate-x-1"></i>
+            <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
         </a>
     </div>
 
     <div
-        class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+        class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-700">
         <h2 class="text-3xl font-black text-gray-900 dark:text-white uppercase mb-8 text-center">
             {{ $isEditMode ? 'Modifica Camper' : 'Crea Camper' }}
         </h2>
@@ -21,7 +21,8 @@
         <form class="space-y-8" novalidate>
 
             {{-- GENERAL INFORMATIONS --}}
-            <section class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+            <section
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-[2rem] border border-gray-200 dark:border-gray-700">
                 <h3
                     class="text-base sm:text-lg font-bold text-amber-500 uppercase tracking-widest mb-4 flex justify-center items-center gap-2">
                     <i class="fa-solid fa-info-circle"></i> Informazioni Generali
@@ -32,7 +33,9 @@
                             <x-input-label for="name" value="Nome Camper" />
                             <x-text-input wire:model.blur="name" id="name" class="block mt-1 w-full"
                                 type="text" />
-                            <x-input-error :messages="$errors->get('name')" class="text-center mt-1" />
+                            <div class="min-h-5 text-center mt-1">
+                                <x-input-error :messages="$errors->get('name')" />
+                            </div>
                         </div>
                     </div>
 
@@ -43,46 +46,55 @@
                                 <input type="checkbox" wire:model.blur="is_active" class="sr-only peer">
 
                                 <div
-                                    class="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-500 transition rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600 dark:peer-checked:bg-amber-500">
+                                    class="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-500 transition rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition peer-checked:bg-amber-600 dark:peer-checked:bg-amber-500">
                                 </div>
                             </label>
-                            <x-input-error :messages="$errors->get('is_active')" class="text-center mt-1" />
+                            <div class="min-h-5 text-center mt-1">
+                                <x-input-error :messages="$errors->get('is_active')" />
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-4 grid grid-cols-3 gap-4">
+                <div class="mt-2 grid grid-cols-3 gap-4">
                     <div>
                         <x-input-label for="prices_low" value="Stagione Bassa (€)" />
                         <x-text-input wire:model.blur="prices_low" id="prices_low" type="text" class="mt-1 w-full" />
-                        <x-input-error :messages="$errors->get('prices_low')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('prices_low')" />
+                        </div>
                     </div>
                     <div>
                         <x-input-label for="prices_mid" value="Stagione Media (€)" />
                         <x-text-input wire:model.blur="prices_mid" id="prices_mid" type="text" class="mt-1 w-full" />
-                        <x-input-error :messages="$errors->get('prices_mid')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('prices_mid')" />
+                        </div>
 
                     </div>
                     <div>
                         <x-input-label for="prices_high" value="Stagione Alta (€)" />
                         <x-text-input wire:model.blur="prices_high" id="prices_high" type="text"
                             class="mt-1 w-full" />
-                        <x-input-error :messages="$errors->get('prices_high')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('prices_high')" />
+                        </div>
                     </div>
                 </div>
 
-                <div class="mt-4">
+                <div class="mt-2">
                     <x-input-label for="description" value="Descrizione" />
                     <textarea wire:model.blur="description" id="description" rows="3"
-                        class="text-center mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-md shadow-sm resize-none"></textarea>
-                    <x-input-error :messages="$errors->get('description')" class="text-center mt-1" />
-
+                        class="text-center mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-[2rem] shadow-sm resize-none"></textarea>
+                    <div class="min-h-5 text-center mt-1">
+                        <x-input-error :messages="$errors->get('description')" />
+                    </div>
                 </div>
             </section>
 
             {{-- MAIN INFORMATIONS --}}
             <section x-data="{ open: false }"
-                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700">
 
                 <div @click="open = !open" class="flex justify-between items-center cursor-pointer">
                     <h3
@@ -95,9 +107,9 @@
                     </button>
                 </div>
 
-                <div x-show="open" x-transition:enter="transition-all ease-out duration-300"
+                <div x-show="open" x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="max-h-0 opacity-0" x-transition:enter-end="max-h-[2000px] opacity-100"
-                    x-transition:leave="transition-all ease-in duration-300"
+                    x-transition:leave="transition ease-in duration-300"
                     x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
                     class="space-y-4 mt-4 overflow-hidden">
 
@@ -125,7 +137,7 @@
 
             {{-- SPECS --}}
             <section x-data="{ open: false }"
-                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700">
 
                 <div @click="open = !open" class="flex justify-between items-center cursor-pointer">
                     <h3
@@ -138,15 +150,15 @@
                     </button>
                 </div>
 
-                <div x-show="open" x-transition:enter="transition-all ease-out duration-300"
+                <div x-show="open" x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="max-h-0 opacity-0" x-transition:enter-end="max-h-[2000px] opacity-100"
-                    x-transition:leave="transition-all ease-in duration-300"
+                    x-transition:leave="transition ease-in duration-300"
                     x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
                     class="space-y-4 mt-4 overflow-hidden">
 
                     <div x-data="{ sub: 'Caratteristiche tecniche' }" class="p-1">
                         <select x-model="sub"
-                            class="w-full mb-4 rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-white focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500">
+                            class="w-full mb-4 rounded-2xl border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-white focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500">
                             @foreach (array_keys($camperAttributes['specs']) as $sub)
                                 <option value="{{ $sub }}">{{ $sub }}</option>
                             @endforeach
@@ -184,7 +196,7 @@
 
             {{-- EQUIPMENT --}}
             <section x-data="{ open: false }"
-                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700">
 
                 <div @click="open = !open" class="flex justify-between items-center cursor-pointer">
                     <h3
@@ -197,15 +209,15 @@
                     </button>
                 </div>
 
-                <div x-show="open" x-transition:enter="transition-all ease-out duration-300"
+                <div x-show="open" x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="max-h-0 opacity-0" x-transition:enter-end="max-h-[2000px] opacity-100"
-                    x-transition:leave="transition-all ease-in duration-300"
+                    x-transition:leave="transition ease-in duration-300"
                     x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
                     class="space-y-4 mt-4 overflow-hidden">
 
                     <div x-data="{ sub: 'Alla guida' }" class="p-1">
                         <select x-model="sub"
-                            class="w-full mb-4 rounded-md border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-white focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500">
+                            class="w-full mb-4 rounded-2xl border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-white focus:border-amber-500 dark:focus:border-amber-500 focus:outline-none focus:ring-amber-500 dark:focus:ring-amber-500">
                             @foreach (array_keys($camperAttributes['equipment']) as $sub)
                                 <option value="{{ $sub }}">{{ $sub }}</option>
                             @endforeach
@@ -243,7 +255,7 @@
 
             {{-- POLICIES --}}
             <section x-data="{ open: false }"
-                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700">
 
                 <div @click="open = !open" class="flex justify-between items-center cursor-pointer">
                     <h3
@@ -256,9 +268,9 @@
                     </button>
                 </div>
 
-                <div x-show="open" x-transition:enter="transition-all ease-out duration-300"
+                <div x-show="open" x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="max-h-0 opacity-0" x-transition:enter-end="max-h-[2000px] opacity-100"
-                    x-transition:leave="transition-all ease-in duration-300"
+                    x-transition:leave="transition ease-in duration-300"
                     x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
                     class="space-y-4 mt-4 overflow-hidden">
 
@@ -285,7 +297,8 @@
             </section>
 
             {{-- IMAGES --}}
-            <section class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+            <section
+                class="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-[2rem] border border-gray-200 dark:border-gray-700">
                 <h3 class="text-amber-500 font-bold uppercase mb-6 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-images"></i> Contenuti Multimediali
                 </h3>
@@ -294,7 +307,7 @@
 
                     {{-- Main Image --}}
                     <div
-                        class="w-full text-center flex flex-col justify-between p-4 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-900/30">
+                        class="w-full text-center flex flex-col justify-between p-4 rounded-[2rem] border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-900/30">
                         <div>
                             <label class="block text-sm font-bold text-gray-900 dark:text-gray-100 uppercase mb-4">
                                 Foto Principale
@@ -306,7 +319,7 @@
                                     onchange="document.getElementById('text-main-image').innerText = this.files[0] ? this.files[0].name : 'Nessun file selezionato'" />
 
                                 <button type="button" onclick="document.getElementById('main_image').click()"
-                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl transition shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-[2rem] transition shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
                                     <i class="fa-solid fa-camera"></i> Sfoglia...
                                 </button>
 
@@ -323,14 +336,14 @@
                                 <span class="text-xs uppercase font-black tracking-wider text-amber-500 mb-1">Nuova
                                     immagine</span>
                                 <div
-                                    class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                                    class="relative inline-block shadow-lg rounded-[2rem] overflow-hidden border border-gray-200 dark:border-gray-700">
                                     <img src="{{ $main_image->temporaryUrl() }}" class="h-24 w-40 object-cover">
                                 </div>
                             @elseif ($isEditMode && $image_path)
                                 <span class="text-xs uppercase font-black tracking-wider text-gray-400 mb-1">Immagine
                                     attuale</span>
                                 <div
-                                    class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                                    class="relative inline-block shadow-lg rounded-[2rem] overflow-hidden border border-gray-200 dark:border-gray-700">
                                     <img src="{{ asset('storage/' . $image_path) }}" class="h-24 w-40 object-cover">
                                 </div>
                             @else
@@ -340,14 +353,14 @@
                             @endif
                         </div>
 
-                        <div class="min-h-[24px] text-center mt-2">
-                            <x-input-error :messages="$errors->get('main_image')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('main_image')" />
                         </div>
                     </div>
 
                     {{-- Gallery Images --}}
                     <div
-                        class="w-full text-center flex flex-col justify-between p-4 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-900/30">
+                        class="w-full text-center flex flex-col justify-between p-4 rounded-[2rem] border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-900/30">
                         <div>
                             <label class="block text-sm font-bold text-gray-900 dark:text-gray-100 uppercase mb-4">
                                 Galleria Immagini
@@ -359,7 +372,7 @@
                                     onchange="document.getElementById('text-gallery-images').innerText = this.files.length > 0 ? this.files.length + ' file selezionati' : 'Nessun file selezionato'" />
 
                                 <button type="button" onclick="document.getElementById('images').click()"
-                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                                    class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-[2rem] shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 transition focus:ring-offset-2 dark:focus:ring-offset-gray-800">
                                     <i class="fa-solid fa-camera"></i> Sfoglia...
                                 </button>
 
@@ -383,7 +396,7 @@
                                             class="relative shadow rounded-lg overflow-hidden border border-amber-500 group">
                                             <img src="{{ $img->temporaryUrl() }}" class="h-16 w-16 object-cover">
                                             <button type="button" wire:click="removeNewImage({{ $index }})"
-                                                class="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white w-4 h-4 rounded-bl flex items-center justify-center transition-colors focus:outline-none">
+                                                class="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white w-4 h-4 rounded-bl flex items-center justify-center transition focus:outline-none">
                                                 <i class="fa-solid fa-xmark text-xs"></i>
                                             </button>
                                         </div>
@@ -401,7 +414,7 @@
                                             <img src="{{ asset('storage/' . $old_img) }}"
                                                 class="h-16 w-16 object-cover opacity-85">
                                             <button type="button" wire:click="removeOldImage({{ $index }})"
-                                                class="absolute top-0 right-0 bg-red-600 hover:bg-red-700 text-white w-4 h-4 rounded-bl flex items-center justify-center transition-colors focus:outline-none"
+                                                class="absolute top-0 right-0 bg-red-600 hover:bg-red-700 text-white w-4 h-4 rounded-bl flex items-center justify-center transition focus:outline-none"
                                                 title="Elimina definitivamente questa foto">
                                                 <i class="fa-solid fa-xmark text-xs"></i>
                                             </button>
@@ -417,8 +430,8 @@
                             @endif
                         </div>
 
-                        <div class="min-h-[24px] text-center mt-2">
-                            <x-input-error :messages="$errors->get('images.*')" class="text-center mt-1" />
+                        <div class="min-h-5 text-center mt-1">
+                            <x-input-error :messages="$errors->get('images.*')" />
                         </div>
                     </div>
 
@@ -430,7 +443,8 @@
 
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     @if ($isEditMode)
-                        <x-danger-button type="button" onclick="confirmAction({{ $camper->id }}, 'ELIMINARE IL CAMPER?', 'Questa azione cancellerà definitivamente il mezzo, i prezzi, la scheda tecnica e tutte le immagini dal server. Non potrai tornare indietro!', 'deleteCamper')"
+                        <x-danger-button type="button"
+                            onclick="confirmAction({{ $camper->id }}, 'ELIMINARE IL CAMPER?', 'Questa azione cancellerà definitivamente il mezzo, i prezzi, la scheda tecnica e tutte le immagini dal server. Non potrai tornare indietro!', 'deleteCamper')"
                             class="w-full sm:w-auto justify-center">
                             Elimina Camper
                         </x-danger-button>

@@ -62,6 +62,7 @@ window.addEventListener('livewire:navigating', () => {
                 </div> --}}
                 <div class="flex items-center ml-auto pt-1">
                     <livewire:admin.admin-notification />
+                    <livewire:user.user-notification />
                 </div>
                 @auth
                     <x-dropdown align="right" width="48">
@@ -72,7 +73,7 @@ window.addEventListener('livewire:navigating', () => {
                                     x-on:profile-updated.window="name = $event.detail.first_name"></div>
 
                                 <div class="ms-1">
-                                    <svg class="fill-current h-4 w-4 transform transition-transform duration-500 ease-in-out"
+                                    <svg class="fill-current h-4 w-4 transform transition duration-500 ease-in-out"
                                         :class="{ 'rotate-[180deg]': open }" xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
@@ -87,6 +88,7 @@ window.addEventListener('livewire:navigating', () => {
                             <x-dropdown-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate
                                 class="flex justify-center items-center">
                                 <livewire:admin.admin-notification />
+                                <livewire:user.user-notification />
                                 <span>{{ __('Dashboard') }}</span>
                             </x-dropdown-link>
                             <x-dropdown-link :href="route('profile')" :active="request()->routeIs('profile')" wire:navigate>
@@ -118,7 +120,7 @@ window.addEventListener('livewire:navigating', () => {
             <!-- Hamburger -->
             <div class="-me-2 flex items-center md:hidden">
                 <button @click.stop="open = ! open"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-100/70 dark:hover:bg-gray-900/70 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-gray-100/70 dark:focus:bg-gray-900/70 focus:text-gray-600 dark:focus:text-gray-400 transition duration-150 ease-in-out">
+                    class="inline-flex items-center justify-center p-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-100/70 dark:hover:bg-gray-900/70 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-gray-100/70 dark:focus:bg-gray-900/70 focus:text-gray-600 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -177,7 +179,8 @@ window.addEventListener('livewire:navigating', () => {
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
-                <button wire:click="logout" class="w-full text-start focus:outline-none focus:text-gray-800 dark:focus:text-gray-200 focus:bg-gray-50 dark:focus:bg-gray-700 focus:border-gray-300 dark:focus:border-gray-600 transition">
+                <button wire:click="logout"
+                    class="w-full text-start focus:outline-none focus:text-gray-800 dark:focus:text-gray-200 focus:bg-gray-50 dark:focus:bg-gray-700 focus:border-gray-300 dark:focus:border-gray-600 transition">
                     <x-responsive-nav-link>
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>

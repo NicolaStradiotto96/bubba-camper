@@ -33,9 +33,9 @@
                     {{-- WHATASPP --}}
                     <div class="space-y-6">
                         <a href="https://wa.me/393347538083"
-                            class="flex items-center p-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl hover:shadow-md hover:border-green-300 hover:bg-green-200 dark:hover:border-green-500 dark:hover:bg-green-900/40 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                            class="flex items-center p-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-[2rem] hover:shadow-md hover:border-green-300 hover:bg-green-200 dark:hover:border-green-500 dark:hover:bg-green-900/40 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
                             target="_blank">
-                            <div class="bg-green-500 p-3 rounded-2xl text-white">
+                            <div class="bg-green-500 p-3 rounded-[2rem] text-white">
                                 <i class="fa-brands fa-whatsapp text-2xl"></i>
                             </div>
                             <div class="ml-4 w-full">
@@ -48,8 +48,8 @@
 
                         {{-- OPENING HOURS --}}
                         <div
-                            class="flex items-start p-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl">
-                            <div class="bg-amber-500 p-3 rounded-2xl text-white flex-shrink-0">
+                            class="flex items-start p-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-[2rem]">
+                            <div class="bg-amber-500 p-3 rounded-[2rem] text-white flex-shrink-0">
                                 <i class="fa-solid fa-clock text-2xl"></i>
                             </div>
                             <div class="ml-4 w-full">

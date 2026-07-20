@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class BookingCancelledNotification extends Mailable
+class BookingCancelledNotification extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

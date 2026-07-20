@@ -740,7 +740,7 @@ document.addEventListener('livewire:init', () => {
 
                                     <div class="mt-3 border border-transparent min-h-[100px]">
                                         <div id="penalty-preview-container" class="hidden flex flex-col items-center justify-center min-h-[96px]">
-                                            <div class="relative inline-block shadow-lg rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+                                            <div class="relative inline-block shadow-lg rounded-[2rem] overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
                                                 <img id="penalty-img-preview" src="" class="hidden h-24 w-40 object-cover rounded-[2rem]">
                                                 <div id="penalty-pdf-preview" class="hidden flex flex-col items-center justify-center h-24 w-40 text-red-500 rounded-[2rem]">
                                                     <i class="fa-solid fa-file-pdf text-3xl mb-1"></i>

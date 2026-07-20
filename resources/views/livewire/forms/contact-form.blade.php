@@ -1,4 +1,4 @@
-<div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-300 dark:border-gray-700">
+<div class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-xl border border-gray-300 dark:border-gray-700">
     <div class="mb-6 text-center">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest">
             Contattaci via email
@@ -6,7 +6,7 @@
     </div>
 
     {{-- FORM --}}
-    <form novalidate @form-reset.window="$el.reset()" class="space-y-4">
+    <form novalidate @form-reset.window="$el.reset()" class="space-y-2">
         @csrf
 
         {{-- Honeypot --}}
@@ -19,14 +19,18 @@
                 <x-input-label for="name" :value="__('Nome')" />
                 <x-text-input id="name" name="name" wire:model.blur="name" type="text"
                     class="block mt-1 w-full" required autocomplete="given-name" />
-                <x-input-error :messages="$errors->get('name')" class="mt-1 text-center" />
+                <div class="min-h-5 text-center mt-1">
+                    <x-input-error :messages="$errors->get('name')" />
+                </div>
             </div>
             {{-- Email --}}
             <div>
                 <x-input-label for="email" :value="__('Email')" />
                 <x-text-input id="email" name="email" wire:model.blur="email" type="email"
                     class="block mt-1 w-full" required autocomplete="email" />
-                <x-input-error :messages="$errors->get('email')" class="mt-1 text-center" />
+                <div class="min-h-5 text-center mt-1">
+                    <x-input-error :messages="$errors->get('email')" />
+                </div>
             </div>
         </div>
 
@@ -74,15 +78,17 @@
                         }
                     });"
                         type="text"
-                        class="text-center block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-md shadow-sm transition duration-150 ease-in-out"
+                        class="text-center block mt-1 w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-2xl shadow-sm transition duration-150 ease-in-out"
                         placeholder="Scegli le date di inizio e fine" />
                 </div>
                 <input type="hidden" wire:model="start_date">
                 <input type="hidden" wire:model="end_date">
 
-                <x-input-error :messages="$errors->get('date_range')" class="mt-1 text-center" />
-                <x-input-error :messages="$errors->get('start_date')" class="mt-1 text-center" />
-                <x-input-error :messages="$errors->get('end_date')" class="mt-1 text-center" />
+                <div class="min-h-5 text-center mt-1">
+                    <x-input-error :messages="$errors->get('date_range')" />
+                    <x-input-error :messages="$errors->get('start_date')" />
+                    <x-input-error :messages="$errors->get('end_date')" />
+                </div>
             </div>
         </div>
 
@@ -90,9 +96,11 @@
         <div>
             <x-input-label for="message" :value="__('Il tuo messaggio')" />
             <textarea id="message" wire:model.blur="message" name="message" rows="5"
-                class="text-center mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-md shadow-sm resize-none"
+                class="text-center mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-500 focus:ring-amber-500 dark:focus:ring-amber-500 rounded-[2rem] shadow-sm resize-none"
                 placeholder="Parlaci del tuo itinerario..."></textarea>
-            <x-input-error :messages="$errors->get('message')" class="mt-1 text-center" />
+            <div class="min-h-5 text-center mt-1">
+                <x-input-error :messages="$errors->get('message')" />
+            </div>
         </div>
 
         <div class="flex justify-center">

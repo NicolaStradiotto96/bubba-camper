@@ -1,7 +1,7 @@
 @props(['camper'])
 
 <div itemscope itemtype="https://schema.org/Product"
-    class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-300 dark:border-gray-700 flex flex-col h-full">
+    class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-md overflow-hidden border border-gray-300 dark:border-gray-700 flex flex-col h-full">
     <meta itemprop="name" content="{{ $camper->name }}">
 
     <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
@@ -18,14 +18,14 @@
         @auth
             @if (auth()->user()->is_admin)
                 <a href="{{ route('camper.edit', $camper) }}" wire:navigate
-                    class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-md font-black text-xs uppercase tracking-wider shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition flex items-center gap-1">
+                    class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-[2rem] font-black text-xs uppercase tracking-wider shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition flex items-center gap-1">
                     <i class="fa-solid fa-pen-to-square"></i> Modifica
                 </a>
             @endif
         @endauth
 
         <div
-            class="absolute top-4 right-4 z-10 px-3 py-1.5 bg-amber-600 text-white rounded-xl font-black text-xs tracking-wider shadow-lg">
+            class="absolute top-4 right-4 z-10 px-3 py-1.5 bg-amber-600 text-white rounded-[2rem] font-black text-xs tracking-wider shadow-lg">
             {{ $camper->getPriceForDate() }}€ / gg
         </div>
     </div>

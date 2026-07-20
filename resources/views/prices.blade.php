@@ -20,7 +20,7 @@
             {{-- GENERAL PRICES --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 pb-16 max-w-7xl mx-auto">
                 <div
-                    class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-b-6 border-blue-400 p-14 text-center">
+                    class="bg-gray-50 dark:bg-gray-800 rounded-[2rem] shadow-lg border-2 border-b-6 border-blue-400 p-14 text-center">
                     <h3 class="text-xl font-bold uppercase tracking-wider text-blue-400">Bassa Stagione</h3>
                     <div class="my-4" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                         <span class="text-gray-500">da</span>
@@ -35,7 +35,7 @@
                 </div>
 
                 <div
-                    class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-xl border-2 border-b-6 border-yellow-500 p-14 text-center">
+                    class="bg-gray-50 dark:bg-gray-800 rounded-[2rem] shadow-xl border-2 border-b-6 border-yellow-500 p-14 text-center">
                     <h3 class="text-xl font-bold uppercase tracking-wider text-yellow-500">Media Stagione</h3>
                     <div class="my-4" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                         <span class="text-gray-500">da</span>
@@ -50,7 +50,7 @@
                 </div>
 
                 <div
-                    class="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-b-6 border-red-500 p-14 text-center">
+                    class="bg-gray-50 dark:bg-gray-800 rounded-[2rem] shadow-lg border-2 border-b-6 border-red-500 p-14 text-center">
                     <h3 class="text-xl font-bold uppercase tracking-wider text-red-500">Alta Stagione</h3>
                     <div class="my-4" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                         <span class="text-gray-500">da</span>
@@ -67,7 +67,7 @@
             {{-- KM PRICES --}}
             <div class="mx-4">
                 <div
-                    class="max-w-3xl mx-auto mt-6 bg-green-100 dark:bg-green-900/20 border-l-8 border-green-500 p-6 rounded-r-xl">
+                    class="max-w-3xl mx-auto mt-6 bg-green-100 dark:bg-green-900/20 border-l-8 border-green-500 p-6 rounded-r-[2rem]">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <i class="fa-solid fa-map text-green-500 text-3xl"></i>
