@@ -8,6 +8,7 @@ use App\Mail\PenaltyRecieptNotification;
 use App\Mail\PenaltyRecieptRecieved;
 use App\Models\Booking;
 use App\Models\Damage;
+use App\Models\Log;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -24,12 +25,11 @@ class BookingHistory extends Component
     public $receiptUpload;
     public $searchId = '';
 
+    // CHECK BOOKING ACCESS
     public function checkBookingAccess($id)
     {
         $booking = Booking::where('id', $id)
-            ->where(function ($q) {
-                if (!auth()->user()->isAdmin()) $q->where('user_id', auth()->id());
-            })->first();
+            ->where('user_id', auth()->id())->first();
 
         if (!$booking) return ['authorized' => false];
 
@@ -44,6 +44,7 @@ class BookingHistory extends Component
         ];
     }
 
+    // OPEN DETAILS MODAL
     public function openBookingDetails($bookingId)
     {
         $booking = Booking::with('camper')->findOrFail($bookingId);
@@ -69,7 +70,7 @@ class BookingHistory extends Component
             'refundRaw'        => (float)$booking->calculateExpectedRefund()['refund_amount'],
             'penalty'          => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '') . '€',
             'penaltyRaw'       => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
-            'damages' => $booking->damages->map(function ($d) {
+            'damages'          => $booking->damages->map(function ($d) {
                 return [
                     'id'           => $d->id,
                     'amount'       => $d->amount,
@@ -85,6 +86,7 @@ class BookingHistory extends Component
         ]);
     }
 
+    // REQUEST BOOKING CANCELLATION
     #[On('requestCancellation')]
     public function requestCancellation($bookingId)
     {
@@ -97,33 +99,61 @@ class BookingHistory extends Component
             $booking->cancellation_requested_at = now();
             $booking->save();
 
+            $this->logPenaltyEvent(
+                'cancellation_requested',
+                "Richiesta di annullamento inoltrata dal cliente per la prenotazione #{$booking->id}.",
+                $booking
+            );
+
             try {
                 Mail::to($booking->customer_email)->send(new BookingCancellationRequest($booking));
                 Mail::to(config('app.admin_email'))->send(new BookingCancellationNotification($booking));
 
-                session()->flash('success', "La richiesta di annullamento per la prenotazione #{$booking->id} è in fase di elaborazione.");
+                $this->dispatch('swal-success', "La richiesta di annullamento per la prenotazione <span class='id'>#{$booking->id}</span> è stata inoltrata con successo!");
             } catch (\Exception $e) {
-                session()->flash('error', "La richiesta è stata registrata, ma c'è stato un problema nell'invio delle notifiche. Ti preghiamo di contattarci.");
+                $this->dispatch('swal-error', "La richiesta è stata registrata, ma c'è stato un problema nell'invio delle notifiche. Ti preghiamo di contattarci.");
             }
         }
     }
 
+    // PAY PENALTY / DAMAGE STRIPE
     #[On('processPenaltyPayment')]
     public function processPenaltyPayment($bookingId, $type = 'penalty', $damageId = null)
     {
         $booking = auth()->user()->bookings()->findOrFail($bookingId);
 
         if ($type === 'damages') {
-            $damage = Damage::findOrFail($damageId);
+            $damage = Damage::where('id', $damageId)
+                ->where('booking_id', $booking->id)
+                ->firstOrFail();
             $amountToPay = $damage->amount;
             $description = "Pagamento Danno #{$damage->id} - Prenotazione #{$booking->id}";
+
+            $this->logPenaltyEvent(
+                'damage_stripe_checkout_initiated',
+                "Avviata sessione di pagamento Stripe per il danno #{$damage->id}.",
+                $booking,
+                ['damage_id' => $damage->id, 'amount' => $amountToPay]
+            );
         } else {
             $amountToPay = ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0);
             $description = "Pagamento Penale - Prenotazione #{$booking->id}";
+
+            $this->logPenaltyEvent(
+                'penalty_stripe_checkout_initiated',
+                "Avviata sessione di pagamento Stripe per la penale di annullamento.",
+                $booking,
+                ['amount' => $amountToPay]
+            );
         }
 
         if ($amountToPay <= 0) {
             return;
+        }
+
+        $cancelUrl = route('penalty.cancel', $booking) . '?type=' . $type;
+        if ($type === 'damages' && $damageId) {
+            $cancelUrl .= '&damage_id=' . $damageId;
         }
 
         Stripe::setApiKey(config('services.stripe.secret'));
@@ -145,59 +175,96 @@ class BookingHistory extends Component
                 'quantity' => 1,
             ]],
             'success_url' => route('penalty.success', $booking) . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => route('penalty.cancel', $booking),
+            'cancel_url' => $cancelUrl,
         ]);
 
         return redirect($session->url);
     }
 
+    // PAY PENALTY / DAMAGE MANUAL
     #[On('processPenaltyBankTransfer')]
     public function processPenaltyBankTransfer($bookingId, $type = 'penalty', $damageId = null)
     {
         $booking = auth()->user()->bookings()->findOrFail($bookingId);
 
         if ($type === 'damages') {
-            $damage = Damage::findOrFail($damageId);
+            $damage = Damage::where('id', $damageId)
+                ->where('booking_id', $booking->id)
+                ->firstOrFail();
             $damage->update(['status' => 'verification']);
+
+            $this->logPenaltyEvent(
+                'damage_bank_transfer_submitted',
+                "Inoltrata contabile di bonifico per la verifica del danno #{$damage->id}.",
+                $booking,
+                ['damage_id' => $damage->id, 'amount' => $damage->amount]
+            );
 
             Mail::to($booking->customer_email)->send(new PenaltyRecieptRecieved($booking));
             Mail::to(config('app.admin_email'))->send(new PenaltyRecieptNotification($booking, $damage->amount, 'Danno'));
 
-            session()->flash('success', "La contabile per il danno #{$damage->id} è stata inoltrata.");
-            return $this->redirect(route('dashboard'), navigate: true);
+            $this->dispatch('swal-success', "La contabile per il danno <span class='damage-id'>#{$damage->id}</span> è stata inoltrata.");
+            return;
         } else {
             if ($booking->payment_status !== 'penalty_pending' || !$booking->penalty_receipt_path) {
-                session()->flash('error', "Errore: contabile non trovata.");
+                $this->dispatch('swal-error', "Errore: contabile non trovata.");
                 return;
             }
 
             $booking->update(['payment_status' => 'penalty_verification']);
 
             $amount = $booking->calculateExpectedRefund()['penalty_amount'] - $booking->down_payment;
+
+            $this->logPenaltyEvent(
+                'penalty_bank_transfer_submitted',
+                "Inoltrata contabile di bonifico per la verifica della penale di annullamento.",
+                $booking,
+                ['amount' => $amount]
+            );
+
             Mail::to($booking->customer_email)->send(new PenaltyRecieptRecieved($booking));
             Mail::to(config('app.admin_email'))->send(new PenaltyRecieptNotification($booking, $amount, 'Penale'));
 
-            session()->flash('success', "La contabile per la penale è stata inoltrata.");
+            $this->dispatch('swal-success', "La contabile per la penale della prenotazione <span class='id'>#{$booking->id}</span> è stata inoltrata con successo!");
         }
     }
 
+    // RESET PAGE
     public function updatingSearchId()
     {
         $this->resetPage();
     }
 
+    // RENDER
     public function render()
     {
         $query = auth()->user()->bookings()
             ->with('camper', 'damages')
             ->latest();
 
-        if (!empty($this->searchId)) {
-            $query->where('id', $this->searchId);
+        $cleanSearch = trim(str_replace('#', '', $this->searchId));
+
+        if (!empty($cleanSearch)) {
+            $query->where('id', $cleanSearch);
         }
 
         return view('livewire.user.booking-history', [
             'bookings' => $query->paginate(10)
+        ]);
+    }
+
+    // LOG
+    private function logPenaltyEvent(string $type, string $message, Booking $booking, array $extraContext = [])
+    {
+        Log::create([
+            'type'       => $type,
+            'message'    => $message,
+            'context'    => array_merge([
+                'user_id'    => auth()->id(),
+                'ip_address' => request()->ip(),
+                'booking_id' => $booking->id,
+                'camper_id'  => $booking->camper_id,
+            ], $extraContext),
         ]);
     }
 }

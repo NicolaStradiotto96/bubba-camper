@@ -3,13 +3,13 @@
 
 # ⚠️ Contabile non valida
 
-Ciao **{{ $damage->booking->customer_first_name }}**,
+Ciao **{{ $booking->customer_first_name }}**,
 
-la contabile caricata per {{ $type === 'Danno' ? 'il danno' : 'la penale' }} <code class="damage">#{{ $damage->id }}</code> relativo alla prenotazione <code class="booking">#{{ $damage->booking_id }}</code> purtroppo non è valida.
+la contabile caricata per {{ $item['type'] === 'danno' ? 'il danno' : 'la penale' }} <code class="damage">#{{ $item['id'] }}</code> relativo alla prenotazione <code class="booking">#{{ $booking->id }}</code> purtroppo non è valida.
 
 **Motivazione:**
 <x-mail::panel>
-{{ $rejectionReason }}
+{{ $reason }}
 </x-mail::panel>
 
 **Caricala nuovamente per permetterci di completare la verifica.**

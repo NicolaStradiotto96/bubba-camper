@@ -25,16 +25,23 @@ class CheckoutController extends Controller
         }
 
         if ($booking->status === 'expired') {
-            return redirect()->route('dashboard')->with('error', 'Questa sessione è scaduta definitivamente. Riprova con una nuova ricerca.');
+            return redirect()->route('dashboard')->with('swal-error', 'Questa sessione è scaduta definitivamente. Riprova con una nuova ricerca.');
         }
 
         if ($booking->created_at->lt(now()->subMinutes(15))) {
             $booking->update(['status' => 'expired']);
-            return redirect()->route('dashboard')->with('error', 'Il tempo per il pagamento è scaduto.');
+
+            $this->logCheckout(
+                'booking_expired',
+                "Prenotazione #{$booking->id} scaduta per timeout pagamento.",
+                $booking
+            );
+
+            return redirect()->route('dashboard')->with('swal-error', 'Il tempo per il pagamento è scaduto.');
         }
 
         if ($booking->payment_status === 'paid') {
-            return redirect()->route('dashboard')->with('info', 'L\'acconto per questa prenotazione è già stato pagato.');
+            return redirect()->route('dashboard')->with('swal-error', 'L\'acconto per questa prenotazione è già stato pagato.');
         }
 
         if ($booking->stripe_session_id) {
@@ -79,6 +86,14 @@ class CheckoutController extends Controller
         ]);
 
         $booking->update(['stripe_session_id' => $session->id]);
+
+        $this->logCheckout(
+            'stripe_session_created',
+            "Creata nuova sessione Stripe per la prenotazione #{$booking->id}.",
+            $booking,
+            ['stripe_session_id' => $session->id]
+        );
+
         return $session;
     }
 
@@ -95,13 +110,36 @@ class CheckoutController extends Controller
 
             try {
                 Mail::to($booking->customer_email)->send(new PaymentReminder($booking));
+
+                $this->logCheckout(
+                    'payment_reminder_sent',
+                    "Inviato promemoria di pagamento via email per la prenotazione #{$booking->id}.",
+                    $booking,
+                    ['email' => $booking->customer_email]
+                );
             } catch (\Exception $e) {
-                Log::error("Errore invio notifica documenti: " . $e->getMessage());
+                Log::error("Errore invio promemoria pagamento [Booking #{$booking->id}]:" . $e->getMessage());
             }
 
             $request->session()->put('reminder_sent_' . $booking->id, true);
         }
 
         return view('checkout.cancel', compact('booking'));
+    }
+
+    // LOG
+    private function logCheckout(string $type, string $message, Booking $booking, array $extraContext = [])
+    {
+        Log::create([
+            'type'    => $type,
+            'message' => $message,
+            'context' => array_merge([
+                'user_id'    => auth()->id(),
+                'ip_address' => request()->ip(),
+                'booking_id' => $booking->id,
+                'camper_id'  => $booking->camper_id,
+                'total'      => $booking->total_price,
+            ], $extraContext),
+        ]);
     }
 }

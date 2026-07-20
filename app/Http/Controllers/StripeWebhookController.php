@@ -70,7 +70,10 @@ class StripeWebhookController extends Controller
 
             // DAMAGES
             elseif ($paymentType === 'damages') {
-                $damage = Damage::find($session->metadata->damage_id ?? null);
+                $damage = Damage::where('id', $session->metadata->damage_id ?? null)
+                    ->where('booking_id', $booking->id)
+                    ->first();
+
                 if ($damage && $damage->status !== 'paid') {
                     $damage->update(['status' => 'paid']);
 
@@ -117,11 +120,10 @@ class StripeWebhookController extends Controller
             'type'    => $type,
             'message' => $message,
             'context' => array_merge([
+                'user_id'    => auth()->id(),
+                'ip_address' => request()->ip(),
                 'booking_id' => $booking->id,
                 'camper_id'  => $booking->camper_id,
-                'user_id'    => $booking->user_id,
-                'ip_address' => request()->ip(),
-                'timestamp'  => now()->toDateTimeString(),
             ], $extraContext),
         ]);
     }

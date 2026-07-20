@@ -150,7 +150,7 @@ class ContactForm extends Component
                 'ip' => request()->ip(),
             ]);
 
-            $this->dispatch('swal-error', ['message' => 'Invio troppo rapido.']);
+            $this->dispatch('swal-error', 'Invio troppo rapido.');
 
             return;
         }
@@ -163,7 +163,7 @@ class ContactForm extends Component
                 'ip' => request()->ip(),
             ]);
 
-            $this->dispatch('swal-error', ['message' => 'Troppi tentativi, riprova più tardi.']);
+            $this->dispatch('swal-error', 'Troppi tentativi, riprova più tardi.');
 
             return;
         }
@@ -192,13 +192,13 @@ class ContactForm extends Component
 
             $this->loadTime = microtime(true);
 
-            $this->dispatch('swal-success', ['message' => 'Messaggio inviato con successo!']);
+            $this->dispatch('swal-success', 'Messaggio inviato con successo!');
         } catch (\Exception $e) {
 
             // LOGGER + ERRORS
             logger()->error('Errore invio mail contatti: ' . $e->getMessage());
 
-            $this->dispatch('swal-error', ['message' => 'Errore durante l\'invio. Riprova più tardi.']);
+            $this->dispatch('swal-error', 'Errore durante l\'invio. Riprova più tardi.');
         }
     }
 

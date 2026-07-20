@@ -143,7 +143,7 @@ class DamageManager extends Component
             \Log::error("Errore invio mail danno (ID: {$damage->id}, Camper: {$this->booking->camper_id}): " . $e->getMessage());
         }
 
-        session()->flash('swal-success', $isUpdate ? 'Danno aggiornato con successo!' : 'Danno segnalato con successo!');
+        session()->flash('swal-success', $isUpdate ? "Danno <span class='damage-id'>#{$damage->id}</span> aggiornato con successo!" : "Danno <span class='damage-id'>#{$damage->id}</span> segnalato con successo!");
         return redirect()->route('damage.index');
     }
 

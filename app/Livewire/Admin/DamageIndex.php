@@ -23,9 +23,8 @@ class DamageIndex extends Component
     public function mount()
     {
         if (!auth()->user()?->is_admin) {
-        abort(403);
-    }
-
+            abort(403);
+        }
     }
 
     // OPEN MODAL
@@ -53,7 +52,7 @@ class DamageIndex extends Component
 
         $damage->delete();
 
-        $this->dispatch('swal-success', ['message' => 'Danno eliminato con successo!']);
+        $this->dispatch('swal-success', "Danno <span class='damage-id'>#{$damage->id}</span> eliminato con successo!");
     }
 
     // RESET PAGE

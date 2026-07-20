@@ -120,7 +120,7 @@
                 nella scheda di noleggio, completo delle dotazioni e degli accessori pattuiti ed in buono stato
                 manutentivo. Si obbliga a consegnare altresì tutta la documentazione di legge necessaria per la
                 circolazione. In caso di indisponibilità del mezzo, per fatti non imputabili al locatore ed intervenuti
-                successivamente alla conclusione del contratto, il locatore potrà proporre al cliente un otro periodo di
+                successivamente alla conclusione del contratto, il locatore potrà proporre al cliente un altro periodo di
                 noleggio di pari costo (o di costo inferiore, riconoscendo, in tal caso, il rimborso della differenza).
                 Il cliente potrà accettare (in tal caso effettuerà la conferma per iscritto) o rifiutare, esigendo in
                 questo ultimo caso il mero rimborso di quanto già versato (con esclusione del pagamento del doppio della
@@ -584,7 +584,7 @@
         </p>
 
         <div class="border border-gray-200 dark:border-gray-700 rounded overflow-hidden">
-            <table class="text-left border-collapse">
+            <table class="w-full text-left border-collapse">
                 <thead>
                     <tr
                         class="bg-gray-200/80 dark:bg-gray-800 font-black uppercase text-[9px] border-b border-gray-200 dark:border-gray-700">

@@ -62,7 +62,7 @@
                             </td>
 
                             {{-- Camper --}}
-                            <td class="px-2 py-4 text-sm text-amber-500">
+                            <td class="px-2 py-4 text-sm text-gray-700 dark:text-gray-300">
                                 {{ $d->booking->camper->name ?? 'N/A' }}
                             </td>
 
@@ -283,6 +283,15 @@
                         <p
                             class="inline-block font-black px-2 py-0.5 rounded-full border bg-white dark:bg-gray-900 {{ $selectedDamage->status === 'paid' ? 'border-green-500 text-green-500' : 'border-amber-500 text-amber-500 animate-pulse' }}">
                             {{ $selectedDamage->status === 'paid' ? 'PAGATO' : 'IN ATTESA' }}
+                        </p>
+                    </div>
+
+                    <div
+                        class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <p class="text-lg font-black text-gray-400 uppercase tracking-widest mb-1">Camper:</p>
+                        <p
+                            class="font-black text-gray-700 dark:text-gray-300">
+                            {{ $selectedDamage->booking->camper->name ?? 'N/A' }}</span>
                         </p>
                     </div>
 

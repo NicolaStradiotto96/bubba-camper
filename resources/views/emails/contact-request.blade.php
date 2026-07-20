@@ -9,7 +9,7 @@ Hai ricevuto una nuova richiesta dal sito **{{ config('app.name', 'Bubba Camper'
 
 ## 👤 Dati Cliente
 - **Nome:** <span class="highlight">{{ $data['name'] }}</span>
-- **Email:** <a href="'mailto:' . $data['email']" class="highlight">{{ $data['email'] }}</a>
+- **Email:** <a href="mailto:{{ $data['email'] }}" class="highlight">{{ $data['email'] }}</a>
 
 <div class="divider"></div>
 

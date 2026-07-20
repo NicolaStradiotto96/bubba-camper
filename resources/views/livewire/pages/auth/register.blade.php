@@ -41,6 +41,8 @@ new #[Layout('layouts.guest')] class extends Component
 
         $validated['password'] = Hash::make($validated['password']);
 
+        $validated['is_admin'] = false;
+
         event(new Registered(($user = User::create($validated))));
 
         $this->logRegistration($user);

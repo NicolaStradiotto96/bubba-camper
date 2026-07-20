@@ -9,6 +9,7 @@ use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
+use App\Models\Log;
 
 new #[Layout('layouts.guest')] class extends Component
 {
@@ -51,6 +52,16 @@ new #[Layout('layouts.guest')] class extends Component
                 ])->save();
 
                 event(new PasswordReset($user));
+
+                Log::create([
+                    'type'       => 'password_reset_success',
+                    'message'    => "Password reimpostata con successo per l'utente: {$user->email}.",
+                    'context'    => [
+                        'user_id'    => $user->id,
+                        'ip_address' => request()->ip(),
+                        'email'      => $user->email,
+                    ],
+                ]);
             }
         );
 
@@ -58,6 +69,16 @@ new #[Layout('layouts.guest')] class extends Component
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         if ($status != Password::PASSWORD_RESET) {
+            Log::create([
+                'type'       => 'password_reset_failed',
+                'message'    => "Tentativo fallito di reset password per l'email: {$this->email}.",
+                'context'    => [
+                    'ip_address' => request()->ip(),
+                    'email'      => $this->email,
+                    'status'     => __($status),
+                ],
+            ]);
+
             $this->addError('email', __($status));
 
             return;

@@ -38,7 +38,7 @@ class PaymentReminder extends Component
             $this->booking = null;
             $this->timeLeft = null;
 
-            $this->dispatch('swal-error', ['message' => 'Il tempo per il pagamento è scaduto. La prenotazione è stata annullata.']);
+            $this->dispatch('swal-error', 'Il tempo per il pagamento è scaduto. La prenotazione è stata annullata.');
         } else {
             $this->timeLeft = gmdate("i:s", now()->diffInSeconds($expiryTime));
         }

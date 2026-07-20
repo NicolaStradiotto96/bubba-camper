@@ -18,23 +18,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'first_name' => 'Test',
-            'last_name' => 'User',
-            'email' => 'test@example.com',
-            'phone' => '+393331234567',
-            'is_admin' => false,
-        ]);
+        // User::factory()->create([
+        //     'first_name' => 'Test',
+        //     'last_name' => 'User',
+        //     'email' => 'test@example.com',
+        //     'phone' => '+393331234567',
+        //     'is_admin' => false,
+        // ]);
 
         User::firstOrCreate(
             ['email' => config('app.admin_email')],
-            [
-                'first_name' => 'Stefano',
-                'last_name' => 'Stradiotto',
-                'phone' => '+393331234567',
-                'is_admin' => true,
-                'password' => Hash::make(env('ADMIN_PASSWORD', 'password')),
-            ]
+            array_merge(
+                User::factory()->raw(),
+                [
+                    'first_name' => 'Stefano',
+                    'last_name' => 'Stradiotto',
+                    'phone' => '+393331234567',
+                    'is_admin' => true,
+                    'password' => Hash::make(env('ADMIN_PASSWORD') ?: 'ScegliUnaPasswordSicuraPerIlPrimoAccesso!'),
+                ]
+            )
         );
 
         if (Camper::count() === 0) {

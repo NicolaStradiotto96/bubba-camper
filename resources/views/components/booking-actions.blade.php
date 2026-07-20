@@ -16,36 +16,32 @@
                         'route' => 'camper.create',
                         'icon' => 'fa-van-shuttle',
                         'label' => 'Nuovo Camper',
-                        'color' => 'amber',
                     ],
                     [
                         'route' => 'booking.create',
                         'icon' => 'fa-calendar-plus',
                         'label' => 'Nuova Prenotazione',
-                        'color' => 'amber',
                     ],
                     [
                         'route' => 'maintenance',
                         'icon' => 'fa-screwdriver-wrench',
                         'label' => 'Manutenzione',
-                        'color' => 'amber',
                     ],
                     [
                         'route' => 'damage.index',
                         'icon' => 'fa-exclamation-triangle',
                         'label' => 'Gestione Danni',
-                        'color' => 'amber',
                     ],
                 ];
             @endphp
 
             @foreach ($actions as $action)
                 <a href="{{ route($action['route']) }}" wire:navigate
-                    class="group flex flex-col items-center justify-center p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-{{ $action['color'] }}-500 dark:hover:border-{{ $action['color'] }}-500 hover:bg-white dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm hover:shadow-md">
+                    class="group flex flex-col items-center justify-center p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-amber-500 dark:hover:border-amber-500 hover:bg-white dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm hover:shadow-md">
 
                     <div
                         class="w-12 h-12 mb-4 flex items-center justify-center rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-inner group-hover:scale-110 transition-transform duration-300">
-                        <i class="fa-solid {{ $action['icon'] }} text-xl text-{{ $action['color'] }}-500"></i>
+                        <i class="fa-solid {{ $action['icon'] }} text-xl text-amber-500"></i>
                     </div>
 
                     <span

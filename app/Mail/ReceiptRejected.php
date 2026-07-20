@@ -14,13 +14,11 @@ use Illuminate\Queue\SerializesModels;
 class ReceiptRejected extends Mailable
 {
     use Queueable, SerializesModels;
-
     /**
      * Create a new message instance.
      */
-    public function __construct(public Damage $damage, public string $rejectionReason, public string $type)
+    public function __construct(public $booking, public $reason, public $item)
     {
-        //
     }
 
     /**

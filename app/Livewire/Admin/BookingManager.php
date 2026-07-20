@@ -8,6 +8,7 @@ use App\Models\Booking;
 use App\Models\Camper;
 use App\Models\Log;
 use App\Models\Maintenance;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Layout;
@@ -117,6 +118,9 @@ class BookingManager extends Component
     {
         $this->validate($this->rules(), $this->messages());
 
+        $user = User::where('email', $this->customer_email)->first();
+        $userIdToAssign = $user ? $user->id : auth()->id();
+
         $isUnderMaintenance = Maintenance::where('camper_id', $this->camper_id)
             ->where(function ($query) {
                 $query->whereBetween('start_date', [$this->start_date, $this->end_date])
@@ -147,7 +151,7 @@ class BookingManager extends Component
         $this->calculatePayments();
 
         $booking = Booking::create([
-            'user_id' => auth()->id(),
+            'user_id' => $userIdToAssign,
             'camper_id' => $this->camper_id,
             'customer_first_name' => $this->customer_first_name,
             'customer_last_name' => $this->customer_last_name,
@@ -182,8 +186,7 @@ class BookingManager extends Component
         $this->reset(['camper_id', 'customer_first_name', 'customer_last_name', 'customer_email', 'customer_phone', 'start_date', 'end_date', 'total_price']);
         $this->dispatch('clear-calendar');
 
-        session()->flash('swal-success', "Prenotazione #{$booking->id} creata con successo!");
-        return $this->redirect(route('dashboard'), navigate: true);
+        return redirect()->route('dashboard')->with('swal-success', "Prenotazione <span class='id'>#{$booking->id}</span> creata con successo!");
     }
 
     // CALENDAR
@@ -253,6 +256,21 @@ class BookingManager extends Component
             $this->start_date = null;
             $this->end_date = null;
             $this->addError('date_range', 'Errore del formato data.');
+        }
+    }
+
+    // UPDATE USER INFOS
+    public function updatedCustomerEmail($email)
+    {
+        $user = User::where('email', $email)->first();
+
+        if ($user) {
+            $this->customer_first_name = $user->first_name;
+            $this->customer_last_name = $user->last_name;
+
+            $this->dispatch('swal-success', "Utente trovato: dati compilati automaticamente.");
+
+            $this->resetErrorBag();
         }
     }
 

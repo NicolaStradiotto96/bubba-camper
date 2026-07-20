@@ -9,7 +9,7 @@ La prenotazione <code class="booking">#{{ $booking->id }}</code> è ora conferma
 
 ## 👤 Dati Cliente
 - **Nome:** <span class="highlight">{{ $booking->customer_first_name }} {{ $booking->customer_last_name }}</span>
-- **Email:** <a href="'mailto:' . {{ $booking->customer_email }}" class="highlight">{{ $booking->customer_email }}</a>
+- **Email:** <a href="mailto:{{ $booking->customer_email }}" class="highlight">{{ $booking->customer_email }}</a>
 - **Telefono:** <span class="highlight">{{ $booking->customer_phone }}</span>
 
 <div class="divider"></div>

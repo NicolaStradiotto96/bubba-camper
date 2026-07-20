@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -301,7 +302,7 @@ class CamperManager extends Component
 
             $this->old_images = array_values($this->old_images);
 
-            session()->flash('info', 'Foto rimossa dall\'anteprima. Ricorda di salvare le modifiche.');
+            session()->flash('swal-success', "Foto rimossa dall\'anteprima. Ricorda di salvare le modifiche.");
         }
     }
 
@@ -349,12 +350,12 @@ class CamperManager extends Component
                 $this->camper->update($data);
 
                 $this->logCamper('camper_updated', "Camper aggiornato: {$this->camper->name}", $this->camper, $oldPrices);
-                session()->flash('swal-success', 'Camper aggiornato con successo!');
+                session()->flash('swal-success', "Camper <b>{$this->name}</b> aggiornato con successo!");
             } else {
                 $newCamper = Camper::create($data);
 
                 $this->logCamper('camper_created', "Camper creato: {$newCamper->name}", $newCamper);
-                session()->flash('swal-success', 'Camper creato con successo!');
+                session()->flash('swal-success', "Camper <b>{$this->name}</b> creato con successo!");
             }
         });
 
@@ -362,6 +363,7 @@ class CamperManager extends Component
     }
 
     // DELETE CAMPER
+    #[On('deleteCamper')]
     public function deleteCamper()
     {
         if (!$this->isEditMode || !$this->camper) return;
@@ -379,7 +381,7 @@ class CamperManager extends Component
 
             $this->camper->delete();
 
-            session()->flash('swal-success', 'Camper eliminato con successo!');
+            session()->flash('swal-success', "Camper <b>{$this->camper->name}</b> eliminato con successo!");
         });
 
         return redirect()->route('index');

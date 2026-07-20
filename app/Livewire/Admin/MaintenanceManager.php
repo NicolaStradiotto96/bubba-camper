@@ -79,7 +79,7 @@ class MaintenanceManager extends Component
 
         $this->cancelEdit();
 
-        $this->dispatch('swal-success', ['message' => 'Indisponibilità aggiunta con successo!']);
+        $this->dispatch('swal-success', 'Indisponibilità aggiunta con successo!');
     }
 
     // EDIT MAINTENANCE
@@ -105,7 +105,7 @@ class MaintenanceManager extends Component
         $block = Maintenance::findOrFail($id);
 
         if ($block->end_date->isPast()) {
-            $this->dispatch('swal-error', ['message' => 'Non puoi eliminare una indisponibilità già conclusa.']);
+            $this->dispatch('swal-error', 'Non puoi eliminare una indisponibilità già conclusa.');
             return;
         }
 
@@ -113,7 +113,7 @@ class MaintenanceManager extends Component
 
         $block->delete();
 
-        $this->dispatch('swal-success', ['message' => 'Indisponibilità eliminata con successo!']);
+        $this->dispatch('swal-success', 'Indisponibilità eliminata con successo!');
     }
 
     // CALENDAR

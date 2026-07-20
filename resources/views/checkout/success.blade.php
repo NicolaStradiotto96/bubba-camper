@@ -129,7 +129,7 @@
                     </p>
                     <div class="mt-8">
                         <a href="{{ route('dashboard') }}"
-                            class="text-sm text-gray-500 hover:text-amber-500 transition">
+                            class="text-sm text-gray-500 hover:text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                             Torna alla dashboard se il pagamento impiega troppo tempo
                         </a>
                     </div>

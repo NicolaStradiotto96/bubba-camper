@@ -11,7 +11,7 @@ Ci farebbe davvero piacere sapere com'è andata la vostra esperienza con **{{ co
 
 Le vostre recensioni sono fondamentali per aiutarci a crescere e per permettere ad altri viaggiatori di scegliere con serenità.
 
-<x-mail::button :url="LINK">
+<x-mail::button :url="'https://search.google.com/local/writereview?placeid=ChIJS8YBp9XZeEcR1oqeRrjQ_vo'">
 LASCIA UNA RECENSIONE
 </x-mail::button>
 

@@ -430,7 +430,7 @@
 
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     @if ($isEditMode)
-                        <x-danger-button type="button" @click="confirmCamperDeletion($wire)"
+                        <x-danger-button type="button" onclick="confirmAction({{ $camper->id }}, 'ELIMINARE IL CAMPER?', 'Questa azione cancellerà definitivamente il mezzo, i prezzi, la scheda tecnica e tutte le immagini dal server. Non potrai tornare indietro!', 'deleteCamper')"
                             class="w-full sm:w-auto justify-center">
                             Elimina Camper
                         </x-danger-button>

@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use App\Models\Log;
 
-new #[Layout('layouts.guest')] class extends Component
-{
+new #[Layout('layouts.guest')] class extends Component {
     public string $email = '';
 
     /**
@@ -20,15 +20,31 @@ new #[Layout('layouts.guest')] class extends Component
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we
         // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $this->only('email')
-        );
+        $status = Password::sendResetLink($this->only('email'));
 
         if ($status != Password::RESET_LINK_SENT) {
+            Log::create([
+                'type' => 'password_reset_request_failed',
+                'message' => "Tentativo fallito di reset password per l'email: {$this->email}.",
+                'context' => [
+                    'ip_address' => request()->ip(),
+                    'email' => $this->email,
+                    'status' => __($status),
+                ],
+            ]);
+
             $this->addError('email', __($status));
 
             return;
         }
+        Log::create([
+            'type' => 'password_reset_requested',
+            'message' => "Inviato link di reset password all'email: {$this->email}.",
+            'context' => [
+                'ip_address' => request()->ip(),
+                'email' => $this->email,
+            ],
+        ]);
 
         $this->reset('email');
 
@@ -38,9 +54,9 @@ new #[Layout('layouts.guest')] class extends Component
 
 <div>
     <div class="mb-4 text-sm text-gray-600 dark:text-gray-400 text-center">
-        {{ __('Hai dimenticato la password? Nessun problema.')}}
+        {{ __('Hai dimenticato la password? Nessun problema.') }}
         <br>
-        {{('Inserisci il tuo indirizzo email e ti invieremo un link per sceglierne una nuova.') }}
+        {{ __('Inserisci il tuo indirizzo email e ti invieremo un link per sceglierne una nuova.') }}
     </div>
 
     <!-- Session Status -->
@@ -50,7 +66,8 @@ new #[Layout('layouts.guest')] class extends Component
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus />
+            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required
+                autofocus />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 

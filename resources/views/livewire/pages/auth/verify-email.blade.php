@@ -5,21 +5,33 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use App\Models\Log;
 
-new #[Layout('layouts.guest')] class extends Component
-{
+new #[Layout('layouts.guest')] class extends Component {
     /**
      * Send an email verification notification to the user.
      */
     public function sendVerification(): void
     {
-        if (Auth::user()->hasVerifiedEmail()) {
+        $user = Auth::user();
+
+        if ($user->hasVerifiedEmail()) {
             $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
 
             return;
         }
 
-        Auth::user()->sendEmailVerificationNotification();
+        $user->sendEmailVerificationNotification();
+
+        Log::create([
+            'type' => 'verification_email_resent',
+            'message' => "Inviata una nuova email di verifica a: {$user->email}.",
+            'context' => [
+                'user_id' => $user->id,
+                'ip_address' => request()->ip(),
+                'email' => $user->email,
+            ],
+        ]);
 
         Session::flash('status', 'verification-link-sent');
     }
@@ -29,6 +41,20 @@ new #[Layout('layouts.guest')] class extends Component
      */
     public function logout(Logout $logout): void
     {
+        $user = Auth::user();
+
+        if ($user) {
+            Log::create([
+                'type' => 'user_logout',
+                'message' => "L'utente {$user->email} ha effettuato il logout dalla schermata di verifica.",
+                'context' => [
+                    'user_id' => $user->id,
+                    'ip_address' => request()->ip(),
+                    'email' => $user->email,
+                ],
+            ]);
+        }
+
         $logout();
 
         $this->redirect('/', navigate: true);
@@ -46,9 +72,14 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
     @endif
 
-    <div class="mt-4 flex items-center justify-center">
+    <div class="mt-4 flex flex-col items-center justify-center gap-3">
         <x-primary-button wire:click="sendVerification">
             {{ __('Resend Verification Email') }}
         </x-primary-button>
+
+        <button wire:click="logout" type="submit"
+            class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 dark:focus:ring-offset-gray-800 transition">
+            {{ __('Log Out') }}
+        </button>
     </div>
 </div>

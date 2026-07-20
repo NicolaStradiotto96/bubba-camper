@@ -52,7 +52,7 @@
         <script>
             document.addEventListener('livewire:navigated', () => {
                 Livewire.dispatch('swal-success', {
-                    message: "{{ session('swal-success') }}"
+                    message: @json(session('swal-success'))
                 });
             }, {
                 once: true
@@ -64,14 +64,13 @@
         <script>
             document.addEventListener('livewire:navigated', () => {
                 Livewire.dispatch('swal-error', {
-                    message: "{{ session('swal-error') }}"
+                    message: @json(session('swal-error'))
                 });
             }, {
                 once: true
             });
         </script>
     @endif
-
 </body>
 
 </html>

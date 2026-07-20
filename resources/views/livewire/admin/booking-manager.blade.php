@@ -31,26 +31,10 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                    {{-- First Name --}}
-                    <div>
-                        <x-input-label for="customer_first_name" value="Nome" />
-                        <x-text-input wire:model.blur="customer_first_name" id="customer_first_name"
-                            class="block mt-1 w-full" type="text" />
-                        <x-input-error :messages="$errors->get('customer_first_name')" class="text-center mt-1" />
-                    </div>
-
-                    {{-- Last Name --}}
-                    <div>
-                        <x-input-label for="customer_last_name" value="Cognome" />
-                        <x-text-input wire:model.blur="customer_last_name" id="customer_last_name"
-                            class="block mt-1 w-full" type="text" />
-                        <x-input-error :messages="$errors->get('customer_last_name')" class="text-center mt-1" />
-                    </div>
-
                     {{-- Email --}}
                     <div>
                         <x-input-label for="customer_email" value="Email" />
-                        <x-text-input wire:model.blur="customer_email" id="customer_email" class="block mt-1 w-full"
+                        <x-text-input wire:model.live="customer_email" id="customer_email" class="block mt-1 w-full"
                             type="email" />
                         <x-input-error :messages="$errors->get('customer_email')" class="text-center mt-1" />
                     </div>
@@ -106,6 +90,22 @@
                         </div>
 
                         <x-input-error :messages="$errors->get('customer_phone')" class="text-center mt-1" />
+                    </div>
+
+                    {{-- First Name --}}
+                    <div>
+                        <x-input-label for="customer_first_name" value="Nome" />
+                        <x-text-input wire:model.live="customer_first_name" id="customer_first_name"
+                            class="block mt-1 w-full" type="text" />
+                        <x-input-error :messages="$errors->get('customer_first_name')" class="text-center mt-1" />
+                    </div>
+
+                    {{-- Last Name --}}
+                    <div>
+                        <x-input-label for="customer_last_name" value="Cognome" />
+                        <x-text-input wire:model.live="customer_last_name" id="customer_last_name"
+                            class="block mt-1 w-full" type="text" />
+                        <x-input-error :messages="$errors->get('customer_last_name')" class="text-center mt-1" />
                     </div>
                 </div>
             </section>

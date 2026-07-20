@@ -67,8 +67,7 @@ class BookingEdit extends Component
 
         $this->logBooking('booking_dates_updated', "Date e prezzo aggiornati per la prenotazione #{$this->booking->id}", $this->booking, $oldPrice);
 
-        session()->flash('swal-success', "Prenotazione #{$this->booking->id} aggiornata con successo!");
-        return $this->redirect(route('dashboard'), navigate: true);
+        return redirect()->route('dashboard')->with('swal-success', "Prenotazione <span class='id'>#{$this->booking->id}</span> aggiornata con successo!");
     }
 
     // CALENDAR

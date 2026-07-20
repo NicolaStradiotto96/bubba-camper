@@ -37,33 +37,6 @@
                 </h3>
             </div>
         @else
-            {{-- MESSAGES --}}
-            <div x-data="{ message: '' }" @notify.window="message = $event.detail.message;">
-
-                <div x-show="message" x-transition
-                    class="mx-4 sm:mx-0 mb-6 p-4 rounded-r-xl border border-l-4 bg-white dark:bg-gray-800 border-green-500 text-green-500">
-                    <div class="flex items-center justify-between font-medium">
-                        <span x-text="message"></span>
-                        <button @click="message = ''"
-                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none"><i
-                                class="fa-solid fa-xmark text-xl"></i></button>
-                    </div>
-                </div>
-
-                @if (session()->has('success') || session()->has('cancelled'))
-                    <div x-data="{ show: true }" x-show="show"
-                        class="mx-4 sm:mx-0 mb-6 p-4 rounded-r-xl border border-l-4 bg-white dark:bg-gray-800 {{ session()->has('success') ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500' }}">
-                        <div class="flex items-center justify-between font-medium">
-                            <span>{{ session('success') ?? session('cancelled') }}</span>
-                            <button @click="show = false"
-                                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-lg transition-colors focus:outline-none"><i
-                                    class="fa-solid fa-xmark text-xl"></i></button>
-                        </div>
-                    </div>
-                @endif
-            </div>
-
-
             {{-- DESKTOP VIEW --}}
             <div
                 class="hidden lg:block bg-white dark:bg-gray-900/30 shadow-xl rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -85,7 +58,7 @@
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                         @foreach ($bookings as $booking)
                             <tr wire:click="openBookingDetails('{{ $booking->id }}')"
-                                class="font-black hover:bg-gray-100/50 dark:hover:bg-gray-700/30 cursor-pointer">
+                                class="font-black hover:bg-gray-100/50 dark:hover:bg-gray-700/30 cursor-pointer transition">
 
                                 {{-- ID --}}
                                 <td class="px-2 py-4 text-sm">
@@ -808,6 +781,7 @@
         document.body.classList.toggle('no-scroll', open || value?.status === 'open');
     });"
         @open-booking-modal.window="open = true; b = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.detail ? $event.detail.detail : $event.detail)"
+        @close-booking-modal.window="closeAll()"
         @keydown.escape.window="if (!document.querySelector('.glightbox-container') && !viewingDocs?.status) { open = false; }"
         x-show="open" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
 
@@ -1366,16 +1340,7 @@
     {{-- DOCUMENTS MODAL --}}
     <div x-data="{ showDocModal: false, selectedBookingId: null }" x-init="const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('open_doc_modal')) {
-        let id = urlParams.get('open_doc_modal');
-    
-        selectedBookingId = id;
-        showDocModal = true;
-    
-        $nextTick(() => {
-            $dispatch('setBookingId', { id: id });
-        });
-    
-        window.history.replaceState({}, document.title, window.location.pathname);
+        window.openBookingModal(urlParams.get('open_doc_modal'), $wire, $dispatch);
     }
     $watch('showDocModal', value => {
         document.body.classList.toggle('no-scroll', value);
@@ -1408,7 +1373,7 @@
             </div>
 
             <div x-init="$watch('showDocModal', value => { if (value) $dispatch('setBookingId', { id: selectedBookingId }) })">
-                @livewire('user.document-uploader', key('doc-uploader-static'))
+                @livewire('user.document-uploader', ['bookingId' => null], key('doc-uploader-modal'))
             </div>
 
             <x-secondary-button @click="showDocModal = false; $dispatch('reset-uploader')"

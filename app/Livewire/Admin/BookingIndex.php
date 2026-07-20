@@ -15,12 +15,15 @@ use App\Mail\PenaltyPaid;
 use App\Mail\PenaltyPaidNotification;
 use App\Models\Booking;
 use App\Models\Damage;
+use App\Models\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Stripe\Refund;
+use Stripe\Stripe;
 
 class BookingIndex extends Component
 {
@@ -39,6 +42,25 @@ class BookingIndex extends Component
         }
     }
 
+    // CHECK BOOKING ACCESS
+    public function checkBookingAccess($id)
+    {
+        $booking = Booking::find($id);
+
+        if (!$booking) return ['authorized' => false];
+
+        $hasMissingDocs = !$booking->driver_license_front_path ||
+            !$booking->driver_license_back_path ||
+            !$booking->id_card_front_path ||
+            !$booking->id_card_back_path;
+
+        return [
+            'authorized' => true,
+            'needsDocs' => ($booking->payment_status === 'paid' && $hasMissingDocs)
+        ];
+    }
+
+    // CONFIRM BOOKING
     #[On('confirmBooking')]
     public function confirmBooking($bookingId)
     {
@@ -48,30 +70,22 @@ class BookingIndex extends Component
             $booking->status = 'confirmed';
             $booking->save();
 
+            $this->logAdminEvent(
+                'booking_confirmed_by_admin',
+                "Prenotazione #{$booking->id} confermata dall'amministratore.",
+                $booking
+            );
+
             $this->dispatch('booking-updated');
 
             Mail::to($booking->customer_email)->send(new BookingConfirmed($booking));
             Mail::to(config('app.admin_email'))->send(new BookingConfirmedNotification($booking));
 
-            session()->flash('success', "Prenotazione #{$booking->id} confermata.");
+            $this->dispatch('swal-success', "Prenotazione <span class='id'>#{$booking->id}</span> confermata con successo!");
         }
     }
 
-    #[On('confirmDamageResolution')]
-    public function confirmDamageResolution($damageId)
-    {
-        $damage = Damage::findOrFail($damageId);
-
-        $damage->update(['status' => 'paid']);
-
-        Mail::to($damage->booking->customer_email)->send(new PenaltyDamagePaid($damage));
-        Mail::to(config('app.admin_email'))->send(new PenaltyDamagePaidNotification($damage));
-
-        session()->flash('success', "Il danno #{$damage->id} è stato risolto con successo.");
-
-        $this->dispatch('refresh-page');
-    }
-
+    // CANCEL BOOKING
     #[On('cancelBooking')]
     public function cancelBooking($bookingId, $applyPenalty = true, $useStripe = false, $byAdmin = false)
     {
@@ -92,26 +106,47 @@ class BookingIndex extends Component
 
         $refundAmount = min($refundAmount, $totalPaid);
 
+        $canUseStripe = $useStripe &&
+            $booking->stripe_payment_id &&
+            $booking->payment_status !== 'fully_paid';
+
         $booking->status = $byAdmin ? 'cancelled_by_admin' : 'cancelled';
         $booking->documents_status = 'not_required';
 
         if ($refundAmount > 0) {
-            if ($useStripe && $booking->stripe_payment_id) {
+            if ($canUseStripe) {
                 try {
-                    \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
-                    \Stripe\Refund::create([
+                    Stripe::setApiKey(config('services.stripe.secret'));
+                    Refund::create([
                         'payment_intent' => $booking->stripe_payment_id,
                         'amount' => (int)($refundAmount * 100),
                     ]);
                     $booking->payment_status = 'refunded_stripe';
                     $booking->refund_paid_at = now();
+
+                    $this->logAdminEvent(
+                        'refund_processed_stripe',
+                        "Eseguito rimborso Stripe di {$refundAmount}€ per la prenotazione #{$booking->id}.",
+                        $booking,
+                        ['refund_amount' => $refundAmount]
+                    );
                 } catch (\Exception $e) {
-                    session()->flash('error', "Errore Stripe: " . $e->getMessage());
+                    \Log::error("ERRORE STRIPE [Booking #{$booking->id}]: " . $e->getMessage(), [
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    $this->dispatch('swal-modal-error', 'Si è verificato un errore durante la comunicazione con Stripe. Il rimborso non è stato effettuato.');
                     return;
                 }
             } else {
                 $booking->payment_status = 'refunded_manual';
                 $booking->refund_paid_at = now();
+
+                $this->logAdminEvent(
+                    'refund_processed_manual',
+                    "Registrato rimborso manuale di {$refundAmount}€ per la prenotazione #{$booking->id}.",
+                    $booking,
+                    ['refund_amount' => $refundAmount]
+                );
             }
         } else {
             if ($totalPaid >= $booking->calculateExpectedRefund()['penalty_amount']) {
@@ -127,20 +162,28 @@ class BookingIndex extends Component
         $booking->cancellation_confirmed_at = now();
         $booking->save();
 
+        $this->logAdminEvent(
+            'booking_cancelled_by_admin',
+            "Prenotazione #{$booking->id} annullata dall'amministratore.",
+            $booking,
+            ['apply_penalty' => $applyPenalty, 'refund_amount' => $refundAmount]
+        );
+
         $this->dispatch('booking-updated');
 
         Mail::to($booking->customer_email)->send(new BookingCancelled($booking));
         Mail::to(config('app.admin_email'))->send(new BookingCancelledNotification($booking));
 
         $msg = $refundAmount > 0
-            ? "Prenotazione annullata. Rimborso di " . number_format($refundAmount, 2, ',', '') . "€ registrato."
+            ? "Prenotazione <span class='id'>#{$booking->id}</span> annullata. Rimborso di " . number_format($refundAmount, 2, ',', '') . "€ registrato."
             : ($remainingPenalty > 0
-                ? "Prenotazione annullata. Penale residua di " . number_format($remainingPenalty, 2, ',', '') . "€ in sospeso."
-                : "Prenotazione annullata. Nessun rimborso dovuto.");
+                ? "Prenotazione <span class='id'>#{$booking->id}</span> annullata. Penale residua di " . number_format($remainingPenalty, 2, ',', '') . "€ in sospeso."
+                : "Prenotazione <span class='id'>#{$booking->id}</span> annullata. Nessun rimborso dovuto.");
 
-        session()->flash('cancelled', $msg);
+        $this->dispatch('swal-success', $msg);
     }
 
+    // COMPLETE BOOKING
     #[On('markAsPaid')]
     public function markAsPaid($bookingId)
     {
@@ -153,40 +196,59 @@ class BookingIndex extends Component
             $booking->penalty_paid_at = now();
             $booking->save();
 
+            $this->logAdminEvent(
+                'penalty_marked_as_paid',
+                "Registrato saldo penale per la prenotazione annullata #{$booking->id}.",
+                $booking,
+                ['amount' => $booking->calculateExpectedRefund()['penalty_amount']]
+            );
+
             Mail::to($booking->customer_email)->send(new PenaltyPaid($booking));
             Mail::to(config('app.admin_email'))->send(new PenaltyPaidNotification($booking));
 
-            $booking->logs()->create([
-                'type'    => 'penalty_paid',
-                'message' => 'Penale di annullamento saldata dal cliente.',
-                'context' => [
-                    'amount' => $booking->calculateExpectedRefund()['penalty_amount']
-                ]
-            ]);
-
-            session()->flash('success', "Penale residua registrata con successo per la prenotazione #{$booking->id}.");
+            $this->dispatch('swal-success', "Penale residua registrata con successo per la prenotazione <span class='id'>#{$booking->id}</span>.");
         } else {
             $booking->payment_status = 'fully_paid';
             $booking->balance_paid = true;
             $booking->balance_paid_at = now();
             $booking->save();
 
+            $this->logAdminEvent(
+                'booking_marked_as_paid',
+                "Registrato saldo completo per la prenotazione #{$booking->id}.",
+                $booking,
+                ['total_price' => $booking->total_price, 'balance_paid' => $booking->balance_payment,]
+            );
+
             Mail::to($booking->customer_email)->send(new BookingCompleted($booking));
             Mail::to(config('app.admin_email'))->send(new BookingCompletedNotification($booking));
 
-            $booking->logs()->create([
-                'type'    => 'booking_completed',
-                'message' => 'Saldo ricevuto e mail di conferma finale inviata al cliente.',
-                'context' => [
-                    'total_price'     => $booking->total_price,
-                    'balance_paid'    => $booking->balance_payment,
-                ]
-            ]);
-
-            session()->flash('success', "Saldo registrato per #{$booking->id}.");
+            $this->dispatch('swal-success', "Saldo registrato con successo per la prenotazione <span class='id'>#{$booking->id}</span>.");
         }
     }
 
+    // COMPLETE DAMAGE
+    #[On('confirmDamageResolution')]
+    public function confirmDamageResolution($damageId)
+    {
+        $damage = Damage::findOrFail($damageId);
+
+        $damage->update(['status' => 'paid']);
+
+        $this->logAdminEvent(
+            'damage_resolved_by_admin',
+            "Registrato saldo/risoluzione per il danno #{$damage->id}.",
+            $damage->booking,
+            ['damage_id' => $damage->id, 'amount' => $damage->amount]
+        );
+
+        Mail::to($damage->booking->customer_email)->send(new PenaltyDamagePaid($damage));
+        Mail::to(config('app.admin_email'))->send(new PenaltyDamagePaidNotification($damage));
+
+        $this->dispatch('swal-success', "Saldo registrato con successo per il danno <span class='damage-id'>#{$damage->id}</span>.");
+    }
+
+    // INVOICE BOOKING
     #[On('markAsInvoiced')]
     public function markAsInvoiced($bookingId)
     {
@@ -195,21 +257,26 @@ class BookingIndex extends Component
         $booking->status = 'invoiced';
         $booking->save();
 
-        session()->flash('success', "La prenotazione #{$bookingId} è stata contrassegnata come Fatturata.");
+        $this->logAdminEvent(
+            'booking_invoiced',
+            "Prenotazione #{$booking->id} contrassegnata come fatturata.",
+            $booking
+        );
 
-        return $this->redirect(route('dashboard'), navigate: true);
+        $this->dispatch('swal-success', "Prenotazione <span class='id'>#{$booking->id}</span> fatturata con successo!");
     }
 
+    // OPEN DETAILS MODAL
     public function openBookingDetails($bookingId)
     {
         $booking = Booking::with(['camper', 'damages'])->findOrFail($bookingId);
 
         $this->dispatch('open-booking-modal', [
             'id'               => $booking->id,
-            'damage_url'       => route('damage.add', $booking->id),
-            'edit_url'         => route('booking.edit', $booking->id),
             'ulid'             => $booking->ulid,
             'created_at'       => $booking->created_at->format('d/m/Y \a\l\l\e H:i'),
+            'damage_url'       => route('damage.add', $booking->id),
+            'edit_url'         => route('booking.edit', $booking->id),
             'name'             => "{$booking->customer_first_name} {$booking->customer_last_name}",
             'email'            => $booking->customer_email,
             'phone'            => $booking->customer_phone,
@@ -268,11 +335,10 @@ class BookingIndex extends Component
         ]);
     }
 
+    // REJECT DOCUMENTS
     public function rejectDocuments($bookingId, array $fields)
     {
-        $this->bookingId = $bookingId;
-
-        $booking = Booking::findOrFail($this->bookingId);
+        $booking = Booking::findOrFail($bookingId);
 
         $rejectedFields = [];
 
@@ -291,12 +357,19 @@ class BookingIndex extends Component
             $booking->save();
         });
 
+        $this->logAdminEvent(
+            'documents_rejected_by_admin',
+            "Documenti rifiutati dall'amministratore per la prenotazione #{$booking->id}.",
+            $booking,
+            ['rejected_fields' => $rejectedFields]
+        );
+
         Mail::to($booking->customer_email)->send(new DocumentRejected($booking, $rejectedFields));
 
-        $this->dispatch('notify', message: 'Documenti cancellati e cliente avvisato.');
-        $this->dispatch('refresh-page');
+        $this->dispatch('swal-success', "Documenti cancellati e cliente avvisato con successo!");
     }
 
+    // RESET PAGE
     public function updatingSearchId()
     {
         $this->resetPage();
@@ -305,13 +378,30 @@ class BookingIndex extends Component
     // RENDER
     public function render()
     {
+        $cleanSearch = trim(str_replace('#', '', $this->searchId));
+
         $bookings = Booking::with('camper')
-            ->when($this->searchId, fn($q) => $q->where('id', $this->searchId))
+            ->when(!empty($cleanSearch), fn($q) => $q->where('id', $cleanSearch))
             ->latest()
             ->paginate(10);
 
         return view('livewire.admin.booking-index', [
             'bookings' => $bookings
+        ]);
+    }
+
+    // LOG
+    private function logAdminEvent(string $type, string $message, Booking $booking, array $extraContext = [])
+    {
+        Log::create([
+            'type'       => $type,
+            'message'    => $message,
+            'context'    => array_merge([
+                'user_id'    => auth()->id(),
+                'ip_address' => request()->ip(),
+                'booking_id' => $booking->id,
+                'camper_id'  => $booking->camper_id,
+            ], $extraContext),
         ]);
     }
 }
