@@ -21,7 +21,7 @@ class CheckoutController extends Controller
     public function show(Booking $booking)
     {
         if ($booking->user_id !== auth()->id()) {
-            abort(403);
+            abort(403, 'Azione non autorizzata.');
         }
 
         if ($booking->status === 'expired') {
@@ -98,8 +98,33 @@ class CheckoutController extends Controller
     }
 
     // PAID
-    public function success(Booking $booking)
+    public function success(Request $request, Booking $booking)
     {
+        if ($booking->user_id !== auth()->id()) {
+            abort(403, 'Azione non autorizzata.');
+        }
+
+        if ($booking->payment_status !== 'paid' && $request->has('session_id')) {
+            try {
+                $session = Session::retrieve($request->query('session_id'));
+
+                if ($session->payment_status === 'paid') {
+                    $booking->update([
+                        'payment_status' => 'paid',
+                        'status' => 'confirmed',
+                    ]);
+
+                    $this->logCheckout(
+                        'payment_successful',
+                        "Pagamento acconto completato con successo per la prenotazione #{$booking->id}.",
+                        $booking
+                    );
+                }
+            } catch (\Exception $e) {
+                \Log::error("Errore verifica sessione Stripe al successo [Booking #{$booking->id}]: " . $e->getMessage());
+            }
+        }
+
         return view('checkout.success', compact('booking'));
     }
 

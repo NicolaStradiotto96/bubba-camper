@@ -4,7 +4,7 @@
 
 <x-app-layout title="Prenotazione Confermata">
     <div
-        class="bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-160px)] flex items-center transition duration-500 ease-in-out">
+        class="bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-160px)] flex items-center">
 
         @if ($booking->payment_status === 'paid')
             <div class="w-full md:w-[48rem] max-w-3xl mx-auto px-4 text-center">
@@ -114,6 +114,38 @@
                     </div>
                 </div>
             </div>
+
+            {{-- CONFETTI --}}
+            <script>
+                (async () => {
+                    const checkConfetti = setInterval(async () => {
+                        if (window.JSConfetti) {
+                            clearInterval(checkConfetti);
+                            const jsConfetti = new window.JSConfetti();
+
+                            await jsConfetti.addConfetti({
+                                confettiColors: ['#f59e0b', '#eab308', '#ef4444', '#ffffff'],
+                                confettiNumber: 500,
+                            });
+
+                            setTimeout(async () => {
+                                await jsConfetti.addConfetti({
+                                    emojis: ['🚐', '🎉', '⭐', '🌍'],
+                                    emojiSize: 35,
+                                    confettiNumber: 100,
+                                });
+                            }, 50);
+
+                            setTimeout(async () => {
+                                await jsConfetti.addConfetti({
+                                    confettiColors: ['#f59e0b', '#eab308', '#ef4444', '#ffffff'],
+                                    confettiNumber: 250,
+                                });
+                            }, 500);
+                        }
+                    }, 50);
+                })();
+            </script>
         @else
             <div class="w-full md:w-[48rem] max-w-3xl mx-auto px-4 text-center">
                 <div

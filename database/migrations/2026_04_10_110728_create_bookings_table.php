@@ -38,6 +38,10 @@ return new class extends Migration
             $table->string('id_card_back_path')->nullable();
             $table->string('documents_status')->default('pending')->index();
 
+            $table->boolean('documents_accepted')->default(false);
+            $table->timestamp('documents_accepted_at')->nullable();
+            $table->ipAddress('documents_accepted_ip')->nullable();
+
             $table->decimal("total_price", 10, 2);
 
             $table->decimal('down_payment', 10, 2);

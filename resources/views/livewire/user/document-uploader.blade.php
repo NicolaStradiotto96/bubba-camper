@@ -212,14 +212,15 @@
             </div>
         </div>
 
-        <div class="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-            <p>
-                Il caricamento dei documenti implica l'accettazione del trattamento dei dati ai fini
-                della verifica identità, in conformità con la nostra
-                <a href="#"
-                    class="text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition hover:underline">Privacy
-                    Policy</a>.
-            </p>
+        <div>
+            <div class="flex items-center gap-2 px-2">
+                <input type="checkbox" id="accept_documents_policy" wire:model="accept_documents_policy" required
+                    class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-amber-500 shadow-sm focus:ring-amber-500 dark:focus:ring-amber-500 dark:focus:ring-offset-gray-800 transition">
+                <label for="accept_documents_policy" class="text-xs text-gray-600 dark:text-gray-400">
+Autorizzo espressamente il trattamento dei documenti personali d'identità e di guida ai fini della verifica e la conferma del noleggio, come da <a href="#termini" class="text-amber-500 hover:underline">Termini e Condizioni</a>.            </div>
+            <div class="min-h-5 text-center mt-1">
+                <x-input-error :messages="$errors->get('accept_documents_policy')" />
+            </div>
         </div>
 
         <x-primary-button type="button" wire:click="uploadDocuments" wire:loading.attr="disabled"

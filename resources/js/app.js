@@ -51,5 +51,9 @@ window.itiI18nIt = it.default || it;
 import Swal from 'sweetalert2';
 window.Swal = Swal;
 
+// JS CONFETTI
+import JSConfetti from 'js-confetti'
+window.JSConfetti = JSConfetti;
+
 // MY JS
 import "./main";

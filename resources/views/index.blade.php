@@ -1,6 +1,21 @@
 <x-app-layout title="I Nostri Camper">
 
-    <div class="min-h-[calc(100vh-160px)]">
+    <div class="min-h-[calc(100vh-160px)] translate-y-10 transition-all duration-1000 transform" x-data="{
+        init() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                    } else {
+                        entry.target.classList.remove('opacity-100', 'translate-y-0');
+                        entry.target.classList.add('opacity-0', 'translate-y-10');
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(this.$el);
+        }
+    }">
 
         {{-- TITLE --}}
         <header class="flex flex-col items-center justify-center text-center">

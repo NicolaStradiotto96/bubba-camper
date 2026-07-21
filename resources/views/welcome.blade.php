@@ -12,36 +12,76 @@
         </div>
         <div class="relative z-10 flex flex-col items-center">
             {{-- LOGO --}}
-            <div class="flex justify-center">
-                <x-application-logo size="xl" class="px-5" />
+            <div class="flex justify-center transition-all duration-1000 transform" x-data="{ show: false }"
+                x-init="setTimeout(() => show = true, 100)" x-cloak
+                :class="show ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 -translate-y-5'">
+                <x-application-logo size="xl" class="px-5 hover:scale-105 transition-transform duration-300" />
             </div>
 
             {{-- DESCRIPTION --}}
             <header class="text-center px-4">
-                <h1 class="text-4xl xl:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight uppercase">
-                    Prenota la tua libertà su quattro ruote
+                <h1 class="text-4xl xl:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight uppercase"
+                    x-data="{
+                        text: '',
+                        fullText: 'Prenota la tua libertà su quattro ruote',
+                        currentIndex: 0,
+                        init() {
+                            let interval = setInterval(() => {
+                                if (this.currentIndex < this.fullText.length) {
+                                    this.text += this.fullText[this.currentIndex];
+                                    this.currentIndex++;
+                                } else {
+                                    clearInterval(interval);
+                                }
+                            }, 55);
+                        }
+                    }" x-text="text">
                 </h1>
 
-                <h2 class="mt-4 text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">Benvenuto su <strong
-                        class="text-amber-500">{{ config('app.name', 'Bubba Camper') }}</strong>.</h2>
+                <div x-data="{ show: false }" x-init="setTimeout(() => show = true, 2100)" x-cloak
+                    class="transition-all duration-1000 transform"
+                    :class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'">
 
-                <p class="text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
-                    Scopri i nostri camper curati nei dettagli e parti per la tua prossima avventura on-the-road.
-                </p>
+                    <h2 class="mt-4 text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
+                        Benvenuto su <strong class="text-amber-500">{{ config('app.name', 'Bubba Camper') }}</strong>.
+                    </h2>
+
+                    <p class="mt-2 text-xl text-gray-800 dark:text-gray-300 max-w-2xl mx-auto">
+                        Scopri i nostri camper curati nei dettagli e parti per la tua prossima avventura on-the-road.
+                    </p>
+                </div>
             </header>
         </div>
     </div>
 
     {{-- REVIEWS --}}
-    <section class="pb-16">
+    <section class="pb-16 opacity-0 translate-y-10 transition-all duration-1000 transform" x-data="{
+        init() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                    } else {
+                        entry.target.classList.remove('opacity-100', 'translate-y-0');
+                        entry.target.classList.add('opacity-0', 'translate-y-10');
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(this.$el);
+        }
+    }">
         <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white uppercase tracking-wider mb-12">
+            <h2
+                class="text-2xl xl:text-3xl font-extrabold text-center text-gray-900 dark:text-white uppercase tracking-widest mb-12 flex items-center justify-center gap-4">
+                <span class="hidden sm:block h-px w-12 bg-amber-500"></span>
                 Cosa dicono i nostri viaggiatori
+                <span class="hidden sm:block h-px w-12 bg-amber-500"></span>
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <article
-                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 relative">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 relative transition duration-300 hover:-translate-y-2">
                     <div class="flex mb-4">
                         @for ($i = 0; $i < 5; $i++)
                             <i class="fa-solid fa-star text-amber-400 text-md"></i>
@@ -64,7 +104,7 @@
                 </article>
 
                 <article
-                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 relative transition duration-300 hover:-translate-y-2">
                     <div class="flex text-amber-400 mb-4">
                         @for ($i = 0; $i < 5; $i++)
                             <i class="fa-solid fa-star text-amber-400 text-md"></i>
@@ -87,7 +127,7 @@
                 </article>
 
                 <article
-                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-300 dark:border-gray-700 relative transition duration-300 hover:-translate-y-2">
                     <div class="flex text-amber-400 mb-4">
                         @for ($i = 0; $i < 5; $i++)
                             <i class="fa-solid fa-star text-amber-400 text-md"></i>
@@ -113,10 +153,28 @@
     </section>
 
     {{-- INDEX --}}
-    <section>
+    <section class="opacity-0 translate-y-10 transition-all duration-1000 transform" x-data="{
+        init() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                    } else {
+                        entry.target.classList.remove('opacity-100', 'translate-y-0');
+                        entry.target.classList.add('opacity-0', 'translate-y-10');
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(this.$el);
+        }
+    }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white uppercase tracking-wider mb-12">
+            <h2
+                class="text-2xl xl:text-3xl font-extrabold text-center text-gray-900 dark:text-white uppercase tracking-widest mb-12 flex items-center justify-center gap-4">
+                <span class="hidden sm:block h-px w-12 bg-amber-500"></span>
                 Scopri i nostri camper
+                <span class="hidden sm:block h-px w-12 bg-amber-500"></span>
             </h2>
             <div class="flex flex-wrap justify-center gap-8">
                 @foreach ($campers->take(3) as $camper)

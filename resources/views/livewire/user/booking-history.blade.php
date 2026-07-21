@@ -1129,7 +1129,7 @@
             x-transition:enter-end="opacity-100" @click="showDocModal = false">
         </div>
 
-        <div class="relative bg-white dark:bg-gray-800 rounded-[2rem] p-6 w-full sm:max-w-lg border-2 border-gray-200 dark:border-gray-700 shadow-2xl z-10 my-auto"
+        <div class="relative bg-white dark:bg-gray-800 rounded-[2rem] p-3 w-full sm:max-w-lg border-2 border-gray-200 dark:border-gray-700 shadow-2xl z-10 my-auto"
             x-show="showDocModal" x-trap="showDocModal"
             x-transition:enter="transition ease-out duration-300 transform"
             x-transition:enter-start="opacity-0 translate-y-4 scale-95"

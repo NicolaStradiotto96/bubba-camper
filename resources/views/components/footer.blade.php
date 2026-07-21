@@ -101,13 +101,13 @@
 
     {{-- SEO --}}
     @php
-        $localBusinessSchema = [
+        $autoRentalSchema = [
             '@context' => 'https://schema.org',
-            '@type' => 'LocalBusiness',
+            '@type' => 'AutoRental',
             'name' => config('app.name', 'Bubba Camper'),
             'image' => asset('logo.svg'),
             'description' =>
-                'Noleggio camper curati nei dettagli. Prenota la tua avventura on-the-road con Bubba Camper e vivi la libertà in totale comfort.',
+                'Noleggio camper curati nei dettagli. Prenota la tua avventura on-the-road con Bubba Camper.',
             'url' => url('/'),
             'telephone' => '+393347538083',
             'address' => [
@@ -127,6 +127,6 @@
     @endphp
 
     <script type="application/ld+json">
-        {!! json_encode($localBusinessSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    {!! json_encode($autoRentalSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
     </script>
 </footer>

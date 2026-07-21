@@ -95,10 +95,12 @@
                 <div class="flex flex-col justify-center">
 
                     {{-- Name --}}
-                    <div class="text-center lg:text-left">
+                    <div class="text-center">
                         <h1 itemprop="name"
-                            class="text-4xl font-extrabold text-gray-900 dark:text-white uppercase tracking-tighter text-center">
+                            class="text-4xl font-extrabold text-gray-900 dark:text-white uppercase tracking-tighter text-center flex items-center justify-center gap-4">
+                            <span class="hidden sm:block h-px w-12 bg-amber-500"></span>
                             {{ $camper->name }}
+                            <span class="hidden sm:block h-px w-12 bg-amber-500"></span>
                         </h1>
                     </div>
 
@@ -220,27 +222,31 @@
                             <div class="flex w-full">
                                 <button @click="openSpecs = true" @keydown.escape.window="openSpecs = false"
                                     type="button"
-                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-[2rem] shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
-                                    <i class="fa-solid fa-gears text-green-500 text-lg"></i>
-                                    {{ __('Caratteristiche tecniche') }}
+                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-[2rem] shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group overflow-hidden">
+                                    <i class="fa-solid fa-gears text-green-500 text-lg flex-shrink-0"></i>
+                                    <span
+                                        class="text-center lg:overflow-hidden lg:text-ellipsis xl:text-wrap xl:overflow-visible">{{ __('Caratteristiche tecniche') }}</span>
                                 </button>
                             </div>
 
                             <div class="flex w-full">
-                                <button @click="openEquipment = true" @keydown.escape.window="openEquipment = false"
+                                <button @click="openSpecs = true" @keydown.escape.window="openSpecs = false"
                                     type="button"
-                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-[2rem] shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
-                                    <i class="fa-solid fa-toolbox text-green-500 text-lg"></i>
-                                    {{ __('Equipaggiamento') }}
+                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-[2rem] shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group overflow-hidden">
+                                    <i class="fa-solid fa-gears text-green-500 text-lg flex-shrink-0"></i>
+                                    <span
+                                        class="text-center lg:overflow-hidden lg:text-ellipsis xl:text-wrap xl:overflow-visible">{{ __('Caratteristiche tecniche') }}</span>
                                 </button>
                             </div>
 
                             <div class="flex w-full">
                                 <button @click="openPolicies = true" @keydown.escape.window="openPolicies = false"
                                     type="button"
-                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-[2rem] shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group">
-                                    <i class="fa-solid fa-hand-holding-dollar text-green-500 text-lg"></i>
-                                    {{ __('Cauzione e annullamento') }}
+                                    class="w-full bg-white dark:bg-gray-800/50 hover:bg-gray-100 hover:dark:bg-gray-700 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white hover:text-black dark:hover:white text-xs font-black tracking-widest uppercase py-3 px-4 rounded-[2rem] shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 transition group overflow-hidden">
+                                    <i
+                                        class="fa-solid fa-hand-holding-dollar text-green-500 text-lg flex-shrink-0"></i>
+                                    <span
+                                        class="text-center lg:overflow-hidden lg:text-ellipsis xl:text-wrap xl:overflow-visible">{{ __('Cauzione e annullamento') }}</span>
                                 </button>
                             </div>
                         </div>
@@ -611,7 +617,7 @@
                 'offers' => [
                     '@type' => 'Offer',
                     'priceCurrency' => 'EUR',
-                    'price' => $camper->getPriceForDate(), // Assicurati che ritorni solo il numero
+                    'price' => $camper->getPriceForDate(),
                     'availability' => $camper->is_active
                         ? 'https://schema.org/InStock'
                         : 'https://schema.org/OutOfStock',
@@ -621,6 +627,6 @@
         @endphp
 
         <script type="application/ld+json">
-    {!! json_encode($productSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
-    </script>
+        {!! json_encode($productSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+        </script>
 </x-app-layout>

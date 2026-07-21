@@ -23,6 +23,8 @@ class DocumentUploader extends Component
     public $id_card_front;
     public $id_card_back;
 
+    public $accept_documents_policy = false;
+
     public function mount($bookingId = null, $existingFiles = [])
     {
         $this->bookingId = $bookingId;
@@ -65,7 +67,7 @@ class DocumentUploader extends Component
     // RESET FORM
     public function resetForm()
     {
-        $this->reset(['driver_license_front', 'driver_license_back', 'id_card_front', 'id_card_back']);
+        $this->reset(['driver_license_front', 'driver_license_back', 'id_card_front', 'id_card_back', 'accept_documents_policy']);
 
         $this->resetErrorBag();
         $this->resetValidation();
@@ -96,7 +98,9 @@ class DocumentUploader extends Component
 
         $booking = $query->findOrFail($this->bookingId);
 
-        $rules = [];
+        $rules = [
+            'accept_documents_policy' => 'accepted',
+        ];
         $newPaths = [];
         $fields = [
             'driver_license_front' => 'driver_license_front_path',
@@ -114,7 +118,9 @@ class DocumentUploader extends Component
             $rules[$field] = 'required|file|mimes:pdf,png,jpg,jpeg|max:5120';
         }
 
-        $this->validate($rules);
+        $this->validate($rules, [
+            'accept_documents_policy.accepted' => 'Devi autorizzare il trattamento dei documenti per procedere.'
+        ]);
 
         DB::transaction(function () use ($booking, $fields, &$newPaths) {
             $folder = 'documents/' . $this->bookingId;
@@ -127,6 +133,9 @@ class DocumentUploader extends Component
 
             if (!empty($newPaths)) {
                 $newPaths['documents_status'] = 'uploaded';
+                $newPaths['documents_accepted'] = true;
+                $newPaths['documents_accepted_at'] = now();
+                $newPaths['documents_accepted_ip'] = request()->ip();
                 $booking->update($newPaths);
 
                 $this->logDocuments(
