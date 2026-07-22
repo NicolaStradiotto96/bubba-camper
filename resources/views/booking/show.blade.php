@@ -14,7 +14,7 @@
             </div>
 
             <div class="flex items-center justify-center lg:justify-start">
-                <a href="{{ route('show', $camper) }}" wire:navigate
+                <a href="{{ route('show', $camper) }}"
                     onclick="if (history.length > 1) { event.preventDefault(); history.back(); }"
                     class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i

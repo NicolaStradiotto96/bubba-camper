@@ -9,6 +9,7 @@ use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
+use Livewire\Attributes\Title;
 use App\Models\Log;
 
 new #[Layout('layouts.guest')] class extends Component {
@@ -31,6 +32,7 @@ new #[Layout('layouts.guest')] class extends Component {
     /**
      * Reset the password for the given user.
      */
+    #[Title('Reimposta Password')]
     public function resetPassword(): void
     {
         $this->validate([
@@ -84,12 +86,12 @@ new #[Layout('layouts.guest')] class extends Component {
 
         Session::flash('status', __($status));
 
-        $this->redirectRoute('login', navigate: true);
+        $this->redirectRoute('login');
     }
 }; ?>
 
 <div>
-    <form wire:submit="resetPassword">
+    <form wire:submit="resetPassword" novalidate>
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />

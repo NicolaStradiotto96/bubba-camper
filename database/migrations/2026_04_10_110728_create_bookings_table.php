@@ -60,9 +60,12 @@ return new class extends Migration
 
             $table->string('stripe_payment_id')->nullable();
 
+            $table->decimal('refund_amount', 10, 2)->default(0.00);
             $table->string('refund_receipt_path')->nullable();
             $table->timestamp('refund_paid_at')->nullable();
 
+            $table->decimal('penalty_amount', 10, 2)->default(0.00);
+            $table->decimal('remaining_penalty', 10, 2)->default(0.00);
             $table->string('penalty_receipt_path')->nullable();
             $table->timestamp('penalty_paid_at')->nullable();
 

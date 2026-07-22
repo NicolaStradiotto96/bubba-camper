@@ -34,7 +34,7 @@
                             <div class="w-full md:w-1/2">
                                 <p class="text-black dark:text-white font-black uppercase">Scegli le
                                     date e parti!</p>
-                                <x-primary-anchor class="mt-3" href="{{ route('index') }}" wire:navigate
+                                <x-primary-anchor class="mt-3" href="{{ route('index') }}"
                                     x-data="{ loading: false }" @click="loading = true"
                                     x-bind:class="loading ? 'opacity-50 cursor-wait' : ''" x-bind:disabled="loading">
                                     {{ __('Prenota ora') }}

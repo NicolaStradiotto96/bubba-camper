@@ -121,7 +121,7 @@ new class extends Component {
             </div>
 
             @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !auth()->user()->hasVerifiedEmail())
-                <div>
+                <div class="mb-6">
                     <p class="text-sm my-2 text-gray-800 dark:text-amber-500 animate-pulse">
                         {{ __('Il tuo indirizzo email non è verificato.') }}
                     </p>

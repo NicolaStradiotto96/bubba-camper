@@ -5,7 +5,7 @@
 <div class="mx-4">
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
-        <a href="{{ route('dashboard') }}" wire:navigate
+        <a href="{{ route('dashboard') }}"
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
             <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
@@ -107,11 +107,7 @@
                     </button>
                 </div>
 
-                <div x-show="open" x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="max-h-0 opacity-0" x-transition:enter-end="max-h-[2000px] opacity-100"
-                    x-transition:leave="transition ease-in duration-300"
-                    x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
-                    class="space-y-4 mt-4 overflow-hidden">
+                <div x-show="open" x-collapse class="space-y-4 mt-4 overflow-hidden">
 
                     <div x-data="{ sub: 'Caratteristiche principali' }" class="p-1">
 
@@ -150,11 +146,7 @@
                     </button>
                 </div>
 
-                <div x-show="open" x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="max-h-0 opacity-0" x-transition:enter-end="max-h-[2000px] opacity-100"
-                    x-transition:leave="transition ease-in duration-300"
-                    x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
-                    class="space-y-4 mt-4 overflow-hidden">
+                <div x-show="open" x-collapse class="space-y-4 mt-4 overflow-hidden">
 
                     <div x-data="{ sub: 'Caratteristiche tecniche' }" class="p-1">
                         <select x-model="sub"
@@ -209,11 +201,7 @@
                     </button>
                 </div>
 
-                <div x-show="open" x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="max-h-0 opacity-0" x-transition:enter-end="max-h-[2000px] opacity-100"
-                    x-transition:leave="transition ease-in duration-300"
-                    x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
-                    class="space-y-4 mt-4 overflow-hidden">
+                <div x-show="open" x-collapse class="space-y-4 mt-4 overflow-hidden">
 
                     <div x-data="{ sub: 'Alla guida' }" class="p-1">
                         <select x-model="sub"
@@ -268,11 +256,7 @@
                     </button>
                 </div>
 
-                <div x-show="open" x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="max-h-0 opacity-0" x-transition:enter-end="max-h-[2000px] opacity-100"
-                    x-transition:leave="transition ease-in duration-300"
-                    x-transition:leave-start="max-h-[2000px] opacity-100" x-transition:leave-end="max-h-0 opacity-0"
-                    class="space-y-4 mt-4 overflow-hidden">
+                <div x-show="open" x-collapse class="space-y-4 mt-4 overflow-hidden">
 
                     <div x-data="{ sub: 'Cauzione' }" class="p-1">
 
@@ -396,6 +380,7 @@
                                             class="relative shadow rounded-lg overflow-hidden border border-amber-500 group">
                                             <img src="{{ $img->temporaryUrl() }}" class="h-16 w-16 object-cover">
                                             <button type="button" wire:click="removeNewImage({{ $index }})"
+                                                title="Cancella Foto"
                                                 class="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white w-4 h-4 rounded-bl flex items-center justify-center transition focus:outline-none">
                                                 <i class="fa-solid fa-xmark text-xs"></i>
                                             </button>
@@ -414,6 +399,7 @@
                                             <img src="{{ asset('storage/' . $old_img) }}"
                                                 class="h-16 w-16 object-cover opacity-85">
                                             <button type="button" wire:click="removeOldImage({{ $index }})"
+                                                title="Cancella Foto"
                                                 class="absolute top-0 right-0 bg-red-600 hover:bg-red-700 text-white w-4 h-4 rounded-bl flex items-center justify-center transition focus:outline-none"
                                                 title="Elimina definitivamente questa foto">
                                                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -452,8 +438,7 @@
                 </div>
 
                 <div class="flex flex-col-reverse sm:flex-row items-center gap-3 w-full sm:w-auto justify-center">
-                    <x-secondary-button href="{{ route('dashboard') }}" wire:navigate
-                        class="w-full sm:w-auto justify-center">
+                    <x-secondary-button href="{{ route('dashboard') }}" class="w-full sm:w-auto justify-center">
                         Annulla
                     </x-secondary-button>
                     <x-primary-button type="button" wire:click="saveCamper" wire:loading.attr="disabled"

@@ -5,18 +5,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Livewire\Attributes\Title;
 use App\Models\Log;
 
 new #[Layout('layouts.guest')] class extends Component {
     /**
      * Send an email verification notification to the user.
      */
+    #[Title('Verifica Email')]
     public function sendVerification(): void
     {
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
-            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+            $this->redirectIntended(default: route('dashboard', absolute: false));
 
             return;
         }
@@ -57,7 +59,7 @@ new #[Layout('layouts.guest')] class extends Component {
 
         $logout();
 
-        $this->redirect('/', navigate: true);
+        $this->redirect('/');
     }
 }; ?>
 

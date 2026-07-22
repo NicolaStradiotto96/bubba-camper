@@ -10,8 +10,7 @@ class BookingController extends Controller
     public function show(Camper $camper)
     {
         if (!$camper->is_active) {
-            session()->flash('swal-error', 'Questo camper non è al momento disponibile per la prenotazione.');
-            return redirect()->route('index');
+            return redirect()->route('index')->with('swal-error', 'Questo camper non è al momento disponibile per la prenotazione.');
         }
 
         return view('booking.show', ['camper' => $camper]);

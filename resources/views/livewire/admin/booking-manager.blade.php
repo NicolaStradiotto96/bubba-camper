@@ -5,7 +5,7 @@
 <div class="min-h-[calc(100vh-160px)] mx-4">
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
-        <a href="{{ route('dashboard') }}" wire:navigate
+        <a href="{{ route('dashboard') }}"
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
             <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}

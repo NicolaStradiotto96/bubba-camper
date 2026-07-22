@@ -5,7 +5,7 @@
 <div class="min-h-[calc(100vh-160px)] mx-4">
 
     <div class="max-w-3xl flex items-center justify-center lg:justify-start mx-auto">
-        <a href="{{ route('dashboard') }}" wire:navigate
+        <a href="{{ route('dashboard') }}"
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
             <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
@@ -99,7 +99,7 @@
                                             </div>
                                         @endif
 
-                                        <button type="button" wire:click="removePhoto({{ $index }})"
+                                        <button type="button" wire:click="removePhoto({{ $index }})" title="Cancella Foto"
                                             class="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-bl flex items-center justify-center transition focus:outline-none">
                                             <i class="fa-solid fa-xmark text-xs"></i>
                                         </button>
@@ -127,10 +127,10 @@
                                                         class="h-20 w-20 object-cover">
                                                 @endif
 
-                                                <button type="button"
+                                                <button type="button" title="Cancella Foto"
                                                     onclick="confirmAction({{ $photo->id }}, 'ELIMINARE LA FOTO?', 'Questa azione non può essere annullata.', 'removeExistingPhoto')"
                                                     class="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-bl flex items-center justify-center transition focus:outline-none">
-                                                    <i class="fa-solid fa-xmark text-[10px]"></i>
+                                                    <i class="fa-solid fa-xmark text-xs"></i>
                                                 </button>
                                             </div>
                                         @endforeach
@@ -152,7 +152,7 @@
             </section>
 
             <div class="flex flex-col-reverse sm:flex-row items-center justify-center gap-3">
-                <x-secondary-button href="{{ route('dashboard') }}" wire:navigate
+                <x-secondary-button href="{{ route('dashboard') }}"
                     class="w-full sm:w-auto justify-center">
                     Annulla
                 </x-secondary-button>

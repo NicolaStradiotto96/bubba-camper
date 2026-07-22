@@ -91,30 +91,37 @@ class BookingIndex extends Component
     {
         $booking = Booking::findOrFail($bookingId);
 
-        $totalPaid = ($booking->payment_status === 'fully_paid')
-            ? $booking->total_price
-            : ($booking->down_payment ?? 0);
+        $totalPaid = 0;
+        if ($booking->balance_paid || $booking->payment_status === 'fully_paid') {
+            $totalPaid = $booking->total_price;
+        } elseif ($booking->down_paid) {
+            $totalPaid = $booking->down_payment ?? 0;
+        }
+
+        $refundInfo = $booking->calculateExpectedRefund();
 
         if ($applyPenalty) {
-            $refundInfo = $booking->calculateExpectedRefund();
             $refundAmount = $refundInfo['refund_amount'] ?? 0;
             $remainingPenalty = $refundInfo['remaining_penalty'] ?? 0;
+            $penaltyAmount = $refundInfo['penalty_amount'] ?? 0;
         } else {
             $refundAmount = $totalPaid;
             $remainingPenalty = 0;
+            $penaltyAmount = 0;
         }
 
         $refundAmount = min($refundAmount, $totalPaid);
+        $canUseStripe = $useStripe && !empty($booking->stripe_payment_id);
 
-        $canUseStripe = $useStripe &&
-            $booking->stripe_payment_id &&
-            $booking->payment_status !== 'fully_paid';
+        DB::transaction(function () use ($booking, $refundAmount, $canUseStripe, $byAdmin, $totalPaid, $penaltyAmount, $remainingPenalty) {
+            $booking->status = $byAdmin ? 'cancelled_by_admin' : 'cancelled';
+            $booking->documents_status = 'not_required';
 
-        $booking->status = $byAdmin ? 'cancelled_by_admin' : 'cancelled';
-        $booking->documents_status = 'not_required';
+            $booking->penalty_amount = $penaltyAmount;
+            $booking->remaining_penalty = $remainingPenalty;
+            $booking->refund_amount = $refundAmount;
 
-        if ($refundAmount > 0) {
-            if ($canUseStripe) {
+            if ($refundAmount > 0 && $canUseStripe) {
                 try {
                     Stripe::setApiKey(config('services.stripe.secret'));
                     Refund::create([
@@ -123,44 +130,27 @@ class BookingIndex extends Component
                     ]);
                     $booking->payment_status = 'refunded_stripe';
                     $booking->refund_paid_at = now();
-
-                    $this->logAdminEvent(
-                        'refund_processed_stripe',
-                        "Eseguito rimborso Stripe di {$refundAmount}€ per la prenotazione #{$booking->id}.",
-                        $booking,
-                        ['refund_amount' => $refundAmount]
-                    );
                 } catch (\Exception $e) {
-                    \Log::error("ERRORE STRIPE [Booking #{$booking->id}]: " . $e->getMessage(), [
-                        'trace' => $e->getTraceAsString()
-                    ]);
-                    $this->dispatch('swal-modal-error', 'Si è verificato un errore durante la comunicazione con Stripe. Il rimborso non è stato effettuato.');
-                    return;
+                    \Log::error("ERRORE STRIPE [Booking #{$booking->id}]: " . $e->getMessage());
+                    throw $e;
                 }
-            } else {
+            } elseif ($refundAmount > 0) {
                 $booking->payment_status = 'refunded_manual';
                 $booking->refund_paid_at = now();
-
-                $this->logAdminEvent(
-                    'refund_processed_manual',
-                    "Registrato rimborso manuale di {$refundAmount}€ per la prenotazione #{$booking->id}.",
-                    $booking,
-                    ['refund_amount' => $refundAmount]
-                );
-            }
-        } else {
-            if ($totalPaid >= $booking->calculateExpectedRefund()['penalty_amount']) {
-                $booking->payment_status = 'penalty_paid';
-                $booking->balance_paid = true;
-                $booking->balance_paid_at = now();
-                $booking->penalty_paid_at = now();
             } else {
-                $booking->payment_status = 'penalty_pending';
+                if ($totalPaid >= $penaltyAmount) {
+                    $booking->payment_status = 'penalty_paid';
+                    $booking->balance_paid = true;
+                    $booking->balance_paid_at = now();
+                    $booking->penalty_paid_at = now();
+                } else {
+                    $booking->payment_status = 'penalty_pending';
+                }
             }
-        }
 
-        $booking->cancellation_confirmed_at = now();
-        $booking->save();
+            $booking->cancellation_confirmed_at = now();
+            $booking->save();
+        });
 
         $this->logAdminEvent(
             'booking_cancelled_by_admin',
@@ -194,13 +184,14 @@ class BookingIndex extends Component
             $booking->balance_paid = true;
             $booking->balance_paid_at = now();
             $booking->penalty_paid_at = now();
+            $booking->remaining_penalty = 0.00;
             $booking->save();
 
             $this->logAdminEvent(
                 'penalty_marked_as_paid',
                 "Registrato saldo penale per la prenotazione annullata #{$booking->id}.",
                 $booking,
-                ['amount' => $booking->calculateExpectedRefund()['penalty_amount']]
+                ['amount' => $booking->penalty_amount]
             );
 
             Mail::to($booking->customer_email)->send(new PenaltyPaid($booking));
@@ -272,29 +263,29 @@ class BookingIndex extends Component
         $booking = Booking::with(['camper', 'damages'])->findOrFail($bookingId);
 
         $this->dispatch('open-booking-modal', [
-            'id'               => $booking->id,
-            'ulid'             => $booking->ulid,
-            'created_at'       => $booking->created_at->format('d/m/Y \a\l\l\e H:i'),
-            'damage_url'       => route('damage.add', $booking->id),
-            'edit_url'         => route('booking.edit', $booking->id),
-            'name'             => "{$booking->customer_first_name} {$booking->customer_last_name}",
-            'email'            => $booking->customer_email,
-            'phone'            => $booking->customer_phone,
-            'camper'           => $booking->camper->name,
-            'start'            => $booking->start_date->format('d/m/Y'),
-            'end'              => $booking->end_date->format('d/m/Y'),
-            'total'            => number_format($booking->total_price, 2, ',', '') . '€',
-            'deposit'          => number_format($booking->down_payment, 2, ',', '') . '€',
-            'down_payment'     => (float)($booking->down_payment ?? 0),
-            'down_paid'        => (bool)$booking->down_paid,
-            'balance_paid'     => (bool)$booking->balance_paid,
-            'balance'          => number_format($booking->balance_payment, 2, ',', '') . '€',
-            'remainingPenalty' => number_format($booking->calculateExpectedRefund()['remaining_penalty'], 2, ',', '') . '€',
-            'originalBalance'  => number_format($booking->total_price - $booking->down_payment, 2, ',', '') . '€',
-            'refund'           => number_format($booking->calculateExpectedRefund()['refund_amount'], 2, ',', '') . '€',
-            'refundRaw'        => (float)$booking->calculateExpectedRefund()['refund_amount'],
-            'penalty'          => number_format($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0, 2, ',', '') . '€',
-            'penaltyRaw'       => (float)($booking->status === 'cancelled' ? $booking->calculateExpectedRefund()['penalty_amount'] : 0),
+            'id'                   => $booking->id,
+            'ulid'                 => $booking->ulid,
+            'created_at'           => $booking->created_at->format('d/m/Y \a\l\l\e H:i'),
+            'damage_url'           => route('damage.add', $booking->id),
+            'edit_url'             => route('booking.edit', $booking->id),
+            'name'                 => "{$booking->customer_first_name} {$booking->customer_last_name}",
+            'email'                => $booking->customer_email,
+            'phone'                => $booking->customer_phone,
+            'camper'               => $booking->camper->name,
+            'start'                => $booking->start_date->format('d/m/Y'),
+            'end'                  => $booking->end_date->format('d/m/Y'),
+            'total'                => number_format($booking->total_price, 2, ',', '') . '€',
+            'deposit'              => number_format($booking->down_payment, 2, ',', '') . '€',
+            'down_payment'         => (float)($booking->down_payment ?? 0),
+            'down_paid'            => (bool)$booking->down_paid,
+            'balance_paid'         => (bool)$booking->balance_paid,
+            'balance'              => number_format($booking->balance_payment, 2, ',', '') . '€',
+            'remainingPenalty'     => number_format($booking->remaining_penalty, 2, ',', '') . '€',
+            'originalBalance'      => number_format($booking->total_price - $booking->down_payment, 2, ',', '') . '€',
+            'refund'               => number_format($booking->refund_amount, 2, ',', '') . '€',
+            'refundRaw'            => (float)$booking->refund_amount,
+            'penalty'              => number_format($booking->status === 'cancelled' ? $booking->penalty_amount : 0, 2, ',', '') . '€',
+            'penaltyRaw'           => (float)($booking->status === 'cancelled' ? $booking->penalty_amount : 0),
             'damages' => $booking->damages->map(function ($d) {
                 return [
                     'id'           => $d->id,
@@ -303,11 +294,11 @@ class BookingIndex extends Component
                     'receipt_url'  => $d->receipt_path ? asset('storage/' . $d->receipt_path) : null,
                 ];
             })->toArray(),
-            'status'           => $booking->status,
-            'documents_status' => $booking->documents_status,
-            'payment_status'   => $booking->payment_status,
-            'penalty_receipt'  => $booking->penalty_receipt_path ? asset('storage/' . $booking->penalty_receipt_path) : null,
-            'refund_receipt'   => $booking->refund_receipt_path ? asset('storage/' . $booking->refund_receipt_path) : null,
+            'status'               => $booking->status,
+            'documents_status'     => $booking->documents_status,
+            'payment_status'       => $booking->payment_status,
+            'penalty_receipt'      => $booking->penalty_receipt_path ? asset('storage/' . $booking->penalty_receipt_path) : null,
+            'refund_receipt'       => $booking->refund_receipt_path ? asset('storage/' . $booking->refund_receipt_path) : null,
             'dl_front' => $booking->driver_license_front_path
                 ? route('admin.view-doc', [
                     'bookingId' => $booking->id,

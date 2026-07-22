@@ -11,7 +11,7 @@ new class extends Component {
     {
         $logout();
 
-        $this->redirect('/', navigate: true);
+        $this->redirect('/');
     }
 };
 
@@ -31,7 +31,7 @@ window.addEventListener('livewire:navigating', () => {
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center w-48">
-                    <a href="{{ route('welcome') }}" wire:navigate
+                    <a href="{{ route('welcome') }}"
                         class="focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                         <x-application-logo size="small" />
                     </a>
@@ -41,16 +41,16 @@ window.addEventListener('livewire:navigating', () => {
             </div>
             <!-- Navigation Links -->
             <div class="hidden md:flex md:items-center md:justify-center flex-1 space-x-8 -my-px">
-                <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')" wire:navigate>
+                <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
                     {{ __('Home') }}
                 </x-nav-link>
-                <x-nav-link :href="route('index')" :active="request()->routeIs('index')" wire:navigate>
+                <x-nav-link :href="route('index')" :active="request()->routeIs('index')">
                     {{ __('Noleggio') }}
                 </x-nav-link>
-                <x-nav-link :href="route('prices')" :active="request()->routeIs('prices')" wire:navigate>
+                <x-nav-link :href="route('prices')" :active="request()->routeIs('prices')">
                     {{ __('Prezzi') }}
                 </x-nav-link>
-                <x-nav-link :href="route('contacts')" :active="request()->routeIs('contacts')" wire:navigate>
+                <x-nav-link :href="route('contacts')" :active="request()->routeIs('contacts')">
                     {{ __('Contatti') }}
                 </x-nav-link>
             </div>
@@ -85,13 +85,12 @@ window.addEventListener('livewire:navigating', () => {
                         </x-slot>
 
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate
-                                class="flex justify-center items-center">
+                            <x-dropdown-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="flex justify-center items-center">
                                 <livewire:admin.admin-notification />
                                 <livewire:user.user-notification />
                                 <span>{{ __('Dashboard') }}</span>
                             </x-dropdown-link>
-                            <x-dropdown-link :href="route('profile')" :active="request()->routeIs('profile')" wire:navigate>
+                            <x-dropdown-link :href="route('profile')" :active="request()->routeIs('profile')">
                                 {{ __('Profilo') }}
                             </x-dropdown-link>
 
@@ -106,11 +105,11 @@ window.addEventListener('livewire:navigating', () => {
                     </x-dropdown>
                 @else
                     <div class="space-x-3 ml-4">
-                        <x-nav-link :href="route('login')" :active="request()->routeIs('login')" wire:navigate>
+                        <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
                             {{ __('Log in') }}
                         </x-nav-link>
 
-                        <x-nav-link :href="route('register')" :active="request()->routeIs('register')" wire:navigate>
+                        <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
                             {{ __('Register') }}
                         </x-nav-link>
                     </div>
@@ -154,27 +153,27 @@ window.addEventListener('livewire:navigating', () => {
                 </div>
             @endauth
             <div class="mt-3">
-                <x-responsive-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')" wire:navigate>
+                <x-responsive-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
                     {{ __('Home') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('index')" :active="request()->routeIs('index')" wire:navigate>
+                <x-responsive-nav-link :href="route('index')" :active="request()->routeIs('index')">
                     {{ __('Noleggio') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('prices')" :active="request()->routeIs('prices')" wire:navigate>
+                <x-responsive-nav-link :href="route('prices')" :active="request()->routeIs('prices')">
                     {{ __('Prezzi') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('contacts')" :active="request()->routeIs('contacts')" wire:navigate>
+                <x-responsive-nav-link :href="route('contacts')" :active="request()->routeIs('contacts')">
                     {{ __('Contatti') }}
                 </x-responsive-nav-link>
             </div>
         </div>
         @auth
             <div class="py-3 border-t border-gray-300 dark:border-gray-700 ">
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
 
-                <x-responsive-nav-link :href="route('profile')" :active="request()->routeIs('profile')" wire:navigate>
+                <x-responsive-nav-link :href="route('profile')" :active="request()->routeIs('profile')">
                     {{ __('Profilo') }}
                 </x-responsive-nav-link>
 
@@ -188,10 +187,10 @@ window.addEventListener('livewire:navigating', () => {
             </div>
         @else
             <div class="py-3 border-t border-gray-300 dark:border-gray-700 ">
-                <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')" wire:navigate>
+                <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')">
                     {{ __('Log In') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')" wire:navigate>
+                <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')">
                     {{ __('Registrati') }}
                 </x-responsive-nav-link>
             </div>

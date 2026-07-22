@@ -8,12 +8,13 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PenaltyController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\TermsController;
 use App\Livewire\Admin\BookingEdit;
 use App\Livewire\Admin\BookingManager;
 use App\Livewire\Admin\CamperManager;
-use App\Livewire\Admin\MaintenanceManager;
 use App\Livewire\Admin\DamageIndex;
 use App\Livewire\Admin\DamageManager;
+use App\Livewire\Admin\MaintenanceManager;
 use Illuminate\Support\Facades\Route;
 
 // HOME
@@ -131,5 +132,8 @@ Route::view('profilo', 'profile')
 
 // FAQ
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
+
+// TERMS AND CONDITIONS
+Route::get('/termini-e-condizioni', [TermsController::class, 'showTerms'])->name('terms');
 
 require __DIR__ . '/auth.php';

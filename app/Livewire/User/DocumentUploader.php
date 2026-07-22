@@ -155,7 +155,7 @@ class DocumentUploader extends Component
         });
 
         $this->resetForm();
-        $this->dispatch('notify', message: 'Documenti inviati correttamente!');
+        $this->dispatch('swal-success', "Documenti per la prenotazione <span class='id'>#{$booking->id}</span> inviati con successo!");
         $this->dispatch('close-doc-modal');
         $this->dispatch('refresh-page');
     }

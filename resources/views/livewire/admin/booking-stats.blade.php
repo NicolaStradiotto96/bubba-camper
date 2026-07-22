@@ -11,13 +11,17 @@
 
         {{-- CARDS --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mx-4">
-            @foreach ([['label' => 'Incasso', 'value' => number_format($this->stats['counts']['earnings'], 0, ',', '') . '€', 'icon' => 'fa-solid fa-coins', 'color' => 'green', 'isPending' => false], ['label' => 'Totali', 'value' => $this->stats['counts']['total'], 'icon' => 'fa-solid fa-boxes-stacked', 'color' => 'green', 'isPending' => false], ['label' => 'Confermate', 'value' => $this->stats['counts']['confirmed'], 'icon' => 'fa-solid fa-circle-check', 'color' => 'green', 'isPending' => false], ['label' => 'In Attesa', 'value' => $this->stats['totalPending'], 'icon' => 'fa-solid fa-clock', 'color' => $this->stats['totalPending'] > 0 ? 'amber' : 'green', 'isPending' => $this->stats['totalPending'] > 0]] as $stat)
+            @foreach ([
+                ['label' => 'Incasso', 'value' => number_format($this->stats['counts']['earnings'], 0, ',', '') . '€', 'icon' => 'fa-solid fa-coins', 'textColor' => 'text-green-500', 'isPending' => false], 
+                ['label' => 'Totali', 'value' => $this->stats['counts']['total'], 'icon' => 'fa-solid fa-boxes-stacked', 'textColor' => 'text-green-500', 'isPending' => false], 
+                ['label' => 'Confermate', 'value' => $this->stats['counts']['confirmed'], 'icon' => 'fa-solid fa-circle-check', 'textColor' => 'text-green-500', 'isPending' => false], 
+                ['label' => 'In Attesa', 'value' => $this->stats['totalPending'], 'icon' => 'fa-solid fa-clock', 'textColor' => $this->stats['totalPending'] > 0 ? 'text-amber-500' : 'text-green-500', 'isPending' => $this->stats['totalPending'] > 0]
+            ] as $stat)
                 <div
                     class="group relative bg-gray-50 dark:bg-gray-900/50 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 transition duration-300">
 
                     <div class="absolute top-4 right-4 opacity-75 group-hover:opacity-100 transition">
-                        <i
-                            class="{{ $stat['icon'] }} text-4xl text-{{ $stat['color'] }}-500 {{ $stat['isPending'] ? 'animate-pulse' : '' }}"></i>
+                        <i class="{{ $stat['icon'] }} text-4xl {{ $stat['textColor'] }} {{ $stat['isPending'] ? 'animate-pulse' : '' }}"></i>
                     </div>
 
                     <div class="flex flex-col">

@@ -1,6 +1,6 @@
 <x-app-layout title="Contatti">
 
-    <div class=" translate-y-10 transition-all duration-1000 transform" x-data="{
+    <div class="min-h-[calc(100vh-160px)] translate-y-10 transition-all duration-1000 transform" x-data="{
         init() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {

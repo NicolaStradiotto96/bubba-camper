@@ -102,12 +102,12 @@
                     @endif
 
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="{{ route('dashboard') }}" wire:navigate
+                        <a href="{{ route('dashboard') }}"
                             class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-[2rem] hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm uppercase">
                             Vai alla tua Dashboard
                         </a>
 
-                        <a href="{{ route('welcome') }}" wire:navigate
+                        <a href="{{ route('welcome') }}"
                             class="px-6 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-[2rem] hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm uppercase">
                             Torna alla Home
                         </a>

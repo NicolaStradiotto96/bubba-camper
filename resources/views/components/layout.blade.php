@@ -2,10 +2,6 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    {{-- Iubenda --}}
-    <script type="text/javascript" src="https://embeds.iubenda.com/widgets/901fb258-25de-438e-ab0e-9e19ea8060e8.js">
-    </script>
-
     {{-- HTML --}}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,9 +42,12 @@
     {{-- Scripts --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Iubenda --}}
+    <script type="text/javascript" src="https://embeds.iubenda.com/widgets/901fb258-25de-438e-ab0e-9e19ea8060e8.js">
+    </script>
 </head>
 
-<body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
+<body class="font-sans antialiased">
 
     {{ $slot }}
 

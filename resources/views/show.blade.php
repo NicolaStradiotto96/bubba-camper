@@ -11,7 +11,7 @@
 
             {{-- BACK --}}
             <div class="flex items-center justify-center lg:justify-start">
-                <a href="{{ route('index') }}" wire:navigate
+                <a href="{{ route('index') }}"
                     class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
                     {{ __('Torna indietro') }}
@@ -259,7 +259,7 @@
 
                     <div class="mt-8">
                         @if ($camper->is_active)
-                            <x-primary-anchor href="{{ route('booking.show', $camper->slug) }}" wire:navigate
+                            <x-primary-anchor href="{{ route('booking.show', $camper->slug) }}"
                                 x-data="{ loading: false }" @click="loading = true"
                                 x-bind:class="loading ? 'opacity-50 cursor-wait' : ''"
                                 class="w-full py-4 flex justify-center uppercase tracking-widest font-bold">
@@ -292,8 +292,8 @@
                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-[2rem] border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
 
-                <button @click="openSpecs = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                <button @click="openSpecs = false" title="Chiudi"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 absolute top-4 right-4 z-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
 
@@ -365,8 +365,8 @@
                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-[2rem] border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
 
-                <button @click="openEquipment = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                <button @click="openEquipment = false" title="Chiudi"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 absolute top-4 right-4 z-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
 
@@ -437,8 +437,8 @@
                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 class="bg-white dark:bg-gray-900 w-full max-w-[960px] rounded-[2rem] border-2 border-gray-200 dark:border-gray-800 p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
 
-                <button @click="openPolicies = false"
-                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 absolute top-4 right-4 z-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                <button @click="openPolicies = false" title="Chiudi"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 absolute top-4 right-4 z-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                     <i class="fa-solid fa-xmark text-2xl"></i>
                 </button>
 

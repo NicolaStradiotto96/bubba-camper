@@ -273,7 +273,7 @@ document.addEventListener('livewire:init', () => {
                 </div>
             `,
             icon: 'question',
-            iconColor: '#d97706',
+            iconColor: '#f59e0b',
             showCancelButton: true,
             confirmButtonText: 'PROCEDI',
             cancelButtonText: 'ANNULLA',
@@ -315,7 +315,7 @@ document.addEventListener('livewire:init', () => {
                         </div>
                     `,
                     icon: 'question',
-                    iconColor: '#d97706',
+                    iconColor: '#f59e0b',
                     showDenyButton: true,
                     showCancelButton: true,
                     confirmButtonText: 'STRIPE',
@@ -374,7 +374,7 @@ document.addEventListener('livewire:init', () => {
                                 </div>
                             `,
                             icon: 'info',
-                            iconColor: '#d97706',
+                            iconColor: '#f59e0b',
                             showCancelButton: true,
                             confirmButtonText: 'INVIA',
                             cancelButtonText: 'ANNULLA',
@@ -667,7 +667,7 @@ document.addEventListener('livewire:init', () => {
                 </div>
             `,
             icon: 'info',
-            iconColor: '#d97706',
+            iconColor: '#f59e0b',
             showCancelButton: true,
             confirmButtonText: 'PROCEDI',
             cancelButtonText: 'ANNULLA',
@@ -684,7 +684,7 @@ document.addEventListener('livewire:init', () => {
                     title: 'METODO DI PAGAMENTO',
                     text: "Seleziona come pagare la penale:",
                     icon: 'question',
-                    iconColor: '#d97706',
+                    iconColor: '#f59e0b',
                     showDenyButton: true,
                     showCancelButton: true,
                     confirmButtonText: 'STRIPE',
@@ -751,7 +751,7 @@ document.addEventListener('livewire:init', () => {
                                 </div>
                             `,
                             icon: 'info',
-                            iconColor: '#d97706',
+                            iconColor: '#f59e0b',
                             showCancelButton: true,
                             confirmButtonText: 'INVIA',
                             cancelButtonText: 'ANNULLA',

@@ -36,7 +36,7 @@
             @endphp
 
             @foreach ($actions as $action)
-                <a href="{{ route($action['route']) }}" wire:navigate
+                <a href="{{ route($action['route']) }}"
                     class="group flex flex-col items-center justify-center p-6 bg-gray-50 dark:bg-gray-900/50 rounded-[2rem] border border-gray-200 dark:border-gray-700 hover:border-amber-500 dark:hover:border-amber-500 hover:bg-white dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm hover:shadow-md">
 
                     <div

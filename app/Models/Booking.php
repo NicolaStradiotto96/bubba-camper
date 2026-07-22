@@ -38,8 +38,11 @@ class Booking extends Model
         'id_card_front_path',
         'id_card_back_path',
         'documents_status',
+        'refund_amount',
         'refund_receipt_path',
         'refund_paid_at',
+        'penalty_amount',
+        'remaining_penalty',
         'penalty_receipt_path',
         'penalty_paid_at',
         'user_id',
@@ -57,6 +60,9 @@ class Booking extends Model
         'total_price' => 'decimal:2',
         'down_payment' => 'decimal:2',
         'balance_payment' => 'decimal:2',
+        'refund_amount' => 'decimal:2',
+        'penalty_amount' => 'decimal:2',
+        'remaining_penalty' => 'decimal:2',
         'terms_accepted' => 'boolean',
         'privacy_accepted' => 'boolean',
         'down_paid' => 'boolean',
@@ -95,6 +101,25 @@ class Booking extends Model
 
     public function calculateExpectedRefund()
     {
+        if (in_array($this->status, ['cancelled', 'cancelled_by_admin'])) {
+            $totalPaid = 0;
+            if ($this->down_paid) {
+                $totalPaid += $this->down_payment;
+            }
+            if ($this->balance_paid || $this->payment_status === 'fully_paid') {
+                $totalPaid += $this->balance_payment;
+            }
+
+            return [
+                'refund_amount' => $this->refund_amount ?? 0,
+                'total_paid' => $totalPaid,
+                'penalty_amount' => $this->penalty_amount ?? 0,
+                'remaining_penalty' => $this->remaining_penalty ?? 0,
+                'days' => 0,
+                'penalty_percent' => 0
+            ];
+        }
+
         $today = now()->startOfDay();
         $startDate = $this->start_date->copy()->startOfDay();
         $daysToTrip = $today->diffInDays($startDate, false);
@@ -124,7 +149,6 @@ class Booking extends Model
         }
 
         $actualRefund = max(0, $totalAmountPaid - $totalPenaltyAmount);
-
         $remainingPenalty = max(0, $totalPenaltyAmount - $totalAmountPaid);
 
         return [

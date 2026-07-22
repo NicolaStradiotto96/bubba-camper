@@ -309,6 +309,10 @@ class CamperManager extends Component
     {
         $this->validate($this->rules(), $this->messages());
 
+        $successMessage = $this->isEditMode
+            ? "Camper <b>{$this->name}</b> aggiornato con successo!"
+            : "Camper <b>{$this->name}</b> creato con successo!";
+
         DB::transaction(function () {
 
             $path = $this->image_path;
@@ -348,16 +352,14 @@ class CamperManager extends Component
                 $this->camper->update($data);
 
                 $this->logCamper('camper_updated', "Camper aggiornato: {$this->camper->name}", $this->camper, $oldPrices);
-                session()->flash('swal-success', "Camper <b>{$this->name}</b> aggiornato con successo!");
             } else {
                 $newCamper = Camper::create($data);
 
                 $this->logCamper('camper_created', "Camper creato: {$newCamper->name}", $newCamper);
-                session()->flash('swal-success', "Camper <b>{$this->name}</b> creato con successo!");
             }
         });
 
-        return redirect()->route('index');
+        return redirect()->route('index')->with('swal-success', $successMessage);
     }
 
     // DELETE CAMPER
@@ -378,11 +380,9 @@ class CamperManager extends Component
             $this->logCamper('camper_deleted', "Camper eliminato: {$this->camper->name}", $this->camper);
 
             $this->camper->delete();
-
-            session()->flash('swal-success', "Camper <b>{$this->camper->name}</b> eliminato con successo!");
         });
 
-        return redirect()->route('index');
+        return redirect()->route('index')->with('swal-success', "Camper <b>{$this->camper->name}</b> eliminato con successo!");
     }
 
     // UPDATE ERRORS

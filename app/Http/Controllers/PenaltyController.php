@@ -77,7 +77,7 @@ class PenaltyController extends Controller
         }
 
         return response()->json([
-            'amount' => max(0, ($booking->calculateExpectedRefund()['penalty_amount'] ?? 0) - ($booking->down_payment ?? 0)),
+            'amount' => max(0, ($booking->penalty_amount ?? 0) - ($booking->down_payment ?? 0)),
             'status' => $booking->payment_status
         ]);
     }

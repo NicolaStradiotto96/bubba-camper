@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Livewire\Attributes\Title;
 use App\Models\Log;
 
 new #[Layout('layouts.guest')] class extends Component {
@@ -11,6 +12,7 @@ new #[Layout('layouts.guest')] class extends Component {
     /**
      * Send a password reset link to the provided email address.
      */
+    #[Title('Password Dimenticata')]
     public function sendPasswordResetLink(): void
     {
         $this->validate([

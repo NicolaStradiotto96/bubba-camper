@@ -6,6 +6,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
@@ -23,7 +24,7 @@ new #[Layout('layouts.guest')] class extends Component {
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class, 'email')->whereNull('deleted_at')],
             'phone' => ['required', 'min:8', 'max:20'],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
             'password_confirmation' => ['required'],
@@ -48,7 +49,7 @@ new #[Layout('layouts.guest')] class extends Component {
 
         Auth::login($user);
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        $this->redirect(route('dashboard', absolute: false));
     }
 
     public function updated($propertyName)
@@ -189,7 +190,7 @@ new #[Layout('layouts.guest')] class extends Component {
 
         <div class="flex items-center justify-end mt-2">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 dark:focus:ring-offset-gray-800 transition"
-                href="{{ route('login') }}" wire:navigate>
+                href="{{ route('login') }}">
                 {{ __('Sei già registrato?') }}
             </a>
 

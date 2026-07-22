@@ -17,8 +17,8 @@
 
         @auth
             @if (auth()->user()->is_admin)
-                <a href="{{ route('camper.edit', $camper) }}" wire:navigate
-                    class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-[2rem] font-black text-xs uppercase tracking-wider shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition flex items-center gap-1">
+                <a href="{{ route('camper.edit', $camper) }}"
+                    class="absolute top-4 left-4 z-10 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-[2rem] font-black text-xs uppercase tracking-wider shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition flex items-center gap-1">
                     <i class="fa-solid fa-pen-to-square"></i> Modifica
                 </a>
             @endif
@@ -51,7 +51,7 @@
             </p>
 
             <x-primary-anchor href="{{ route('show', $camper) }}"
-                aria-label="Vedi i dettagli del camper {{ $camper->name }}" wire:navigate x-data="{ loading: false }"
+                aria-label="Vedi i dettagli del camper {{ $camper->name }}" x-data="{ loading: false }"
                 @click="loading = true" x-bind:class="loading ? 'opacity-50 cursor-wait' : ''">
                 {{ __('Vedi Dettagli') }}
             </x-primary-anchor>

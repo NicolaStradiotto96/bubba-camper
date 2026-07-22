@@ -2,10 +2,11 @@
     <meta name="robots" content="noindex, nofollow">
 @endpush
 
-<div class="min-h-[calc(100vh-160px)] mx-4" x-data="{ open: false }" @open-modal.window="open = true" x-effect="open ? document.body.classList.add('no-scroll') : document.body.classList.remove('no-scroll')">>
+<div class="min-h-[calc(100vh-160px)] mx-4" x-data="{ open: false }" @open-modal.window="open = true"
+    x-effect="open ? document.body.classList.add('no-scroll') : document.body.classList.remove('no-scroll')">>
 
     <div class="max-w-5xl flex items-center justify-center lg:justify-start mx-auto">
-        <a href="{{ route('dashboard') }}" wire:navigate
+        <a href="{{ route('dashboard') }}"
             class="text-sm font-black text-amber-600 dark:text-amber-500 uppercase tracking-wider group mb-5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
             <i class="fa-solid fa-arrow-left mr-1.5 transition duration-300 group-hover:-translate-x-1"></i>
             {{ __('Torna alla dashboard') }}
@@ -114,7 +115,7 @@
                                         </span>
                                     @else
                                         <a href="{{ route('damage.edit', ['booking' => $d->booking_id, 'damage_id' => $d->id]) }}"
-                                            wire:navigate class="text-amber-500 hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                                            class="text-amber-500 hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                             <i class="fa-solid fa-pen-to-square text-lg"></i>
                                         </a>
                                         <button type="button"
@@ -205,7 +206,7 @@
                                 </span>
                             @else
                                 <a href="{{ route('damage.edit', ['booking' => $d->booking_id, 'damage_id' => $d->id]) }}"
-                                    wire:navigate class="text-amber-500 hover:text-amber-600 p-2">
+                                    class="text-amber-500 hover:text-amber-600 p-2">
                                     <i class="fa-solid fa-pen-to-square text-lg"></i>
                                 </a>
                                 <button type="button"
@@ -250,11 +251,12 @@
                 <div
                     class="bg-gray-50 dark:bg-gray-700/50 font-black p-4 border-b border-gray-100 dark:border-gray-700">
                     <div class=" flex justify-between items-center">
-                        <h3 tabindex="1" class="text-xl text-gray-900 dark:text-white uppercase tracking-wider focus:outline-none">
+                        <h3 tabindex="1"
+                            class="text-xl text-gray-900 dark:text-white uppercase tracking-wider focus:outline-none">
                             Danno
                             <span class="damage-id">#{{ $selectedDamage->id }}</span>
                         </h3>
-                        <button @click="open = false"
+                        <button @click="open = false" title="Chiudi"
                             class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                             <i class="fa-solid fa-xmark text-xl"></i>
                         </button>
@@ -289,8 +291,7 @@
                     <div
                         class="bg-gray-50 dark:bg-gray-900 p-4 rounded-[2rem] border border-gray-100 dark:border-gray-700">
                         <p class="text-lg font-black text-gray-400 uppercase tracking-widest mb-1">Camper:</p>
-                        <p
-                            class="font-black text-gray-700 dark:text-gray-300">
+                        <p class="font-black text-gray-700 dark:text-gray-300">
                             {{ $selectedDamage->booking->camper->name ?? 'N/A' }}</span>
                         </p>
                     </div>

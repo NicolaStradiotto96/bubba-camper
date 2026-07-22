@@ -84,7 +84,7 @@ new class extends Component {
             </div>
         </div>
 
-        <div class="flex justify-center items-center gap-4">
+        <div>
             <x-primary-button type="button" wire:click="updatePassword" wire:loading.attr="disabled"
                 wire:target="updatePassword" class="w-full justify-center disabled:opacity-50 disabled:cursor-wait">
 
@@ -97,7 +97,7 @@ new class extends Component {
                 </span>
             </x-primary-button>
 
-            <x-action-message class="me-3" on="password-updated" role="status" aria-live="polite">
+            <x-action-message class="mt-1" on="password-updated" role="status" aria-live="polite">
                 {{ __('Modifiche salvate.') }}
             </x-action-message>
         </div>

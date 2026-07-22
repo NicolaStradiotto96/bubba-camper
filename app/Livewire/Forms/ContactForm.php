@@ -36,7 +36,7 @@ class ContactForm extends Component
     {
         return [
             'name' => 'required|string|min:2|max:60',
-            'email' => 'required|email:rfc,dns',
+            'email' => 'required|email',
             'date_range' => 'nullable',
             'start_date' => [
                 'nullable',

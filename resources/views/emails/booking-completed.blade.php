@@ -16,7 +16,7 @@ Riceverai la fattura entro 12 giorni lavorativi.
 ## 🔔 Promemoria:
 - **Assistenza:** In caso di emergenza tecnica durante il viaggio, il numero di riferimento è <span class="highlight">+39 334 753 8083</span>
 - **Manuale:** Ti ricordiamo che sul camper è presente il manuale d'uso. Ti preghiamo di consultarlo per gestire correttamente il tuo viaggio
-- **Foto e Avventure:** Se avrai voglia di scattare delle foto durante il viaggio, saremo felici di vederle! Taggaci su Instagram <span class="highlight">@BubbaCamper</span> o invicele via WhatsApp
+- **Foto e Avventure:** Se avrai voglia di scattare delle foto durante il viaggio, saremo felici di vederle! Taggaci su Instagram <span class="highlight">@BubbaCamper</span> o inviacele via WhatsApp
 
 Se hai domande, puoi rispondere direttamente a questa email.
 

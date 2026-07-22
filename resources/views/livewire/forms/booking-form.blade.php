@@ -162,7 +162,7 @@
                             <div class="text-xs">
                                 <label for="privacy_accepted"
                                     class="font-bold text-gray-700 dark:text-gray-300 select-none cursor-pointer">
-                                    Ho letto e accetto l'<a href="{{ route('faq') }}#privacy" target="_blank"
+                                    Ho letto e accetto l'<a href="https://www.iubenda.com/privacy-policy/48326335" target="_blank"
                                         class="text-amber-500 hover:underline focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Informativa sulla Privacy</a>.
                                 </label>
                                 <p class="text-[10px] text-gray-500 dark:text-gray-400">Consento al trattamento dei dati
@@ -204,7 +204,7 @@
 
             <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 tabindex="1" class="font-bold text-gray-900 dark:text-white uppercase focus:outline-none">Contratto di Noleggio</h3>
-                <button @click="showContract = false"
+                <button @click="showContract = false" title="Chiudi"
                     class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 p-1 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition"><i
                         class="fa-solid fa-xmark text-xl"></i></button>
             </div>

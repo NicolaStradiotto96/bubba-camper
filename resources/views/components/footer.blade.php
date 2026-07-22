@@ -33,13 +33,13 @@
                         Navigazione
                     </h3>
                     <ul class="mt-4 space-y-4 text-center">
-                        <li><a href="{{ route('welcome') }}" wire:navigate
+                        <li><a href="{{ route('welcome') }}"
                                 class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Home</a>
                         </li>
-                        <li><a href="{{ route('index') }}" wire:navigate
+                        <li><a href="{{ route('index') }}"
                                 class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Noleggio</a>
                         </li>
-                        <li><a href="{{ route('prices') }}" wire:navigate
+                        <li><a href="{{ route('prices') }}"
                                 class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Prezzi</a>
                         </li>
                     </ul>
@@ -49,15 +49,14 @@
                         Supporto
                     </h3>
                     <ul class="mt-4 space-y-4 text-center">
-                        <li><a href="{{ route('contacts') }}" wire:navigate
+                        <li><a href="{{ route('contacts') }}"
                                 class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Contatti</a>
                         </li>
-                        <li><a href="{{ route('faq') }}" wire:navigate
+                        <li><a href="{{ route('terms') }}"
+                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Termini e Condizioni</a></li>
+                        <li><a href="{{ route('faq') }}"
                                 class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">FAQ</a>
                         </li>
-                        <li><a href="#" wire:navigate
-                                class="text-base px-1 text-gray-500 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition">Privacy
-                                Policy</a></li>
                     </ul>
                 </div>
                 <div class="mt-7 md:mt-0">
